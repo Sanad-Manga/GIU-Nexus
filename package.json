@@ -1,0 +1,24 @@
+{
+  "name": "giu-nexus",
+  "version": "1.0.0",
+  "description": "AI-Powered Career &amp; Talent Platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ziadmosen06/GIU-Nexus.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ziadmosen06/GIU-Nexus/issues"
+  },
+  "homepage": "https://github.com/ziadmosen06/GIU-Nexus#readme",
+  "dependencies": {
+    "mongoose": "^9.4.1"
+  }
+}
