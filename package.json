@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/ziadmosen06/GIU-Nexus#readme",
   "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "mongoose": "^9.4.1"
   }
 }
