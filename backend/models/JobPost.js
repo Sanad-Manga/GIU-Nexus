@@ -26,7 +26,7 @@ const applicationSchema = new mongoose.Schema({
 
     location: {
         type: String,
-        required: trim
+        required: true
     },
 
     type: {
