@@ -38,6 +38,7 @@ const userSchema = new mongoose.Schema({
     // only meaningful when role === 'recruiter'
     default: 'pending',
   },
+
   createdAt: {
     type: Date,
     default: Date.now,
