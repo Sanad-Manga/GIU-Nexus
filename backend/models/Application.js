@@ -9,24 +9,7 @@ const applicationSchema = new mongoose.Schema({
   },
 
   // The job being applied to
-  job: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "JobPost",
-    required: true,
-  },
-
-  coverLetter: {
-    type: String,
-    default: "",
-  },
-
-  
-  status: {
-    type: String,
-    enum: ["pending", "shortlisted", "rejected"],
-    default: "pending",
-  },
-
+ 
   appliedAt: {
     type: Date,
     default: Date.now,
