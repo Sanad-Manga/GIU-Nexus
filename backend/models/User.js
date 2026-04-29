@@ -39,6 +39,12 @@ const userSchema = new mongoose.Schema({
     default: 'pending',
   },
 
+  savedJobs: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "JobPost",
+    default: [],
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,
