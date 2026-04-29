@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -13,9 +14,9 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    // Store only hashed password (bcrypt in Task 2)
+    select: false, // Don't return password by default in queries
   },
-    profilePicture: {
+  profilePicture: {
     type: String, // URL string
     // optional — no required: true
   },
@@ -38,17 +39,33 @@ const userSchema = new mongoose.Schema({
     // only meaningful when role === 'recruiter'
     default: 'pending',
   },
-
   savedJobs: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "JobPost",
     default: [],
   },
-
+  resetPasswordToken: {
+    type: String,
+  },
+  resetPasswordExpire: {
+    type: Date,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
+
+// Mongoose 9+ async hooks don't receive a next callback — the promise resolving signals completion
+userSchema.pre('save', async function() {
+  if (!this.isModified('password')) return;
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+// Method to compare passwords
+userSchema.methods.comparePassword = async function(candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
 
 module.exports = mongoose.model('User', userSchema);

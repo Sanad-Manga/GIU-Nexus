@@ -25,7 +25,7 @@ const jobPostSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ["full-time", "part-time", "internships"],
+        enum: ["full-time", "part-time", "internship"],
         required: true
     },
    
@@ -56,3 +56,5 @@ const jobPostSchema = new mongoose.Schema({
     },
 });
 module.exports = mongoose.model("JobPost", jobPostSchema);
+
+

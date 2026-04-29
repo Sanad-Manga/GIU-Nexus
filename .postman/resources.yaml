@@ -1,9 +1,9 @@
 # Use this workspace to collaborate
 workspace:
-  id: 145de767-4dfd-440e-8882-aacd4b5ab99a
+  id: 907a638d-6faa-4070-8906-fee2fcd81484
 
-# All resources in the `postman/` folder are automatically registered in Local View.
-# Point to additional files outside the `postman/` folder to register them individually. Example:
-#localResources:
-#  collections:
-#    - ../tests/E2E Test Collection/
+localResources:
+  collections:
+    - ..\GIU-Nexus-Auth-Collection.postman_collection.json
+  environments:
+    - ..\GIU-Nexus-Local-Dev.postman_environment.json
