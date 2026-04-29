@@ -1,0 +1,444 @@
+{
+  "info": {
+    "_postman_id": "giu-nexus-auth-collection",
+    "name": "GIU Nexus - Auth & Recruiter Approval",
+    "description": "Complete auth flow + recruiter approval scenario for GIU Nexus",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Auth Flow - Job Seeker",
+      "item": [
+        {
+          "name": "1.1 Register Job Seeker",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sara Ahmed\",\n  \"email\": \"sara@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"jobSeeker\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/register",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Register as a job seeker. Status is auto-approved."
+          },
+          "response": []
+        },
+        {
+          "name": "1.2 Login Job Seeker",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) {",
+                  "  pm.environment.set('TOKEN', res.token);",
+                  "  console.log('Token saved: ' + res.token.substring(0, 20) + '...');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"sara@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/login",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login with job seeker credentials. Token is auto-captured."
+          },
+          "response": []
+        },
+        {
+          "name": "1.3 Get Own Profile (Protected)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/profile",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            },
+            "description": "Access protected route with JWT token. Demonstrates that token works."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Recruiter Approval Flow",
+      "item": [
+        {
+          "name": "2.1 Register Recruiter",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ahmed Mohamed\",\n  \"email\": \"ahmed@company.com\",\n  \"password\": \"password123\",\n  \"role\": \"recruiter\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/register",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Register as recruiter. Status will be 'pending' until admin approves."
+          },
+          "response": []
+        },
+        {
+          "name": "2.2 Verify Recruiter Status is Pending",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ahmed@company.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/login",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login as recruiter and verify status is 'pending' in response."
+          },
+          "response": []
+        },
+        {
+          "name": "2.3 Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) {",
+                  "  pm.environment.set('ADMIN_TOKEN', res.token);",
+                  "  console.log('Admin token saved');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/login",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login as admin (must be created in database). Token is auto-captured."
+          },
+          "response": []
+        },
+        {
+          "name": "2.4 Get Pending Recruiters (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/users?role=recruiter&status=pending",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "role",
+                  "value": "recruiter"
+                },
+                {
+                  "key": "status",
+                  "value": "pending"
+                }
+              ]
+            },
+            "description": "List all pending recruiters. Copy the recruiter's _id for approval step."
+          },
+          "response": []
+        },
+        {
+          "name": "2.5 Approve Recruiter (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"approved\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/users/{{RECRUITER_ID}}/status",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "users",
+                "{{RECRUITER_ID}}",
+                "status"
+              ]
+            },
+            "description": "Approve recruiter by updating status to 'approved'. Replace {{RECRUITER_ID}} with actual ID."
+          },
+          "response": []
+        },
+        {
+          "name": "2.6 Recruiter Login After Approval",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) {",
+                  "  pm.environment.set('RECRUITER_TOKEN', res.token);",
+                  "  console.log('Recruiter token saved - status should now be approved');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ahmed@company.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/login",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login as recruiter again. Verify status is now 'approved' in response."
+          },
+          "response": []
+        },
+        {
+          "name": "2.7 Recruiter Creates Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{RECRUITER_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Backend Intern\",\n  \"company\": \"TechCo\",\n  \"description\": \"We are looking for a backend engineer with Node.js and Express experience\",\n  \"requirements\": [\"Node.js\", \"Express\", \"MongoDB\"],\n  \"location\": \"Cairo\",\n  \"type\": \"internship\",\n  \"salary\": 2500,\n  \"totalSlots\": 3\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/jobs",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "jobs"
+              ]
+            },
+            "description": "Create a job post. Only works after recruiter is approved. AI will auto-assign category."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Password Reset Flow",
+      "item": [
+        {
+          "name": "3.1 Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"sara@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/forgot-password",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ]
+            },
+            "description": "Request password reset. Email will be sent with reset link. Always returns 200."
+          },
+          "response": []
+        },
+        {
+          "name": "3.2 Reset Password",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"newpassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/auth/reset-password/{{RESET_TOKEN}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "auth",
+                "reset-password",
+                "{{RESET_TOKEN}}"
+              ]
+            },
+            "description": "Reset password with token from email. Replace {{RESET_TOKEN}} with actual token from the reset link."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:5000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "ADMIN_TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "RECRUITER_TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "RECRUITER_ID",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "RESET_TOKEN",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
