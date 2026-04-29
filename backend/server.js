@@ -3,7 +3,9 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
-const ErrorHandler = require('./middleware/errorHandler')
+const jobRoutes = require("./routes/jobRoutes");
+const userRoutes = require("./routes/userRoutes");
+const ErrorHandler = require('./middleware/ErrorHandler');
 
 const app = express();
 
@@ -18,8 +20,9 @@ app.use(cors());
 app.get("/", (_req, res) => {
   res.json({ message: "GIU-Nexus API is running" });
 });
-
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/jobs", jobRoutes);
+app.use("/api/v1/users", userRoutes);
 
 // Error handling middleware (must be last)
 app.use((err, req, res, next) => {
