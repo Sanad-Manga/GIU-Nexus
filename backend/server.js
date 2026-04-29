@@ -1,13 +1,16 @@
-    const mongoose = require("mongoose");
+require("dotenv").config();
+const express = require("express");
+const connectDB = require("./config/db");
 
-// MongoDB connection string
-const MONGO_URI = "mongodb://localhost:27017/giu-nexus";
+const app = express();
 
-mongoose
-  .connect(MONGO_URI)
-  .then(() => {
-    console.log("✅ Connected to MongoDB successfully!");
-  })
-  .catch((err) => {
-    console.error("❌ MongoDB connection failed:", err.message);
-  });
+connectDB();
+
+app.use(express.json());
+
+app.get("/", (_req, res) => {
+  res.json({ message: "GIU-Nexus API is running" });
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
