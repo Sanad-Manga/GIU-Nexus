@@ -37,6 +37,6 @@ const applicationSchema = new mongoose.Schema({
 });
 
 // Prevent duplicate applications
-applicationSchema.index({ user: 1, job: 1 }, { unique: true });
+applicationSchema.index({ user: 1, job: 1 }, { unique: 1 });
 
 module.exports = mongoose.model("Application", applicationSchema);
