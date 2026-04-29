@@ -19,7 +19,7 @@ GIU Nexus is a smart job board where:
 | Name |
 |------|
 | Ziad Mohamed |
-| Abdelrhman ALGabarty |
+| Abdelrahman ALGabarty |
 | Aly Issa | 
 | Ahmed Sanad |
 | Baraa Ibrahim |
