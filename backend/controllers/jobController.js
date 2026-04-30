@@ -1,7 +1,7 @@
 const JobPost = require('../models/JobPost');
 
 // ─── GET /api/v1/jobs ─────────────────────────────────────────────────────────
-// Public. Returns paginated list of all jobs.
+// Public — paginated, filterable list of all jobs
 // Supports filters: keyword (searches title + description), location, type, status
 const getJobs = async (req, res, next) => {
   try {
@@ -35,10 +35,17 @@ const getMyJobs = async (req, res, next) => {
 };
 
 // ─── GET /api/v1/jobs/:id ─────────────────────────────────────────────────────
-// Public. Returns a single job by ID.
-// Populates createdBy with recruiter name and email only (not full user object)
+// Public — returns a single job by ID with recruiter info populated.
 const getJobById = async (req, res, next) => {
   try {
+    // EC-3: Invalid Job ID Format
+    // Without this check, Mongoose throws a CastError when the ID is not a valid
+    // MongoDB ObjectId (e.g. "123invalidid"), which causes an unhandled 500 error.
+    // We now validate the format first and return a clean 404 instead.
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(404).json({ success: false, message: 'Job not found' });
+    }
+
     const job = await JobPost.findById(req.params.id).populate('createdBy', 'name email');
     if (!job) return res.status(404).json({ success: false, message: 'Job not found' });
     res.status(200).json({ success: true, job });
@@ -48,15 +55,27 @@ const getJobById = async (req, res, next) => {
 // ─── POST /api/v1/jobs ────────────────────────────────────────────────────────
 // Private (approved recruiter only).
 // Business rule: recruiters with status "pending" are blocked with 403.
-// category is hardcoded to "Other" for Sprint 1 — Baraa will provide the real
-// AI classifier (GNX-21) in Sprint 2. Swap the stub at the TODO below.
+// category is hardcoded to "Other" for Sprint 1.
+// TODO Sprint 2: replace stub with Baraa's classifyJob(description) — GNX-21
 const createJob = async (req, res, next) => {
   try {
-    // Block pending recruiters from posting jobs
+    // Business rule: block pending recruiters from posting jobs
     if (req.user.status !== 'approved') {
       return res.status(403).json({
         success: false,
         message: 'Your account is pending approval. Wait for admin approval before posting jobs.',
+      });
+    }
+
+    // EC-4: Missing Required Fields on Job Creation
+    // Without this check, Mongoose throws a ValidationError when required fields
+    // are missing, which causes an unhandled 500 error.
+    // We now validate all required fields upfront and return a clean 400 instead.
+    const { title, company, description, requirements, location, type } = req.body;
+    if (!title || !company || !description || !requirements || !location || !type) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide all required fields: title, company, description, requirements, location, type',
       });
     }
 
@@ -71,9 +90,15 @@ const createJob = async (req, res, next) => {
 // ─── PATCH /api/v1/jobs/:id ───────────────────────────────────────────────────
 // Private (recruiter only). Updates a job post.
 // Business rule: only the recruiter who created the job can edit it (403 otherwise).
-// TODO Sprint 2: if description is updated, re-run AI classification to update category.
 const updateJob = async (req, res, next) => {
   try {
+    // EC-3: Invalid Job ID Format
+    // Same fix as getJobById — prevents Mongoose CastError from causing a 500.
+    // Returns a clean 404 if the ID format is invalid.
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(404).json({ success: false, message: 'Job not found' });
+    }
+
     const job = await JobPost.findById(req.params.id);
     if (!job) return res.status(404).json({ success: false, message: 'Job not found' });
 
@@ -93,6 +118,13 @@ const updateJob = async (req, res, next) => {
 // Admin can delete any job regardless of ownership.
 const deleteJob = async (req, res, next) => {
   try {
+    // EC-3: Invalid Job ID Format
+    // Same fix as getJobById — prevents Mongoose CastError from causing a 500.
+    // Returns a clean 404 if the ID format is invalid.
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(404).json({ success: false, message: 'Job not found' });
+    }
+
     const job = await JobPost.findById(req.params.id);
     if (!job) return res.status(404).json({ success: false, message: 'Job not found' });
 
