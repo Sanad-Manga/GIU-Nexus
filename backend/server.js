@@ -5,6 +5,8 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const jobRoutes = require("./routes/jobRoutes");
 const userRoutes = require("./routes/userRoutes");
+const applicationRoutes = require("./routes/applicationRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 const ErrorHandler = require('./middleware/ErrorHandler');
 const dns = require('dns');
 
@@ -25,6 +27,8 @@ app.get("/", (_req, res) => {
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/jobs", jobRoutes);
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/applications", applicationRoutes);
+app.use("/api/v1/admin", adminRoutes);
 
 // Error handling middleware (must be last)
 app.use((err, req, res, next) => {
