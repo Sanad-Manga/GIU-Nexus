@@ -21,4 +21,6 @@ router.get('/:id', getJobById);
 router.patch('/:id', protect, authorize('recruiter'), updateJob);
 router.delete('/:id', protect, authorize('recruiter', 'admin'), deleteJob);
 
+
+
 module.exports = router;
