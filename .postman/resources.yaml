@@ -1,0 +1,9 @@
+# Use this workspace to collaborate
+workspace:
+  id: 907a638d-6faa-4070-8906-fee2fcd81484
+
+localResources:
+  collections:
+    - ..\GIU-Nexus-Auth-Collection.postman_collection.json
+  environments:
+    - ..\GIU-Nexus-Local-Dev.postman_environment.json
