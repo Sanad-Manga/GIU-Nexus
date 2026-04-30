@@ -4,10 +4,13 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const jobRoutes = require("./routes/jobRoutes");
+const dns = require('dns');
 const userRoutes = require("./routes/userRoutes");
 const ErrorHandler = require('./middleware/ErrorHandler');
 
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 const app = express();
+
 
 connectDB();
 
@@ -24,18 +27,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/jobs", jobRoutes);
 app.use("/api/v1/users", userRoutes);
 
-// Error handling middleware (must be last)
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Internal server error";
-
-  res.status(statusCode).json({
-    success: false,
-    message: message,
-  });
-});
+// Centralized error handling middleware (must be last)
 app.use(ErrorHandler);
 
 const PORT = process.env.PORT || 5000;

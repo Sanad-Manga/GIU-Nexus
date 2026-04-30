@@ -4,10 +4,14 @@ const crypto = require('crypto');
 const { sendResetEmail } = require('../services/emailService');
 
 // Generate JWT Token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE || '7d',
-  });
+const generateToken = (user) => {
+  return jwt.sign(
+    { id: user._id, role: user.role }, 
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRE || '7d',
+    }
+  );
 };
 
 // @desc    Register user
@@ -61,7 +65,7 @@ exports.register = async (req, res, next) => {
     await user.save();
 
     // Generate token
-    const token = generateToken(user._id);
+    const token = generateToken(user);
 
     res.status(201).json({
       success: true,
@@ -115,7 +119,7 @@ exports.login = async (req, res, next) => {
     }
 
     // Generate token
-    const token = generateToken(user._id);
+    const token = generateToken(user);
 
     res.status(200).json({
       success: true,
@@ -258,7 +262,7 @@ exports.resetPassword = async (req, res, next) => {
     await user.save();
 
     // Generate new token
-    const newToken = generateToken(user._id);
+    const newToken = generateToken(user);
 
     res.status(200).json({
       success: true,
