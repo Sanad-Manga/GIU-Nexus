@@ -424,7 +424,6 @@ exports.changePassword = async (req, res, next) => {
   try {
     const { currentPassword, newPassword } = req.body;
 
-    // 1. Validate presence
     if (!currentPassword || !newPassword) {
       return res.status(400).json({
         success: false,
@@ -432,50 +431,44 @@ exports.changePassword = async (req, res, next) => {
       });
     }
 
-    // 2. Length validation (6–30 characters)
-    if (newPassword.length < 6) {
+    if (newPassword.length < 6 || newPassword.length > 30) {
       return res.status(400).json({
         success: false,
-        message: 'newPassword must be at least 6 characters',
-      });
-    }
-    if (newPassword.length > 30) {
-      return res.status(400).json({
-        success: false,
-        message: 'newPassword cannot exceed 30 characters',
+        message: 'newPassword must be between 6 and 30 characters',
       });
     }
 
-    // 3. Load user with current password field
-    const user = await User.findById(req.user._id).select('+password');
+    const user = await User.findById(req.user._id).select('+password +passwordHistory');
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    // 4. Verify current password
     const isMatch = await user.comparePassword(currentPassword);
     if (!isMatch) {
       return res.status(401).json({ success: false, message: 'Current password is incorrect' });
     }
 
-    // 5. Prevent password reuse (new password same as current)
     const isSame = await user.comparePassword(newPassword);
     if (isSame) {
-      return res.status(400).json({
-        success: false,
-        message: 'New password must be different from current password',
-      });
+      return res.status(400).json({ success: false, message: 'New password must be different from current password' });
     }
 
-    // 6. Update password (pre-save hook will hash it)
+    // Check password history (assuming passwordHistory is an array of old hashes)
+    for (const oldHash of user.passwordHistory) {
+      const reused = await bcrypt.compare(newPassword, oldHash);
+      if (reused) {
+        return res.status(400).json({ success: false, message: 'You have used this password before' });
+      }
+    }
+
+    // Store current password hash into history
+    user.passwordHistory.push(user.password);
+    if (user.passwordHistory.length > 5) user.passwordHistory.shift();
+
     user.password = newPassword;
     await user.save();
 
-    // 7. Return success (existing tokens remain valid)
-    res.status(200).json({
-      success: true,
-      message: 'Password updated successfully'
-    });
+    res.status(200).json({ success: true, message: 'Password updated successfully' });
   } catch (err) {
     next(err);
   }
