@@ -274,3 +274,209 @@ exports.resetPassword = async (req, res, next) => {
     next(err);
   }
 };
+
+// @desc    Get current authenticated user's profile
+// @route   GET /api/v1/auth/profile
+// @access  Private
+exports.getProfile = async (req, res, next) => {
+  try {
+    // req.user is attached by protect middleware
+    const user = req.user;
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Not authorized to access this route',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        bio: user.bio || '',
+        skills: user.skills || [],
+        profilePicture: user.profilePicture || '',
+        role: user.role,
+        status: user.status,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Update current authenticated user's profile
+// @route   PATCH /api/v1/auth/profile
+// @access  Private
+exports.updateProfile = async (req, res, next) => {
+  try {
+    const { name, bio, profilePicture } = req.body;
+
+    // 1. Sanitize input to prevent NoSQL injection (remove Mongo operators)
+    const sanitizeValue = (val) => {
+      if (val && typeof val === 'object' && !Array.isArray(val)) {
+        // Reject any object that looks like a MongoDB operator (starts with $)
+        if (Object.keys(val).some(k => k.startsWith('$'))) {
+          return null;
+        }
+      }
+      return val;
+    };
+
+    const updates = {};
+
+    // 2. Validate and sanitize name
+    if (typeof name !== 'undefined') {
+      const cleanName = sanitizeValue(name);
+      if (cleanName === null || (typeof cleanName !== 'string' && typeof cleanName !== 'number')) {
+        return res.status(400).json({ success: false, message: 'Name must be a string or number' });
+      }
+      const nameStr = String(cleanName).trim();
+      if (nameStr.length === 0) {
+        return res.status(400).json({ success: false, message: 'Name cannot be empty' });
+      }
+      if (nameStr.length > 100) {
+        return res.status(400).json({ success: false, message: 'Name cannot exceed 100 characters' });
+      }
+      // Optional: strip HTML tags against XSS
+      updates.name = nameStr.replace(/<[^>]*>?/gm, '');
+    }
+
+    // 3. Validate bio
+    if (typeof bio !== 'undefined') {
+      const cleanBio = sanitizeValue(bio);
+      if (cleanBio !== null && typeof cleanBio !== 'string') {
+        return res.status(400).json({ success: false, message: 'Bio must be a string' });
+      }
+      const bioStr = cleanBio ? cleanBio.toString() : '';
+      if (bioStr.length > 1000) {
+        return res.status(400).json({ success: false, message: 'Bio cannot exceed 1000 characters' });
+      }
+      updates.bio = bioStr.replace(/<[^>]*>?/gm, '');
+    }
+
+    // 4. Validate profilePicture (basic URL check)
+    if (typeof profilePicture !== 'undefined') {
+      const cleanUrl = sanitizeValue(profilePicture);
+      if (cleanUrl === null || typeof cleanUrl !== 'string') {
+        return res.status(400).json({ success: false, message: 'Profile picture must be a string URL' });
+      }
+      const urlStr = cleanUrl.trim();
+      // Simple URL validation (optional, but recommended)
+      const urlPattern = /^(https?:\/\/)[^\s]+$/i;
+      if (urlStr && !urlPattern.test(urlStr)) {
+        return res.status(400).json({ success: false, message: 'Profile picture must be a valid URL (http:// or https://)' });
+      }
+      if (urlStr.length > 500) {
+        return res.status(400).json({ success: false, message: 'Profile picture URL too long' });
+      }
+      updates.profilePicture = urlStr;
+    }
+
+    // If no fields after validation, return current user
+    if (Object.keys(updates).length === 0) {
+      const user = await req.user.populate();
+      return res.status(200).json({
+        success: true,
+        user: {
+          _id: req.user._id,
+          name: req.user.name,
+          email: req.user.email,
+          bio: req.user.bio || '',
+          skills: req.user.skills || [],
+          profilePicture: req.user.profilePicture || '',
+          role: req.user.role,
+          status: req.user.status,
+        },
+      });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, updates, {
+      new: true,
+      runValidators: true,
+    }).select('-password');
+
+    res.status(200).json({
+      success: true,
+      user: {
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        bio: updatedUser.bio || '',
+        skills: updatedUser.skills || [],
+        profilePicture: updatedUser.profilePicture || '',
+        role: updatedUser.role,
+        status: updatedUser.status,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Change current authenticated user's password
+// @route   PATCH /api/v1/auth/profile/change-password
+// @access  Private
+exports.changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    // 1. Validate presence
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide currentPassword and newPassword',
+      });
+    }
+
+    // 2. Length validation (6–30 characters)
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'newPassword must be at least 6 characters',
+      });
+    }
+    if (newPassword.length > 30) {
+      return res.status(400).json({
+        success: false,
+        message: 'newPassword cannot exceed 30 characters',
+      });
+    }
+
+    // 3. Load user with current password field
+    const user = await User.findById(req.user._id).select('+password');
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // 4. Verify current password
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Current password is incorrect' });
+    }
+
+    // 5. Prevent password reuse (new password same as current)
+    const isSame = await user.comparePassword(newPassword);
+    if (isSame) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be different from current password',
+      });
+    }
+
+    // 6. Update password (pre-save hook will hash it)
+    user.password = newPassword;
+    await user.save();
+
+    // 7. Return success (existing tokens remain valid)
+    res.status(200).json({
+      success: true,
+      message: 'Password updated successfully'
+    });
+  } catch (err) {
+    next(err);
+  }
+};
