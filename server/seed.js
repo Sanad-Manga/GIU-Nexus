@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const bcrypt = require('bcryptjs');
-const User = require('C:/proj/GIU-Nexus/backend/models/User');  // Full absolute path
+const dns = require('dns');
+const User = require('../backend/models/User');
+
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 dotenv.config();  // Load environment variables from .env
 
@@ -16,17 +19,20 @@ const adminData = {
 const createAdminUser = async () => {
   try {
     // Connect to the MongoDB database using MONGO_URI from .env
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(process.env.MONGO_URI);
 
-    // Check if an admin already exists
-    let admin = await User.findOne({ role: 'admin' });
+    // Check if the expected admin email already exists
+    let admin = await User.findOne({ email: 'admin@example.com' });
 
+    // If the expected admin already exists, update the password to the known default.
     if (admin) {
-      console.log('Admin user already exists');
-      return;  // Exit if admin user already exists
+      const salt = await bcrypt.genSalt(10);
+      admin.password = await bcrypt.hash(adminData.password, salt);
+      admin.name = adminData.name;
+      admin.role = adminData.role;
+      await admin.save();
+      console.log('Admin user already exists. Password has been reset to the default.');
+      return;
     }
 
     // Hash the admin password before saving
