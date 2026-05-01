@@ -5,7 +5,6 @@ const dns = require('dns');
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const jobRoutes = require("./routes/jobRoutes");
-const dns = require('dns');
 const userRoutes = require("./routes/userRoutes");
 const ErrorHandler = require('./middleware/ErrorHandler');
 
