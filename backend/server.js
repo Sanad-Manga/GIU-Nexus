@@ -2,15 +2,17 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const dns = require('dns');
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const jobRoutes = require("./routes/jobRoutes");
 const userRoutes = require("./routes/userRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const ErrorHandler = require('./middleware/ErrorHandler');
-const dns = require('dns');
 
+// Prefer reliable public DNS for SRV lookups (helps when local DNS/VPN blocks SRV)
 dns.setServers(['8.8.8.8', '1.1.1.1']);
+
 const app = express();
 
 connectDB();
