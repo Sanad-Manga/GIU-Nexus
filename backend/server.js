@@ -4,7 +4,6 @@ const cors = require("cors");
 const helmet = require("helmet");
 
 const mongoose = require("mongoose");
-const dns = require("dns");
 
 // Import routes
 const dns = require('dns');

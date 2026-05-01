@@ -284,3 +284,69 @@ exports.resetPassword = async (req, res, next) => {
     next(err);
   }
 };
+
+// @desc    Get logged-in user profile
+// @route   GET /api/v1/auth/profile
+// @access  Private
+exports.getProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    res.status(200).json({ success: true, user });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Update profile (name, bio, profilePicture)
+// @route   PATCH /api/v1/auth/profile
+// @access  Private
+exports.updateProfile = async (req, res, next) => {
+  try {
+    const { name, bio, profilePicture } = req.body;
+    const updates = {};
+
+    if (name !== undefined) updates.name = name;
+    if (bio !== undefined) updates.bio = bio;
+    if (profilePicture !== undefined) updates.profilePicture = profilePicture;
+
+    const user = await User.findByIdAndUpdate(req.user._id, updates, { new: true, runValidators: true });
+    res.status(200).json({ success: true, user });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Change password
+// @route   PATCH /api/v1/auth/profile/change-password
+// @access  Private
+exports.changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ success: false, message: 'Please provide current and new password' });
+    }
+
+    if (newPassword.length < 6 || newPassword.length > 30) {
+      return res.status(400).json({ success: false, message: 'Password must be between 6 and 30 characters' });
+    }
+
+    const user = await User.findById(req.user._id).select('+password');
+    const isMatch = await user.comparePassword(currentPassword);
+
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Current password is incorrect' });
+    }
+
+    if (currentPassword === newPassword) {
+      return res.status(400).json({ success: false, message: 'New password cannot be the same as current password' });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({ success: true, message: 'Password updated successfully' });
+  } catch (err) {
+    next(err);
+  }
+};
