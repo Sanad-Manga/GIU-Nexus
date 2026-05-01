@@ -1,61 +1,64 @@
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const bcrypt = require('bcryptjs');
-const dns = require('dns');
-const User = require('../backend/models/User');
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const dns = require("dns");
+const dotenv = require("dotenv");
 
-dns.setServers(['8.8.8.8', '1.1.1.1']);
+dotenv.config({ path: "../backend/.env" });
 
-dotenv.config();  // Load environment variables from .env
+const User = require("../backend/models/User");
 
-// Admin user data
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
+
 const adminData = {
-  name: 'Admin User',
-  email: 'admin@example.com',
-  password: 'adminpassword',  // Password will be hashed
-  role: 'admin',
+  name: "Admin User",
+  email: "admin@example.com",
+  password: "adminpassword",
+  role: "admin",
+  status: "approved",
 };
 
 const createAdminUser = async () => {
   try {
-    // Connect to the MongoDB database using MONGO_URI from .env
     await mongoose.connect(process.env.MONGO_URI);
+    console.log("MongoDB connected.");
 
-    // Check if the expected admin email already exists
-    let admin = await User.findOne({ email: 'admin@example.com' });
+    const existing = await User.findOne({ email: adminData.email });
 
-    // If the expected admin already exists, update the password to the known default.
-    if (admin) {
+    if (existing) {
+      // Reset password to known default without double-hashing
       const salt = await bcrypt.genSalt(10);
-      admin.password = await bcrypt.hash(adminData.password, salt);
-      admin.name = adminData.name;
-      admin.role = adminData.role;
-      await admin.save();
-      console.log('Admin user already exists. Password has been reset to the default.');
-      return;
+      existing.password = await bcrypt.hash(adminData.password, salt);
+      existing.name = adminData.name;
+      existing.role = adminData.role;
+      existing.status = "approved";
+      // Use updateOne to bypass pre-save hook since we already hashed
+      await User.updateOne(
+        { email: adminData.email },
+        {
+          name: existing.name,
+          role: existing.role,
+          status: existing.status,
+          password: existing.password,
+        }
+      );
+      console.log("Admin already exists. Password reset to default.");
+    } else {
+      // Hash password manually — bypass pre-save hook to avoid double-hashing
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(adminData.password, salt);
+
+      await User.create({
+        ...adminData,
+        password: hashedPassword,
+      });
+      console.log("Admin user created successfully.");
     }
-
-    // Hash the admin password before saving
-    const salt = await bcrypt.genSalt(10);  // Generate salt
-    const hashedPassword = await bcrypt.hash(adminData.password, salt);  // Hash the password
-
-    // Create a new admin user with the hashed password
-    admin = new User({
-      ...adminData,  // Spread the admin data
-      password: hashedPassword,  // Store the hashed password
-    });
-
-    // Save the new admin user to the database
-    await admin.save();
-    console.log('Admin user created successfully');
-
-    // Close the MongoDB connection
-    mongoose.connection.close();
   } catch (error) {
-    console.error('Error creating admin user:', error);  // Log any errors
-    mongoose.connection.close();  // Ensure the connection is closed on error
+    console.error("Error creating admin user:", error);
+  } finally {
+    await mongoose.connection.close();
+    console.log("MongoDB connection closed.");
   }
 };
 
-// Execute the script to create the admin user
 createAdminUser();
