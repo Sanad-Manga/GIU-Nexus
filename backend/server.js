@@ -53,10 +53,10 @@ app.use((_req, res) => {
 });
 
 // Global error handler (must be last)
-app.use(ErrorHandler);
 
 // Start server after DB connects
 const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 connectDatabase().then(() => {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
