@@ -1,12 +1,14 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const { sendResetEmail } = require('../services/emailService');
+const User = require("../models/User");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const validator = require("validator");
+const xss = require("xss");
+const { sendResetEmail } = require("../services/emailService");
 
 // Generate JWT Token
 const generateToken = (user) => {
   return jwt.sign(
-    { id: user._id, role: user.role }, 
+    { id: user._id, role: user.role },
     process.env.JWT_SECRET,
     {
       expiresIn: process.env.JWT_EXPIRE || '7d',
@@ -14,52 +16,85 @@ const generateToken = (user) => {
   );
 };
 
-// @desc    Register user
-// @route   POST /api/v1/auth/register
-// @access  Public
+// POST /api/v1/auth/register
 exports.register = async (req, res, next) => {
   try {
     const { name, email, password, role } = req.body;
 
-    // Validate input
     if (!name || !email || !password || !role) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide all required fields',
+        message: "Please provide all required fields",
       });
     }
 
     if (password.length < 6) {
       return res.status(400).json({
         success: false,
-        message: 'Password must be at least 6 characters',
+        message: "Password must be at least 6 characters",
       });
     }
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    // Validate email format
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide a valid email address",
+      });
+    }
+
+    // Sanitize inputs
+    const sanitizedEmail = xss(validator.normalizeEmail(email));
+    const sanitizedName = xss(validator.escape(name));
+
+    // Block script injection attempts in name field
+    const xssPattern = /(<script|alert\s*\(|javascript:|on\w+=)/i;
+    if (xssPattern.test(name)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid characters in name field",
+      });
+    }
+
+    // Validate name length
+    if (!validator.isLength(sanitizedName, { min: 2, max: 50 })) {
+      return res.status(400).json({
+        success: false,
+        message: "Name must be between 2 and 50 characters",
+      });
+    }
+
+    // Validate name contains letters, spaces, hyphens and apostrophes only
+    if (/[^a-zA-Z\s\-']/.test(sanitizedName)) {
+      return res.status(400).json({
+        success: false,
+        message: "Name contains invalid characters",
+      });
+    }
+
+    const allowedRoles = ["jobSeeker", "recruiter"];
+    if (!allowedRoles.includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: "Role must be 'jobSeeker' or 'recruiter'",
+      });
+    }
+
+    const existingUser = await User.findOne({ email: sanitizedEmail });
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: 'Email already in use',
+        message: "Email already in use",
       });
     }
 
-    // Validate role
-    if (!['jobSeeker', 'recruiter'].includes(role)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Role must be either jobSeeker or recruiter',
-      });
-    }
-
-    // Create user
+    // Pass plain password — pre-save hook handles hashing
     const user = new User({
-      name,
-      email,
-      password,
+      name: sanitizedName,
+      email: sanitizedEmail,
+      password: password,
       role,
-      status: role === 'recruiter' ? 'pending' : 'approved',
+      status: role === "recruiter" ? "pending" : "approved",
     });
 
     await user.save();
@@ -83,38 +118,32 @@ exports.register = async (req, res, next) => {
   }
 };
 
-// @desc    Login user
-// @route   POST /api/v1/auth/login
-// @access  Public
+// POST /api/v1/auth/login
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // Validate input
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide email and password',
+        message: "Please provide email and password",
       });
     }
 
-    // Find user and include password field
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid email or password',
+        message: "Invalid email or password",
       });
     }
 
-    // Compare passwords
     const isMatch = await user.comparePassword(password);
-
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid email or password',
+        message: "Invalid email or password",
       });
     }
 
@@ -130,7 +159,7 @@ exports.login = async (req, res, next) => {
         email: user.email,
         role: user.role,
         status: user.status,
-        profilePicture: user.profilePicture || '',
+        profilePicture: user.profilePicture || "",
         skills: user.skills || [],
       },
     });
@@ -139,23 +168,19 @@ exports.login = async (req, res, next) => {
   }
 };
 
-// @desc    Logout user (stateless)
-// @route   POST /api/v1/auth/logout
-// @access  Private
+// POST /api/v1/auth/logout
 exports.logout = async (req, res, next) => {
   try {
     res.status(200).json({
       success: true,
-      message: 'Logged out successfully',
+      message: "Logged out successfully",
     });
   } catch (err) {
     next(err);
   }
 };
 
-// @desc    Forgot password
-// @route   POST /api/v1/auth/forgot-password
-// @access  Public
+// POST /api/v1/auth/forgot-password
 exports.forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
@@ -163,7 +188,7 @@ exports.forgotPassword = async (req, res, next) => {
     if (!email) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide an email',
+        message: "Please provide an email",
       });
     }
 
@@ -173,49 +198,41 @@ exports.forgotPassword = async (req, res, next) => {
     if (!user) {
       return res.status(200).json({
         success: true,
-        message: 'Password reset email sent',
+        message: "Password reset email sent",
       });
     }
 
-    // Generate reset token
-    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetToken = crypto.randomBytes(32).toString("hex");
     const resetTokenHash = crypto
-      .createHash('sha256')
+      .createHash("sha256")
       .update(resetToken)
-      .digest('hex');
+      .digest("hex");
 
-    // Save hashed token and expiry to user
     user.resetPasswordToken = resetTokenHash;
-    user.resetPasswordExpire = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
+    user.resetPasswordExpire = new Date(Date.now() + 10 * 60 * 1000);
     await user.save();
 
-    // Build reset link
     const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
     try {
       await sendResetEmail(user.email, resetToken, resetLink);
     } catch (emailErr) {
-      // If email fails, clear the reset token
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
       await user.save();
-
-      console.error('Email error:', emailErr);
+      console.error("Email error:", emailErr);
     }
 
     res.status(200).json({
       success: true,
-      message: 'Password reset email sent',
+      message: "Password reset email sent",
     });
   } catch (err) {
     next(err);
   }
 };
 
-// @desc    Reset password
-// @route   PATCH /api/v1/auth/reset-password/:token
-// @access  Public
+// PATCH /api/v1/auth/reset-password/:token
 exports.resetPassword = async (req, res, next) => {
   try {
     const { token } = req.params;
@@ -224,41 +241,39 @@ exports.resetPassword = async (req, res, next) => {
     if (!password) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide a new password',
+        message: "Please provide a new password",
       });
     }
 
     if (password.length < 6) {
       return res.status(400).json({
         success: false,
-        message: 'Password must be at least 6 characters',
+        message: "Password must be at least 6 characters",
       });
     }
 
-    // Hash the token to match stored one
     const resetTokenHash = crypto
-      .createHash('sha256')
+      .createHash("sha256")
       .update(token)
-      .digest('hex');
+      .digest("hex");
 
-    // Find user by reset token and check expiry
+    // Explicitly select hidden fields needed for this query
     const user = await User.findOne({
       resetPasswordToken: resetTokenHash,
       resetPasswordExpire: { $gt: Date.now() },
-    });
+    }).select("+resetPasswordToken +resetPasswordExpire");
 
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: 'Token is invalid or has expired',
+        message: "Token is invalid or has expired",
       });
     }
 
-    // Update password
+    // Plain password — pre-save hook hashes it
     user.password = password;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
-
     await user.save();
 
     // Generate new token
@@ -270,10 +285,75 @@ exports.resetPassword = async (req, res, next) => {
       user: {
         _id: user._id,
         name: user.name,
-        email: user.email,
         role: user.role,
       },
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Get logged-in user profile
+// @route   GET /api/v1/auth/profile
+// @access  Private
+exports.getProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    res.status(200).json({ success: true, user });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Update profile (name, bio, profilePicture)
+// @route   PATCH /api/v1/auth/profile
+// @access  Private
+exports.updateProfile = async (req, res, next) => {
+  try {
+    const { name, bio, profilePicture } = req.body;
+    const updates = {};
+
+    if (name !== undefined) updates.name = name;
+    if (bio !== undefined) updates.bio = bio;
+    if (profilePicture !== undefined) updates.profilePicture = profilePicture;
+
+    const user = await User.findByIdAndUpdate(req.user._id, updates, { new: true, runValidators: true });
+    res.status(200).json({ success: true, user });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Change password
+// @route   PATCH /api/v1/auth/profile/change-password
+// @access  Private
+exports.changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ success: false, message: 'Please provide current and new password' });
+    }
+
+    if (newPassword.length < 6 || newPassword.length > 30) {
+      return res.status(400).json({ success: false, message: 'Password must be between 6 and 30 characters' });
+    }
+
+    const user = await User.findById(req.user._id).select('+password');
+    const isMatch = await user.comparePassword(currentPassword);
+
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Current password is incorrect' });
+    }
+
+    if (currentPassword === newPassword) {
+      return res.status(400).json({ success: false, message: 'New password cannot be the same as current password' });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({ success: true, message: 'Password updated successfully' });
   } catch (err) {
     next(err);
   }

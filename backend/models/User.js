@@ -14,18 +14,16 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    select: false, // Don't return password by default in queries
+    select: false,
   },
   profilePicture: {
-    type: String, // URL string
-    // optional — no required: true
+    type: String,
   },
   bio: {
     type: String,
-    // optional text field
   },
   skills: {
-    type: [String], // array of strings, filled by AI in Task 2
+    type: [String],
     default: [],
   },
   role: {
@@ -36,26 +34,32 @@ const userSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ['pending', 'approved', 'rejected'],
-    // only meaningful when role === 'recruiter'
     default: 'pending',
   },
   savedJobs: {
     type: [mongoose.Schema.Types.ObjectId],
-    ref: "JobPost",
+    ref: 'JobPost',
     default: [],
+    select: false,
   },
   resetPasswordToken: {
     type: String,
+    select: false,
   },
   resetPasswordExpire: {
     type: Date,
+    select: false,
   },
   createdAt: {
     type: Date,
     default: Date.now,
   },
+  passwordHistory: {
+    type: [String],   // stores bcrypt hashes of old passwords
+    default: [],
+    validate: [arrayLimit, '{PATH} exceeds the limit of 5'],
+  }
 });
-
 // Mongoose 9+ async hooks don't receive a next callback — the promise resolving signals completion
 userSchema.pre('save', async function() {
   if (!this.isModified('password')) return;
@@ -63,9 +67,12 @@ userSchema.pre('save', async function() {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-// Method to compare passwords
-userSchema.methods.comparePassword = async function(candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
+
+function arrayLimit(val) {
+  return val.length <= 5;   // keep last 5 passwords
+}
 
 module.exports = mongoose.model('User', userSchema);
