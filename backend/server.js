@@ -7,6 +7,8 @@ const mongoose = require("mongoose");
 const dns = require("dns");
 
 // Import routes
+const dns = require('dns');
+const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const jobRoutes = require("./routes/jobRoutes");
 const userRoutes = require("./routes/userRoutes");

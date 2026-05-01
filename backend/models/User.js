@@ -54,9 +54,14 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  passwordHistory: {
+    type: [String],   // stores bcrypt hashes of old passwords
+    default: [],
+    validate: [arrayLimit, '{PATH} exceeds the limit of 5'],
+  }
 });
-
-userSchema.pre('save', async function () {
+// Mongoose 9+ async hooks don't receive a next callback — the promise resolving signals completion
+userSchema.pre('save', async function() {
   if (!this.isModified('password')) return;
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
@@ -65,5 +70,9 @@ userSchema.pre('save', async function () {
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
+
+function arrayLimit(val) {
+  return val.length <= 5;   // keep last 5 passwords
+}
 
 module.exports = mongoose.model('User', userSchema);
