@@ -23,9 +23,11 @@ exports.extractSkills = async (req, res, next) => {
       });
 
       // Filter for relevant entity groups only
-      const filtered = result.filter((entity) =>
-        ["B-MISC", "I-MISC", "B-ORG"].includes(entity.entity_group)
-      );
+      // HF API returns "ORG"/"MISC" (aggregated) or "B-ORG"/"B-MISC" (non-aggregated)
+      const filtered = result.filter((entity) => {
+        const tag = entity.entity_group || entity.entity || "";
+        return ["B-MISC", "I-MISC", "B-ORG", "MISC", "ORG"].includes(tag);
+      });
 
       // Map to words and deduplicate
       const cleaned = [...new Set(filtered.map((e) => e.word))];
