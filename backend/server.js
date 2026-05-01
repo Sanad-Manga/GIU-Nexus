@@ -13,7 +13,8 @@ const adminRoutes = require("./routes/adminRoutes");
 const errorHandler = require("./middleware/ErrorHandler");
 
 // Set custom DNS servers
-dns.setServers(["8.8.8.8", "1.1.1.1"]);
+// Prefer reliable public DNS for SRV lookups (helps when local DNS/VPN blocks SRV)
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 const app = express();
 
