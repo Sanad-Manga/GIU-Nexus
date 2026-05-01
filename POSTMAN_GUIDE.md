@@ -120,7 +120,8 @@ if (res.token) {
    - Update `.env` with correct `MONGO_URI`
 
 2. **Admin Account**
-   - Create an admin user directly in MongoDB (admins can't self-register)
+   - Admins can be created through a protected registration secret or directly in MongoDB.
+   - Set `ADMIN_REGISTRATION_SECRET` in `.env` before using admin registration.
    - Example in MongoDB Compass:
      ```json
      {
