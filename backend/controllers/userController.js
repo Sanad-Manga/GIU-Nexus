@@ -1,11 +1,11 @@
-const User = require("../models/User");
+const User = require('../models/User');
 
-// GET /users - Admin gets a paginated list of users (filterable by role/status)
+// GET /api/v1/users
 exports.getUsers = async (req, res, next) => {
   try {
     const { role, status, page = 1, limit = 20 } = req.query;
-    const query = {};
 
+    const query = {};
     if (role) query.role = role;
     if (status) query.status = status;
 
@@ -13,12 +13,13 @@ exports.getUsers = async (req, res, next) => {
     const users = await User.find(query)
       .skip((page - 1) * limit)
       .limit(Number(limit))
-      .select("-password");
+      .select('_id name email role status createdAt')
+      .lean();
 
     res.status(200).json({
       success: true,
       total,
-      page,
+      page: Number(page),
       users,
     });
   } catch (err) {
@@ -26,15 +27,17 @@ exports.getUsers = async (req, res, next) => {
   }
 };
 
-// GET /users/:id - Admin can view a single user's details by ID
+// GET /api/v1/users/:id
 exports.getUserById = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id).select("-password");
+    const user = await User.findById(req.params.id)
+      .select('_id name email role status')
+      .lean();
 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: 'User not found',
       });
     }
 
@@ -47,10 +50,10 @@ exports.getUserById = async (req, res, next) => {
   }
 };
 
-// PATCH /users/:id/status - Admin can update a user's status (approve/reject/pending)
+// PATCH /api/v1/users/:id/status
 exports.updateUserStatus = async (req, res, next) => {
   const { status } = req.body;
-  const allowedStatuses = ["approved", "rejected", "pending"];
+  const allowedStatuses = ['approved', 'rejected', 'pending'];
 
   if (!allowedStatuses.includes(status)) {
     return res.status(400).json({
@@ -64,12 +67,12 @@ exports.updateUserStatus = async (req, res, next) => {
       req.params.id,
       { status },
       { new: true, runValidators: true }
-    );
+    ).select('_id name email role status');
 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: 'User not found',
       });
     }
 
@@ -82,7 +85,7 @@ exports.updateUserStatus = async (req, res, next) => {
   }
 };
 
-// DELETE /users/:id - Admin can permanently delete a user account
+// DELETE /api/v1/users/:id
 exports.deleteUser = async (req, res, next) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
@@ -90,13 +93,13 @@ exports.deleteUser = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: 'User not found',
       });
     }
 
     res.status(200).json({
       success: true,
-      message: "User deleted",
+      message: 'User deleted',
     });
   } catch (err) {
     next(err);
