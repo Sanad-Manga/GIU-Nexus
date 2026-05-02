@@ -1,67 +1,99 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const { sendResetEmail } = require('../services/emailService');
-const bcrypt = require('bcryptjs');
+const User = require("../models/User");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const validator = require("validator");
+const xss = require("xss");
+const { sendResetEmail } = require("../services/emailService");
 
-// Generate JWT Token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE || '7d',
+    expiresIn: process.env.JWT_EXPIRE || "7d",
   });
 };
 
-// @desc    Register user
-// @route   POST /api/v1/auth/register
-// @access  Public
+// POST /api/v1/auth/register
 exports.register = async (req, res, next) => {
   try {
     const { name, email, password, role } = req.body;
 
-    // Validate input
     if (!name || !email || !password || !role) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide all required fields',
+        message: "Please provide all required fields",
       });
     }
 
     if (password.length < 6) {
       return res.status(400).json({
         success: false,
-        message: 'Password must be at least 6 characters',
+        message: "Password must be at least 6 characters",
       });
     }
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    // Validate email format
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide a valid email address",
+      });
+    }
+
+    // Sanitize inputs
+    const sanitizedEmail = xss(validator.normalizeEmail(email));
+    const sanitizedName = xss(validator.escape(name));
+
+    // Block script injection attempts in name field
+    const xssPattern = /(<script|alert\s*\(|javascript:|on\w+=)/i;
+    if (xssPattern.test(name)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid characters in name field",
+      });
+    }
+
+    // Validate name length
+    if (!validator.isLength(sanitizedName, { min: 2, max: 50 })) {
+      return res.status(400).json({
+        success: false,
+        message: "Name must be between 2 and 50 characters",
+      });
+    }
+
+    // Validate name contains letters, spaces, hyphens and apostrophes only
+    if (/[^a-zA-Z\s\-']/.test(sanitizedName)) {
+      return res.status(400).json({
+        success: false,
+        message: "Name contains invalid characters",
+      });
+    }
+
+    const allowedRoles = ["jobSeeker", "recruiter"];
+    if (!allowedRoles.includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: "Role must be 'jobSeeker' or 'recruiter'",
+      });
+    }
+
+    const existingUser = await User.findOne({ email: sanitizedEmail });
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: 'Email already in use',
+        message: "Email already in use",
       });
     }
 
-    // Validate role
-    if (!['jobSeeker', 'recruiter'].includes(role)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Role must be either jobSeeker or recruiter',
-      });
-    }
-
-    // Create user
+    // Pass plain password — pre-save hook handles hashing
     const user = new User({
-      name,
-      email,
-      password,
+      name: sanitizedName,
+      email: sanitizedEmail,
+      password: password,
       role,
-      status: role === 'recruiter' ? 'pending' : 'approved',
+      status: role === "recruiter" ? "pending" : "approved",
     });
 
     await user.save();
 
-    // Generate token
     const token = generateToken(user._id);
 
     res.status(201).json({
@@ -80,42 +112,35 @@ exports.register = async (req, res, next) => {
   }
 };
 
-// @desc    Login user
-// @route   POST /api/v1/auth/login
-// @access  Public
+// POST /api/v1/auth/login
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // Validate input
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide email and password',
+        message: "Please provide email and password",
       });
     }
 
-    // Find user and include password field
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid email or password',
+        message: "Invalid email or password",
       });
     }
 
-    // Compare passwords
     const isMatch = await user.comparePassword(password);
-
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid email or password',
+        message: "Invalid email or password",
       });
     }
 
-    // Generate token
     const token = generateToken(user._id);
 
     res.status(200).json({
@@ -127,7 +152,7 @@ exports.login = async (req, res, next) => {
         email: user.email,
         role: user.role,
         status: user.status,
-        profilePicture: user.profilePicture || '',
+        profilePicture: user.profilePicture || "",
         skills: user.skills || [],
       },
     });
@@ -136,23 +161,19 @@ exports.login = async (req, res, next) => {
   }
 };
 
-// @desc    Logout user (stateless)
-// @route   POST /api/v1/auth/logout
-// @access  Private
+// POST /api/v1/auth/logout
 exports.logout = async (req, res, next) => {
   try {
     res.status(200).json({
       success: true,
-      message: 'Logged out successfully',
+      message: "Logged out successfully",
     });
   } catch (err) {
     next(err);
   }
 };
 
-// @desc    Forgot password
-// @route   POST /api/v1/auth/forgot-password
-// @access  Public
+// POST /api/v1/auth/forgot-password
 exports.forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
@@ -160,7 +181,7 @@ exports.forgotPassword = async (req, res, next) => {
     if (!email) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide an email',
+        message: "Please provide an email",
       });
     }
 
@@ -170,49 +191,41 @@ exports.forgotPassword = async (req, res, next) => {
     if (!user) {
       return res.status(200).json({
         success: true,
-        message: 'Password reset email sent',
+        message: "Password reset email sent",
       });
     }
 
-    // Generate reset token
-    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetToken = crypto.randomBytes(32).toString("hex");
     const resetTokenHash = crypto
-      .createHash('sha256')
+      .createHash("sha256")
       .update(resetToken)
-      .digest('hex');
+      .digest("hex");
 
-    // Save hashed token and expiry to user
     user.resetPasswordToken = resetTokenHash;
-    user.resetPasswordExpire = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
+    user.resetPasswordExpire = new Date(Date.now() + 10 * 60 * 1000);
     await user.save();
 
-    // Build reset link
     const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
     try {
       await sendResetEmail(user.email, resetToken, resetLink);
     } catch (emailErr) {
-      // If email fails, clear the reset token
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
       await user.save();
-
-      console.error('Email error:', emailErr);
+      console.error("Email error:", emailErr);
     }
 
     res.status(200).json({
       success: true,
-      message: 'Password reset email sent',
+      message: "Password reset email sent",
     });
   } catch (err) {
     next(err);
   }
 };
 
-// @desc    Reset password
-// @route   PATCH /api/v1/auth/reset-password/:token
-// @access  Public
+// PATCH /api/v1/auth/reset-password/:token
 exports.resetPassword = async (req, res, next) => {
   try {
     const { token } = req.params;
@@ -221,44 +234,41 @@ exports.resetPassword = async (req, res, next) => {
     if (!password) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide a new password',
+        message: "Please provide a new password",
       });
     }
 
     if (password.length < 6) {
       return res.status(400).json({
         success: false,
-        message: 'Password must be at least 6 characters',
+        message: "Password must be at least 6 characters",
       });
     }
 
-    // Hash the token to match stored one
     const resetTokenHash = crypto
-      .createHash('sha256')
+      .createHash("sha256")
       .update(token)
-      .digest('hex');
+      .digest("hex");
 
-    // Find user by reset token and check expiry
+    // Explicitly select hidden fields needed for this query
     const user = await User.findOne({
       resetPasswordToken: resetTokenHash,
       resetPasswordExpire: { $gt: Date.now() },
-    });
+    }).select("+resetPasswordToken +resetPasswordExpire");
 
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: 'Token is invalid or has expired',
+        message: "Token is invalid or has expired",
       });
     }
 
-    // Update password
+    // Plain password — pre-save hook hashes it
     user.password = password;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
-
     await user.save();
 
-    // Generate new token
     const newToken = generateToken(user._id);
 
     res.status(200).json({
@@ -267,7 +277,6 @@ exports.resetPassword = async (req, res, next) => {
       user: {
         _id: user._id,
         name: user.name,
-        email: user.email,
         role: user.role,
       },
     });
@@ -276,149 +285,38 @@ exports.resetPassword = async (req, res, next) => {
   }
 };
 
-// @desc    Get current authenticated user's profile
+// @desc    Get logged-in user profile
 // @route   GET /api/v1/auth/profile
 // @access  Private
 exports.getProfile = async (req, res, next) => {
   try {
-    // req.user is attached by protect middleware
-    const user = req.user;
-
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Not authorized to access this route',
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        bio: user.bio || '',
-        skills: user.skills || [],
-        profilePicture: user.profilePicture || '',
-        role: user.role,
-        status: user.status,
-      },
-    });
+    const user = await User.findById(req.user._id);
+    res.status(200).json({ success: true, user });
   } catch (err) {
     next(err);
   }
 };
 
-// @desc    Update current authenticated user's profile
+// @desc    Update profile (name, bio, profilePicture)
 // @route   PATCH /api/v1/auth/profile
 // @access  Private
 exports.updateProfile = async (req, res, next) => {
   try {
     const { name, bio, profilePicture } = req.body;
-
-    // 1. Sanitize input to prevent NoSQL injection (remove Mongo operators)
-    const sanitizeValue = (val) => {
-      if (val && typeof val === 'object' && !Array.isArray(val)) {
-        // Reject any object that looks like a MongoDB operator (starts with $)
-        if (Object.keys(val).some(k => k.startsWith('$'))) {
-          return null;
-        }
-      }
-      return val;
-    };
-
     const updates = {};
 
-    // 2. Validate and sanitize name
-    if (typeof name !== 'undefined') {
-      const cleanName = sanitizeValue(name);
-      if (cleanName === null || (typeof cleanName !== 'string' && typeof cleanName !== 'number')) {
-        return res.status(400).json({ success: false, message: 'Name must be a string or number' });
-      }
-      const nameStr = String(cleanName).trim();
-      if (nameStr.length === 0) {
-        return res.status(400).json({ success: false, message: 'Name cannot be empty' });
-      }
-      if (nameStr.length > 100) {
-        return res.status(400).json({ success: false, message: 'Name cannot exceed 100 characters' });
-      }
-      // Optional: strip HTML tags against XSS
-      updates.name = nameStr.replace(/<[^>]*>?/gm, '');
-    }
+    if (name !== undefined) updates.name = name;
+    if (bio !== undefined) updates.bio = bio;
+    if (profilePicture !== undefined) updates.profilePicture = profilePicture;
 
-    // 3. Validate bio
-    if (typeof bio !== 'undefined') {
-      const cleanBio = sanitizeValue(bio);
-      if (cleanBio !== null && typeof cleanBio !== 'string') {
-        return res.status(400).json({ success: false, message: 'Bio must be a string' });
-      }
-      const bioStr = cleanBio ? cleanBio.toString() : '';
-      if (bioStr.length > 1000) {
-        return res.status(400).json({ success: false, message: 'Bio cannot exceed 1000 characters' });
-      }
-      updates.bio = bioStr.replace(/<[^>]*>?/gm, '');
-    }
-
-    // 4. Validate profilePicture (basic URL check)
-    if (typeof profilePicture !== 'undefined') {
-      const cleanUrl = sanitizeValue(profilePicture);
-      if (cleanUrl === null || typeof cleanUrl !== 'string') {
-        return res.status(400).json({ success: false, message: 'Profile picture must be a string URL' });
-      }
-      const urlStr = cleanUrl.trim();
-      // Simple URL validation (optional, but recommended)
-      const urlPattern = /^(https?:\/\/)[^\s]+$/i;
-      if (urlStr && !urlPattern.test(urlStr)) {
-        return res.status(400).json({ success: false, message: 'Profile picture must be a valid URL (http:// or https://)' });
-      }
-      if (urlStr.length > 500) {
-        return res.status(400).json({ success: false, message: 'Profile picture URL too long' });
-      }
-      updates.profilePicture = urlStr;
-    }
-
-    // If no fields after validation, return current user
-    if (Object.keys(updates).length === 0) {
-      const user = await req.user.populate();
-      return res.status(200).json({
-        success: true,
-        user: {
-          _id: req.user._id,
-          name: req.user.name,
-          email: req.user.email,
-          bio: req.user.bio || '',
-          skills: req.user.skills || [],
-          profilePicture: req.user.profilePicture || '',
-          role: req.user.role,
-          status: req.user.status,
-        },
-      });
-    }
-
-    const updatedUser = await User.findByIdAndUpdate(req.user._id, updates, {
-      new: true,
-      runValidators: true,
-    }).select('-password');
-
-    res.status(200).json({
-      success: true,
-      user: {
-        _id: updatedUser._id,
-        name: updatedUser.name,
-        email: updatedUser.email,
-        bio: updatedUser.bio || '',
-        skills: updatedUser.skills || [],
-        profilePicture: updatedUser.profilePicture || '',
-        role: updatedUser.role,
-        status: updatedUser.status,
-      },
-    });
+    const user = await User.findByIdAndUpdate(req.user._id, updates, { new: true, runValidators: true });
+    res.status(200).json({ success: true, user });
   } catch (err) {
     next(err);
   }
 };
 
-// @desc    Change current authenticated user's password
+// @desc    Change password
 // @route   PATCH /api/v1/auth/profile/change-password
 // @access  Private
 exports.changePassword = async (req, res, next) => {
@@ -426,45 +324,23 @@ exports.changePassword = async (req, res, next) => {
     const { currentPassword, newPassword } = req.body;
 
     if (!currentPassword || !newPassword) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide currentPassword and newPassword',
-      });
+      return res.status(400).json({ success: false, message: 'Please provide current and new password' });
     }
 
     if (newPassword.length < 6 || newPassword.length > 30) {
-      return res.status(400).json({
-        success: false,
-        message: 'newPassword must be between 6 and 30 characters',
-      });
+      return res.status(400).json({ success: false, message: 'Password must be between 6 and 30 characters' });
     }
 
-    const user = await User.findById(req.user._id).select('+password +passwordHistory');
-    if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found' });
-    }
-
+    const user = await User.findById(req.user._id).select('+password');
     const isMatch = await user.comparePassword(currentPassword);
+
     if (!isMatch) {
       return res.status(401).json({ success: false, message: 'Current password is incorrect' });
     }
 
-    const isSame = await user.comparePassword(newPassword);
-    if (isSame) {
-      return res.status(400).json({ success: false, message: 'New password must be different from current password' });
+    if (currentPassword === newPassword) {
+      return res.status(400).json({ success: false, message: 'New password cannot be the same as current password' });
     }
-
-    // Check password history (assuming passwordHistory is an array of old hashes)
-    for (const oldHash of user.passwordHistory) {
-      const reused = await bcrypt.compare(newPassword, oldHash);
-      if (reused) {
-        return res.status(400).json({ success: false, message: 'You have used this password before' });
-      }
-    }
-
-    // Store current password hash into history
-    user.passwordHistory.push(user.password);
-    if (user.passwordHistory.length > 5) user.passwordHistory.shift();
 
     user.password = newPassword;
     await user.save();
