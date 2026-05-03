@@ -236,12 +236,12 @@ exports.forgotPassword = async (req, res, next) => {
 exports.resetPassword = async (req, res, next) => {
   try {
     const { token } = req.params;
-    const { password } = req.body;
+    const { currentPassword, password } = req.body;
 
-    if (!password) {
+    if (!currentPassword || !password) {
       return res.status(400).json({
         success: false,
-        message: "Please provide a new password",
+        message: "Please provide your current password and a new password",
       });
     }
 
@@ -257,11 +257,10 @@ exports.resetPassword = async (req, res, next) => {
       .update(token)
       .digest("hex");
 
-    // Explicitly select hidden fields needed for this query
     const user = await User.findOne({
       resetPasswordToken: resetTokenHash,
       resetPasswordExpire: { $gt: Date.now() },
-    }).select("+resetPasswordToken +resetPasswordExpire");
+    }).select("+resetPasswordToken +resetPasswordExpire +password");
 
     if (!user) {
       return res.status(400).json({
@@ -270,13 +269,26 @@ exports.resetPassword = async (req, res, next) => {
       });
     }
 
-    // Plain password — pre-save hook hashes it
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Current password is incorrect",
+      });
+    }
+
+    if (currentPassword === password) {
+      return res.status(400).json({
+        success: false,
+        message: "New password cannot be the same as current password",
+      });
+    }
+
     user.password = password;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save();
 
-    // Generate new token
     const newToken = generateToken(user);
 
     res.status(200).json({
