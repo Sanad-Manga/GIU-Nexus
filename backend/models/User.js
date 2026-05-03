@@ -14,18 +14,16 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    select: false, // Don't return password by default in queries
+    select: false,
   },
   profilePicture: {
-    type: String, // URL string
-    // optional — no required: true
+    type: String,
   },
   bio: {
     type: String,
-    // optional text field
   },
   skills: {
-    type: [String], // array of strings, filled by AI in Task 2
+    type: [String],
     default: [],
   },
   role: {
@@ -36,12 +34,11 @@ const userSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ['pending', 'approved', 'rejected'],
-    // only meaningful when role === 'recruiter'
     default: 'pending',
   },
   savedJobs: {
     type: [mongoose.Schema.Types.ObjectId],
-    ref: "JobPost",
+    ref: 'JobPost',
     default: [],
   },
   resetPasswordToken: {
@@ -50,13 +47,24 @@ const userSchema = new mongoose.Schema({
   resetPasswordExpire: {
     type: Date,
   },
+  // OTP fields for password reset verification
+  otpCode: {
+    type: String,
+  },
+  otpExpire: {
+    type: Date,
+  },
+  otpVerified: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
 
-// Hash password before saving
+// hash password before saving
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   try {
@@ -68,7 +76,7 @@ userSchema.pre('save', async function(next) {
   }
 });
 
-// Method to compare passwords
+// compare entered password with stored hash
 userSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };

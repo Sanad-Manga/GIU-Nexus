@@ -1,17 +1,16 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { isBlacklisted } = require('../services/tokenBlacklist');
 
-// Protect middleware: Verify JWT and attach user to request
+// verify JWT and attach user to request
 const protect = async (req, res, next) => {
   try {
     let token;
 
-    // Check for Bearer token in Authorization header
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
     }
 
-    // Make sure token exists
     if (!token) {
       return res.status(401).json({
         success: false,
@@ -20,8 +19,16 @@ const protect = async (req, res, next) => {
     }
 
     try {
-      // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      // reject if token was blacklisted on logout
+      if (decoded.jti && isBlacklisted(decoded.jti)) {
+        return res.status(401).json({
+          success: false,
+          message: 'Token has been invalidated. Please log in again.',
+        });
+      }
+
       req.user = await User.findById(decoded.id);
 
       if (!req.user) {
@@ -30,6 +37,9 @@ const protect = async (req, res, next) => {
           message: 'User not found',
         });
       }
+
+      // attach decoded token so logout can read the jti
+      req.token = decoded;
 
       next();
     } catch (err) {
@@ -43,7 +53,7 @@ const protect = async (req, res, next) => {
   }
 };
 
-// Authorize middleware: Check if user has required role(s)
+// check if user has the required role
 const authorize = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {

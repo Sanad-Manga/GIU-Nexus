@@ -1,14 +1,19 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const { sendResetEmail } = require('../services/emailService');
+const { v4: uuidv4 } = require('uuid');
+const { sendResetEmail, sendOtpEmail } = require('../services/emailService');
+const { addToBlacklist } = require('../services/tokenBlacklist');
 
-// Generate JWT Token
+// generate token with a unique jti for blacklisting
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+  return jwt.sign({ id, jti: uuidv4() }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE || '7d',
   });
 };
+
+// generate a 6-digit OTP
+const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
 
 // @desc    Register user
 // @route   POST /api/v1/auth/register
@@ -17,7 +22,6 @@ exports.register = async (req, res, next) => {
   try {
     const { name, email, password, role } = req.body;
 
-    // Validate input
     if (!name || !email || !password || !role) {
       return res.status(400).json({
         success: false,
@@ -32,7 +36,6 @@ exports.register = async (req, res, next) => {
       });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
@@ -41,7 +44,6 @@ exports.register = async (req, res, next) => {
       });
     }
 
-    // Validate role
     if (!['jobSeeker', 'recruiter'].includes(role)) {
       return res.status(400).json({
         success: false,
@@ -49,7 +51,6 @@ exports.register = async (req, res, next) => {
       });
     }
 
-    // Create user
     const user = new User({
       name,
       email,
@@ -60,7 +61,6 @@ exports.register = async (req, res, next) => {
 
     await user.save();
 
-    // Generate token
     const token = generateToken(user._id);
 
     res.status(201).json({
@@ -86,7 +86,6 @@ exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // Validate input
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -94,7 +93,6 @@ exports.login = async (req, res, next) => {
       });
     }
 
-    // Find user and include password field
     const user = await User.findOne({ email }).select('+password');
 
     if (!user) {
@@ -104,7 +102,6 @@ exports.login = async (req, res, next) => {
       });
     }
 
-    // Compare passwords
     const isMatch = await user.comparePassword(password);
 
     if (!isMatch) {
@@ -114,7 +111,6 @@ exports.login = async (req, res, next) => {
       });
     }
 
-    // Generate token
     const token = generateToken(user._id);
 
     res.status(200).json({
@@ -135,11 +131,14 @@ exports.login = async (req, res, next) => {
   }
 };
 
-// @desc    Logout user (stateless)
+// @desc    Logout user — blacklists the token so it can't be reused
 // @route   POST /api/v1/auth/logout
 // @access  Private
 exports.logout = async (req, res, next) => {
   try {
+    if (req.token && req.token.jti) {
+      addToBlacklist(req.token.jti);
+    }
     res.status(200).json({
       success: true,
       message: 'Logged out successfully',
@@ -149,7 +148,7 @@ exports.logout = async (req, res, next) => {
   }
 };
 
-// @desc    Forgot password
+// @desc    Forgot password — sends OTP to email first
 // @route   POST /api/v1/auth/forgot-password
 // @access  Public
 exports.forgotPassword = async (req, res, next) => {
@@ -165,44 +164,97 @@ exports.forgotPassword = async (req, res, next) => {
 
     const user = await User.findOne({ email });
 
-    // Always return 200 to avoid email enumeration
+    // always return 200 to avoid email enumeration
     if (!user) {
       return res.status(200).json({
         success: true,
-        message: 'Password reset email sent',
+        message: 'If that email exists, a reset OTP has been sent.',
       });
     }
 
-    // Generate reset token
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    const resetTokenHash = crypto
-      .createHash('sha256')
-      .update(resetToken)
-      .digest('hex');
+    // generate OTP, hash it, store with 10 min expiry
+    const otp = generateOtp();
+    const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
 
-    // Save hashed token and expiry to user
-    user.resetPasswordToken = resetTokenHash;
-    user.resetPasswordExpire = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    user.otpCode = otpHash;
+    user.otpExpire = new Date(Date.now() + 10 * 60 * 1000);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    user.otpVerified = false;
 
     await user.save();
 
-    // Build reset link
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-
     try {
-      await sendResetEmail(user.email, resetToken, resetLink);
+      await sendOtpEmail(user.email, otp);
     } catch (emailErr) {
-      // If email fails, clear the reset token
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpire = undefined;
+      user.otpCode = undefined;
+      user.otpExpire = undefined;
       await user.save();
-
-      console.error('Email error:', emailErr);
+      console.error('OTP email error:', emailErr);
     }
 
     res.status(200).json({
       success: true,
-      message: 'Password reset email sent',
+      message: 'If that email exists, a reset OTP has been sent.',
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Verify OTP — issues reset link on success
+// @route   POST /api/v1/auth/verify-otp
+// @access  Public
+exports.verifyOtp = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide email and OTP',
+      });
+    }
+
+    const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
+
+    const user = await User.findOne({
+      email,
+      otpCode: otpHash,
+      otpExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: 'OTP is invalid or has expired',
+      });
+    }
+
+    // clear OTP and issue a password reset token
+    user.otpCode = undefined;
+    user.otpExpire = undefined;
+    user.otpVerified = true;
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+    user.resetPasswordToken = resetTokenHash;
+    user.resetPasswordExpire = new Date(Date.now() + 10 * 60 * 1000);
+
+    await user.save();
+
+    const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password/${resetToken}`;
+
+    try {
+      await sendResetEmail(user.email, resetToken, resetLink);
+    } catch (emailErr) {
+      console.error('Reset email error:', emailErr);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'OTP verified. A password reset link has been sent to your email.',
     });
   } catch (err) {
     next(err);
@@ -231,13 +283,11 @@ exports.resetPassword = async (req, res, next) => {
       });
     }
 
-    // Hash the token to match stored one
     const resetTokenHash = crypto
       .createHash('sha256')
       .update(token)
       .digest('hex');
 
-    // Find user by reset token and check expiry
     const user = await User.findOne({
       resetPasswordToken: resetTokenHash,
       resetPasswordExpire: { $gt: Date.now() },
@@ -250,14 +300,13 @@ exports.resetPassword = async (req, res, next) => {
       });
     }
 
-    // Update password
     user.password = password;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
+    user.otpVerified = undefined;
 
     await user.save();
 
-    // Generate new token
     const newToken = generateToken(user._id);
 
     res.status(200).json({
