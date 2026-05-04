@@ -3,7 +3,8 @@ const bcrypt = require("bcryptjs");
 const dns = require("dns");
 const dotenv = require("dotenv");
 
-dotenv.config({ path: "../backend/.env" });
+dotenv.config({ path: ".env" });
+
 
 const User = require("../backend/models/User");
 
