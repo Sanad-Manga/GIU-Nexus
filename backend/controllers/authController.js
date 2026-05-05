@@ -1,4 +1,4 @@
-const User = require("../models/User");
+require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const validator = require("validator");
