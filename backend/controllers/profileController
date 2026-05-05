@@ -1,8 +1,62 @@
 const hf = require("../services/hfService");
 const User = require("../models/User");
-
+const bcrypt = require("bcryptjs");
 // POST /api/v1/profile/extract-skills
 // Job Seeker only
+
+// GET /api/v1/profile
+// Private (any authenticated user)
+exports.getProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).select("-password");
+    res.status(200).json({ success: true, user });
+  } catch (err) { next(err); }
+};
+
+// PATCH /api/v1/profile
+// Private (any authenticated user)
+exports.updateProfile = async (req, res, next) => {
+  try {
+    const { name, bio, profilePicture } = req.body;
+    const updates = {};
+    if (name)           updates.name           = name;
+    if (bio)            updates.bio            = bio;
+    if (profilePicture) updates.profilePicture = profilePicture;
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      updates,
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    res.status(200).json({ success: true, user });
+  } catch (err) { next(err); }
+};
+
+// PATCH /api/v1/profile/change-password
+// Private (any authenticated user)
+exports.changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ success: false, message: "Please provide current and new password" });
+    }
+
+    const user = await User.findById(req.user._id);
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: "Current password is incorrect" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Password updated successfully" });
+  } catch (err) { next(err); }
+};
+
+
 exports.extractSkills = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);

@@ -1,5 +1,6 @@
 const JobPost = require('../models/JobPost');
 const { classifyJobCategory } = require('../services/classificationService');
+const hf = require('../services/hfService');
 // ─── GET /api/v1/jobs ─────────────────────────────────────────────────────────
 // Public — paginated, filterable list of all jobs
 // Supports filters: keyword (searches title + description), location, type, status
@@ -140,4 +141,42 @@ const deleteJob = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { getJobs, getMyJobs, getJobById, createJob, updateJob, deleteJob };
+// ─── GET /api/v1/jobs/recommended ────────────────────────────────────────────
+// Private (jobSeeker only). Returns open jobs ranked by cosine similarity.
+const getRecommendedJobs = async (req, res, next) => {
+  try {
+    const user = req.user;
+    const openJobs = await JobPost.find({ status: 'open' });
+
+    if (!openJobs.length) return res.status(200).json({ success: true, jobs: [] });
+
+    const studentText = user.skills.join(', ');
+    const jobTexts = openJobs.map(job => `${job.title} ${job.requirements.join(' ')}`);
+
+    try {
+      const embeddings = await hf.featureExtraction({
+        model: 'sentence-transformers/all-MiniLM-L6-v2',
+        inputs: [studentText, ...jobTexts],
+      });
+
+      const cosineSimilarity = (a, b) => {
+        const dot  = a.reduce((sum, val, i) => sum + val * b[i], 0);
+        const magA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0));
+        const magB = Math.sqrt(b.reduce((sum, val) => sum + val * val, 0));
+        return dot / (magA * magB);
+      };
+
+      const studentVec = embeddings[0];
+      const ranked = openJobs
+        .map((job, i) => ({ ...job.toObject(), score: cosineSimilarity(studentVec, embeddings[i + 1]) }))
+        .sort((a, b) => b.score - a.score);
+
+      return res.status(200).json({ success: true, jobs: ranked });
+    } catch (hfErr) {
+      console.error('[getRecommendedJobs] HF call failed:', hfErr.message);
+      return res.status(200).json({ success: true, jobs: openJobs });
+    }
+  } catch (err) { next(err); }
+};
+
+module.exports = { getJobs, getMyJobs, getJobById, createJob, updateJob, deleteJob, getRecommendedJobs };

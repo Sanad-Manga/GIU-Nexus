@@ -9,11 +9,13 @@ const {
   createJob,
   updateJob,
   deleteJob,
+  getRecommendedJobs,
 } = require('../controllers/jobController');
 
 const { getJobApplicants } = require("../controllers/jobApplicantsController");
 
 router.get('/my-jobs', protect, authorize('recruiter'), getMyJobs);
+router.get('/recommended', protect, authorize('jobSeeker'), getRecommendedJobs);
 
 router.route('/')
   .get(getJobs)
