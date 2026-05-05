@@ -141,4 +141,14 @@ const saveJob = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { getJobs, getMyJobs, getJobById, createJob, updateJob, deleteJob, saveJob };
+// ─── GET /api/v1/jobs/saved ───────────────────────────────────────────────────
+// SCRUM-50: returns all saved jobs for the logged-in job seeker
+const getSavedJobs = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).select('+savedJobs');
+    const jobs = await JobPost.find({ _id: { $in: user.savedJobs } });
+    res.status(200).json({ success: true, jobs });
+  } catch (err) { next(err); }
+};
+
+module.exports = { getJobs, getMyJobs, getJobById, createJob, updateJob, deleteJob, saveJob, getSavedJobs };

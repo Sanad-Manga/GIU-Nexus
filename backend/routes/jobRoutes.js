@@ -10,11 +10,15 @@ const {
   updateJob,
   deleteJob,
   saveJob,
+  getSavedJobs,
 } = require('../controllers/jobController');
 
 const { getJobApplicants } = require("../controllers/jobApplicantsController");
 
 router.get('/my-jobs', protect, authorize('recruiter'), getMyJobs);
+
+// SCRUM-50: get saved jobs (must be before /:id to avoid conflict)
+router.get('/saved', protect, authorize('jobSeeker'), getSavedJobs);
 
 router.route('/')
   .get(getJobs)
