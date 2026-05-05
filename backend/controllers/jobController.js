@@ -1,5 +1,5 @@
 const JobPost = require('../models/JobPost');
-
+const { classifyJobCategory } = require('../services/classificationService');
 // ─── GET /api/v1/jobs ─────────────────────────────────────────────────────────
 // Public — paginated, filterable list of all jobs
 // Supports filters: keyword (searches title + description), location, type, status
@@ -80,7 +80,7 @@ const createJob = async (req, res, next) => {
     }
 
     // TODO Sprint 2: replace with Baraa's classifyJob(req.body.description)
-    const category = 'Other';
+    const category = await classifyJobCategory(description);
 
     const job = await JobPost.create({ ...req.body, category, createdBy: req.user._id });
     res.status(201).json({ success: true, job });
@@ -107,7 +107,7 @@ const updateJob = async (req, res, next) => {
       return res.status(403).json({ success: false, message: 'Not authorised to edit this job' });
 
     // TODO Sprint 2: if (req.body.description) req.body.category = await classifyJob(req.body.description);
-
+if (req.body.description) req.body.category = await classifyJobCategory(req.body.description);
     const updated = await JobPost.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     res.status(200).json({ success: true, job: updated });
   } catch (err) { next(err); }
