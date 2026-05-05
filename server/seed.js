@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const dns = require("dns");
 const dotenv = require("dotenv");
+const path = require("path");
 
-dotenv.config({ path: ".env" });
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 
 const User = require("../backend/models/User");
@@ -20,7 +21,14 @@ const adminData = {
 
 const createAdminUser = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    if (!process.env.MONGO_URI) {
+      throw new Error("MONGO_URI is not defined");
+    }
+
+    await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
     console.log("MongoDB connected.");
 
     const existing = await User.findOne({ email: adminData.email });
@@ -44,21 +52,20 @@ const createAdminUser = async () => {
       );
       console.log("Admin already exists. Password reset to default.");
     } else {
-      // Hash password manually — bypass pre-save hook to avoid double-hashing
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(adminData.password, salt);
-
+      // Create new admin user
       await User.create({
         ...adminData,
-        password: hashedPassword,
       });
       console.log("Admin user created successfully.");
     }
   } catch (error) {
     console.error("Error creating admin user:", error);
+    process.exitCode = 1;
   } finally {
-    await mongoose.connection.close();
-    console.log("MongoDB connection closed.");
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.connection.close();
+      console.log("MongoDB connection closed.");
+    }
   }
 };
 
