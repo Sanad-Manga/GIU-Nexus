@@ -23,6 +23,8 @@ const authLimiter = rateLimit({
   },
 });
 
+const upload = require('../middleware/upload');
+
 // Public routes (rate limited)
 router.post('/register', authLimiter, register);
 router.post('/login', authLimiter, login);
@@ -31,8 +33,14 @@ router.patch('/reset-password/:token', resetPassword);
 
 // Private routes
 router.post('/logout', protect, logout);
-router.get('/profile', protect, getProfile);
-router.patch('/profile', protect, updateProfile);
 router.patch('/profile/change-password', protect, changePassword);
+// PATCH /api/v1/auth/profile - now accepts multipart/form-data with optional file
+router.route('/profile')
+  .get(protect, getProfile)
+  .patch(protect, upload.single('profilePicture'), updateProfile);
+
+// change-password remains JSON-only
+router.route('/profile/change-password')
+  .patch(protect, changePassword);
 
 module.exports = router;
