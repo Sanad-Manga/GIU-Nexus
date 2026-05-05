@@ -9,6 +9,7 @@ const {
   createJob,
   updateJob,
   deleteJob,
+  saveJob,
 } = require('../controllers/jobController');
 
 const { getJobApplicants } = require("../controllers/jobApplicantsController");
@@ -25,5 +26,8 @@ router.get("/:jobId/applicants", protect, authorize("recruiter"), getJobApplican
 router.get('/:id', getJobById);
 router.patch('/:id', protect, authorize('recruiter'), updateJob);
 router.delete('/:id', protect, authorize('recruiter', 'admin'), deleteJob);
+
+// SCRUM-37: toggle save/unsave a job (job seeker only)
+router.post('/:id/save', protect, authorize('jobSeeker'), saveJob);
 
 module.exports = router;
