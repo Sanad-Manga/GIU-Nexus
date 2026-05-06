@@ -1,4 +1,3 @@
-const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const blacklist = require("../middleware/tokenBlacklist");
