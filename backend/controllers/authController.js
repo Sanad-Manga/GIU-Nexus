@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const blacklist = require("../middleware/tokenBlacklist");
 const validator = require("validator");
 const xss = require("xss");
 const { sendResetEmail } = require("../services/emailService");
@@ -8,7 +9,7 @@ const { sendResetEmail } = require("../services/emailService");
 // Generate JWT Token
 const generateToken = (user) => {
   return jwt.sign(
-    { id: user._id, role: user.role },
+    { id: user._id, role: user.role, jti: crypto.randomUUID() },
     process.env.JWT_SECRET,
     {
       expiresIn: process.env.JWT_EXPIRE || '7d',
@@ -171,6 +172,11 @@ exports.login = async (req, res, next) => {
 // POST /api/v1/auth/logout
 exports.logout = async (req, res, next) => {
   try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.decode(token);
+    if (decoded?.jti) {
+      blacklist.add(decoded.jti);
+    }
     res.status(200).json({
       success: true,
       message: "Logged out successfully",
