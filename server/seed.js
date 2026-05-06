@@ -14,7 +14,7 @@ dns.setServers(["8.8.8.8", "1.1.1.1"]);
 const adminData = {
   name: "Admin User",
   email: "admin@example.com",
-  password: "adminpassword",
+  password: "admin123",
   role: "admin",
   status: "approved",
 };
