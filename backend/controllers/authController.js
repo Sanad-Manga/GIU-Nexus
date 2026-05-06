@@ -4,6 +4,8 @@ const blacklist = require("../middleware/tokenBlacklist");
 const validator = require("validator");
 const xss = require("xss");
 const { sendResetEmail } = require("../services/emailService");
+const cloudinary = require('../config/cloudinary');
+const upload = require('../middleware/upload');
 
 // Generate JWT Token
 const generateToken = (user) => {
@@ -327,15 +329,76 @@ exports.getProfile = async (req, res, next) => {
 // @access  Private
 exports.updateProfile = async (req, res, next) => {
   try {
-    const { name, bio, profilePicture } = req.body;
+    // 1. Extract text fields (Multer puts them in req.body)
+    const { name, bio } = req.body;
     const updates = {};
 
+    // 2. Validate and assign text fields (if provided)
     if (name !== undefined) updates.name = name;
     if (bio !== undefined) updates.bio = bio;
-    if (profilePicture !== undefined) updates.profilePicture = profilePicture;
 
-    const user = await User.findByIdAndUpdate(req.user._id, updates, { new: true, runValidators: true });
-    res.status(200).json({ success: true, user });
+    // 3. Handle profile picture upload if a file was sent
+    if (req.file) {
+      // req.file is present because of upload.single('profilePicture') middleware
+      const cloudinary = require('../config/cloudinary'); // adjust path as needed
+
+      // Upload file buffer (or path) to Cloudinary
+      const result = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: `profile_pictures/users/${req.user._id}`,
+            public_id: 'profile-picture',
+            overwrite: true,
+            transformation: [{ width: 400, height: 400, crop: 'fill' }],
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        uploadStream.end(req.file.buffer);
+      });
+
+      updates.profilePicture = result.secure_url;
+    }
+
+    // 4. If no updates at all, return current user without making changes
+    if (Object.keys(updates).length === 0) {
+      return res.status(200).json({
+        success: true,
+        user: {
+          _id: req.user._id,
+          name: req.user.name,
+          email: req.user.email,
+          bio: req.user.bio || '',
+          skills: req.user.skills || [],
+          profilePicture: req.user.profilePicture || '',
+          role: req.user.role,
+          status: req.user.status,
+        },
+      });
+    }
+
+    // 5. Apply updates to the database
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, updates, {
+      new: true,
+      runValidators: true,
+    }).select('-password');
+
+    // 6. Send response
+    res.status(200).json({
+      success: true,
+      user: {
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        bio: updatedUser.bio || '',
+        skills: updatedUser.skills || [],
+        profilePicture: updatedUser.profilePicture || '',
+        role: updatedUser.role,
+        status: updatedUser.status,
+      },
+    });
   } catch (err) {
     next(err);
   }
