@@ -10,12 +10,17 @@ const {
   updateJob,
   deleteJob,
   getRecommendedJobs,
+  saveJob,
+  getSavedJobs,
 } = require('../controllers/jobController');
 
 const { getJobApplicants } = require("../controllers/jobApplicantsController");
 
 router.get('/my-jobs', protect, authorize('recruiter'), getMyJobs);
 router.get('/recommended', protect, authorize('jobSeeker'), getRecommendedJobs);
+
+// SCRUM-50: get saved jobs (must be before /:id to avoid conflict)
+router.get('/saved', protect, authorize('jobSeeker'), getSavedJobs);
 
 router.route('/')
   .get(getJobs)
@@ -27,5 +32,8 @@ router.get("/:jobId/applicants", protect, authorize("recruiter"), getJobApplican
 router.get('/:id', getJobById);
 router.patch('/:id', protect, authorize('recruiter'), updateJob);
 router.delete('/:id', protect, authorize('recruiter', 'admin'), deleteJob);
+
+// SCRUM-37: toggle save/unsave a job (job seeker only)
+router.post('/:id/save', protect, authorize('jobSeeker'), saveJob);
 
 module.exports = router;
