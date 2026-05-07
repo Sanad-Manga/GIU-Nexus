@@ -16,6 +16,12 @@ const ErrorHandler = require('./middleware/ErrorHandler');
 
 const errorHandler = require("./middleware/ErrorHandler");
 
+
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./config/swagger");
+
+
+
 // Set custom DNS servers
 // Prefer reliable public DNS for SRV lookups (helps when local DNS/VPN blocks SRV)
 dns.setServers(['8.8.8.8', '1.1.1.1']);
@@ -23,10 +29,21 @@ dns.setServers(['8.8.8.8', '1.1.1.1']);
 const app = express();
 
 // Middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false, // needed so Swagger UI loads correctly
+}));
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customSiteTitle: "GIU Nexus API Docs",
+  swaggerOptions: {
+    persistAuthorization: true, // keeps your JWT token after page refresh
+  },
+}));
 
 
 // Routes
@@ -54,5 +71,7 @@ const PORT = process.env.PORT || 5000;
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    console.log(` Swagger docs at http://localhost:${PORT}/api-docs`); 
   });
 });
+
