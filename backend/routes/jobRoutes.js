@@ -9,6 +9,7 @@ const {
   createJob,
   updateJob,
   deleteJob,
+  getRecommendedJobs,
   saveJob,
   getSavedJobs,
 } = require('../controllers/jobController');
@@ -16,6 +17,7 @@ const {
 const { getJobApplicants } = require("../controllers/jobApplicantsController");
 
 router.get('/my-jobs', protect, authorize('recruiter'), getMyJobs);
+router.get('/recommended', protect, authorize('jobSeeker'), getRecommendedJobs);
 
 // SCRUM-50: get saved jobs (must be before /:id to avoid conflict)
 router.get('/saved', protect, authorize('jobSeeker'), getSavedJobs);

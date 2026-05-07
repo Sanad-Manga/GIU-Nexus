@@ -1,6 +1,7 @@
 const JobPost = require('../models/JobPost');
 const User = require('../models/User');
-
+const { classifyJobCategory } = require('../services/classificationService');
+const hf = require('../services/hfService');
 // ─── GET /api/v1/jobs ─────────────────────────────────────────────────────────
 const getJobs = async (req, res, next) => {
   try {
@@ -63,7 +64,7 @@ const createJob = async (req, res, next) => {
     }
 
     // TODO Sprint 2: replace with Baraa's classifyJob(req.body.description)
-    const category = 'Other';
+    const category = await classifyJobCategory(description);
 
     const job = await JobPost.create({ ...req.body, category, createdBy: req.user._id });
     res.status(201).json({ success: true, job });
@@ -84,7 +85,7 @@ const updateJob = async (req, res, next) => {
       return res.status(403).json({ success: false, message: 'Not authorised to edit this job' });
 
     // TODO Sprint 2: if (req.body.description) req.body.category = await classifyJob(req.body.description);
-
+    if (req.body.description) req.body.category = await classifyJobCategory(req.body.description);
     const updated = await JobPost.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     res.status(200).json({ success: true, job: updated });
   } catch (err) { next(err); }
@@ -108,6 +109,44 @@ const deleteJob = async (req, res, next) => {
 
     await job.deleteOne();
     res.status(200).json({ success: true, message: 'Job deleted' });
+  } catch (err) { next(err); }
+};
+
+// ─── GET /api/v1/jobs/recommended ────────────────────────────────────────────
+// Private (jobSeeker only). Returns open jobs ranked by cosine similarity.
+const getRecommendedJobs = async (req, res, next) => {
+  try {
+    const user = req.user;
+    const openJobs = await JobPost.find({ status: 'open' });
+
+    if (!openJobs.length) return res.status(200).json({ success: true, jobs: [] });
+
+    const studentText = user.skills.join(', ');
+    const jobTexts = openJobs.map(job => `${job.title} ${job.requirements.join(' ')}`);
+
+    try {
+      const embeddings = await hf.featureExtraction({
+        model: 'sentence-transformers/all-MiniLM-L6-v2',
+        inputs: [studentText, ...jobTexts],
+      });
+
+      const cosineSimilarity = (a, b) => {
+        const dot = a.reduce((sum, val, i) => sum + val * b[i], 0);
+        const magA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0));
+        const magB = Math.sqrt(b.reduce((sum, val) => sum + val * val, 0));
+        return dot / (magA * magB);
+      };
+
+      const studentVec = embeddings[0];
+      const ranked = openJobs
+        .map((job, i) => ({ ...job.toObject(), score: cosineSimilarity(studentVec, embeddings[i + 1]) }))
+        .sort((a, b) => b.score - a.score);
+
+      return res.status(200).json({ success: true, jobs: ranked });
+    } catch (hfErr) {
+      console.error('[getRecommendedJobs] HF call failed:', hfErr.message);
+      return res.status(200).json({ success: true, jobs: openJobs });
+    }
   } catch (err) { next(err); }
 };
 
@@ -151,4 +190,14 @@ const getSavedJobs = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { getJobs, getMyJobs, getJobById, createJob, updateJob, deleteJob, saveJob, getSavedJobs };
+module.exports = {
+  getJobs,
+  getMyJobs,
+  getJobById,
+  createJob,
+  updateJob,
+  deleteJob,
+  getRecommendedJobs,
+  saveJob,
+  getSavedJobs,
+};
