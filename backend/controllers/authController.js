@@ -1,11 +1,10 @@
+const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const blacklist = require("../middleware/tokenBlacklist");
 const validator = require("validator");
 const xss = require("xss");
 const { sendResetEmail } = require("../services/emailService");
-const cloudinary = require('../config/cloudinary');
-const upload = require('../middleware/upload');
 
 // Generate JWT Token
 const generateToken = (user) => {
@@ -312,129 +311,3 @@ exports.resetPassword = async (req, res, next) => {
   }
 };
 
-// @desc    Get logged-in user profile
-// @route   GET /api/v1/auth/profile
-// @access  Private
-exports.getProfile = async (req, res, next) => {
-  try {
-    const user = await User.findById(req.user._id);
-    res.status(200).json({ success: true, user });
-  } catch (err) {
-    next(err);
-  }
-};
-
-// @desc    Update profile (name, bio, profilePicture)
-// @route   PATCH /api/v1/auth/profile
-// @access  Private
-exports.updateProfile = async (req, res, next) => {
-  try {
-    // 1. Extract text fields (Multer puts them in req.body)
-    const { name, bio } = req.body;
-    const updates = {};
-
-    // 2. Validate and assign text fields (if provided)
-    if (name !== undefined) updates.name = name;
-    if (bio !== undefined) updates.bio = bio;
-
-    // 3. Handle profile picture upload if a file was sent
-    if (req.file) {
-      // req.file is present because of upload.single('profilePicture') middleware
-      const cloudinary = require('../config/cloudinary'); // adjust path as needed
-
-      // Upload file buffer (or path) to Cloudinary
-      const result = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          {
-            folder: `profile_pictures/users/${req.user._id}`,
-            public_id: 'profile-picture',
-            overwrite: true,
-            transformation: [{ width: 400, height: 400, crop: 'fill' }],
-          },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        );
-        uploadStream.end(req.file.buffer);
-      });
-
-      updates.profilePicture = result.secure_url;
-    }
-
-    // 4. If no updates at all, return current user without making changes
-    if (Object.keys(updates).length === 0) {
-      return res.status(200).json({
-        success: true,
-        user: {
-          _id: req.user._id,
-          name: req.user.name,
-          email: req.user.email,
-          bio: req.user.bio || '',
-          skills: req.user.skills || [],
-          profilePicture: req.user.profilePicture || '',
-          role: req.user.role,
-          status: req.user.status,
-        },
-      });
-    }
-
-    // 5. Apply updates to the database
-    const updatedUser = await User.findByIdAndUpdate(req.user._id, updates, {
-      new: true,
-      runValidators: true,
-    }).select('-password');
-
-    // 6. Send response
-    res.status(200).json({
-      success: true,
-      user: {
-        _id: updatedUser._id,
-        name: updatedUser.name,
-        email: updatedUser.email,
-        bio: updatedUser.bio || '',
-        skills: updatedUser.skills || [],
-        profilePicture: updatedUser.profilePicture || '',
-        role: updatedUser.role,
-        status: updatedUser.status,
-      },
-    });
-  } catch (err) {
-    next(err);
-  }
-};
-
-// @desc    Change password
-// @route   PATCH /api/v1/auth/profile/change-password
-// @access  Private
-exports.changePassword = async (req, res, next) => {
-  try {
-    const { currentPassword, newPassword } = req.body;
-
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({ success: false, message: 'Please provide current and new password' });
-    }
-
-    if (newPassword.length < 6 || newPassword.length > 30) {
-      return res.status(400).json({ success: false, message: 'Password must be between 6 and 30 characters' });
-    }
-
-    const user = await User.findById(req.user._id).select('+password');
-    const isMatch = await user.comparePassword(currentPassword);
-
-    if (!isMatch) {
-      return res.status(401).json({ success: false, message: 'Current password is incorrect' });
-    }
-
-    if (currentPassword === newPassword) {
-      return res.status(400).json({ success: false, message: 'New password cannot be the same as current password' });
-    }
-
-    user.password = newPassword;
-    await user.save();
-
-    res.status(200).json({ success: true, message: 'Password updated successfully' });
-  } catch (err) {
-    next(err);
-  }
-};

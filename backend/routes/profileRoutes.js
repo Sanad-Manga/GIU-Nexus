@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
 const { getProfile, updateProfile, changePassword, extractSkills } = require('../controllers/profileController');
+const upload = require('../middleware/upload');
 
 /**
  * @swagger
@@ -84,7 +85,7 @@ const { getProfile, updateProfile, changePassword, extractSkills } = require('..
  */
 router.route('/')
   .get(protect, getProfile)
-  .patch(protect, updateProfile);
+  .patch(protect, upload.single('profilePicture'), updateProfile);
 
 /**
  * @swagger

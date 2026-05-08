@@ -5,9 +5,8 @@ const {
   getMyApplications,
   applyToJob,
   updateApplicationStatus,
+  getJobApplicants,
 } = require("../controllers/applicationController");
-
-const { getJobApplicants } = require("../controllers/jobApplicantsController");
 const { protect, authorize } = require("../middleware/auth");
 
 /**

@@ -79,4 +79,10 @@ const options = {
 };
 
 const swaggerSpec = swaggerJsdoc(options);
-module.exports = swaggerSpec;
+
+const swaggerUiOptions = {
+  customSiteTitle: 'GIU Nexus API Docs',
+  swaggerOptions: { persistAuthorization: true },
+};
+
+module.exports = { swaggerSpec, swaggerUiOptions };
