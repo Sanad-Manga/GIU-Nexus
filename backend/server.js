@@ -1,12 +1,17 @@
 
 require("dotenv").config();
 const dns = require('dns');
+
+// Railway containers have no IPv6 internet connectivity — patch dns.lookup globally
+// so every net.createConnection (including nodemailer's) resolves to IPv4 only.
+const _lookup = dns.lookup.bind(dns);
+dns.lookup = (hostname, options, callback) => {
+  if (typeof options === 'function') return _lookup(hostname, { family: 4 }, options);
+  return _lookup(hostname, { ...(typeof options === 'object' ? options : {}), family: 4 }, callback);
+};
+
 const connectDB = require("./config/db");
 const app = require("./app");
-
-// Prefer reliable public DNS for SRV lookups (helps when local DNS/VPN blocks SRV)
-dns.setServers(['8.8.8.8', '1.1.1.1']);
-dns.setDefaultResultOrder('ipv4first');
 
 const PORT = process.env.PORT || 5000;
 connectDB().then(() => {

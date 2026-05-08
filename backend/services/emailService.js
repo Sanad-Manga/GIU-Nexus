@@ -1,5 +1,4 @@
 const nodemailer = require('nodemailer');
-const dns = require('dns');
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
@@ -12,9 +11,6 @@ const transporter = nodemailer.createTransport({
   connectionTimeout: 8000,
   greetingTimeout: 8000,
   socketTimeout: 10000,
-  lookup: (hostname, options, callback) => {
-    dns.lookup(hostname, { ...options, family: 4 }, callback);
-  },
 });
 
 const sendResetEmail = async (email, resetToken, resetLink) => {
