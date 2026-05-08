@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const blacklist = require("../middleware/tokenBlacklist");
 const validator = require("validator");
 const xss = require("xss");
-const { sendResetEmail } = require("../services/emailService");
+const { sendResetEmail, sendOtpEmail } = require("../services/emailService");
 
 // Generate JWT Token
 const generateToken = (user) => {
@@ -204,34 +204,77 @@ exports.forgotPassword = async (req, res, next) => {
     if (!user) {
       return res.status(200).json({
         success: true,
-        message: "Password reset email sent",
+        message: "If that email exists, an OTP has been sent",
       });
     }
 
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
+
+    user.otp = otpHash;
+    user.otpExpire = new Date(Date.now() + 10 * 60 * 1000);
+    await user.save();
+
+    try {
+      await sendOtpEmail(user.email, otp);
+    } catch (emailErr) {
+      user.otp = undefined;
+      user.otpExpire = undefined;
+      await user.save();
+      console.error("Email error:", emailErr);
+      return res.status(500).json({ success: false, message: "Failed to send OTP email" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "If that email exists, an OTP has been sent",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// POST /api/v1/auth/verify-otp
+exports.verifyOtp = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide email and OTP",
+      });
+    }
+
+    const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
+
+    const user = await User.findOne({
+      email,
+      otp: otpHash,
+      otpExpire: { $gt: Date.now() },
+    }).select("+otp +otpExpire");
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP is invalid or has expired",
+      });
+    }
+
+    user.otp = undefined;
+    user.otpExpire = undefined;
+
     const resetToken = crypto.randomBytes(32).toString("hex");
-    const resetTokenHash = crypto
-      .createHash("sha256")
-      .update(resetToken)
-      .digest("hex");
+    const resetTokenHash = crypto.createHash("sha256").update(resetToken).digest("hex");
 
     user.resetPasswordToken = resetTokenHash;
     user.resetPasswordExpire = new Date(Date.now() + 10 * 60 * 1000);
     await user.save();
 
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-
-    try {
-      await sendResetEmail(user.email, resetToken, resetLink);
-    } catch (emailErr) {
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpire = undefined;
-      await user.save();
-      console.error("Email error:", emailErr);
-    }
-
     res.status(200).json({
       success: true,
-      message: "Password reset email sent",
+      message: "OTP verified",
+      resetToken,
     });
   } catch (err) {
     next(err);
@@ -242,12 +285,12 @@ exports.forgotPassword = async (req, res, next) => {
 exports.resetPassword = async (req, res, next) => {
   try {
     const { token } = req.params;
-    const { currentPassword, password } = req.body;
+    const { password } = req.body;
 
-    if (!currentPassword || !password) {
+    if (!password) {
       return res.status(400).json({
         success: false,
-        message: "Please provide your current password and a new password",
+        message: "Please provide a new password",
       });
     }
 
@@ -272,21 +315,6 @@ exports.resetPassword = async (req, res, next) => {
       return res.status(400).json({
         success: false,
         message: "Token is invalid or has expired",
-      });
-    }
-
-    const isMatch = await user.comparePassword(currentPassword);
-    if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Current password is incorrect",
-      });
-    }
-
-    if (currentPassword === password) {
-      return res.status(400).json({
-        success: false,
-        message: "New password cannot be the same as current password",
       });
     }
 

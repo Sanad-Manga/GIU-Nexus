@@ -5,3 +5,5 @@ node_modules/
 *.log
 .claude/
 .yaml
+*.postman_collection.json
+*.postman_environment.json

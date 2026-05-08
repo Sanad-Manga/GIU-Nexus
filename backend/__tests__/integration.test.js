@@ -13,6 +13,7 @@ jest.mock('../services/hfService', () => ({
 
 jest.mock('../services/emailService', () => ({
   sendResetEmail: jest.fn().mockResolvedValue(undefined),
+  sendOtpEmail: jest.fn().mockResolvedValue(undefined),
 }));
 
 process.env.JWT_SECRET = 'test-secret-key';
@@ -253,6 +254,70 @@ describe('Profile — Extract Skills', () => {
 
     expect(res.status).toBe(400);
     expect(res.body.message).toMatch(/bio is empty/i);
+  });
+});
+
+// ─── OTP / Forgot Password ───────────────────────────────────────────────────
+
+describe('Auth — OTP / Forgot Password', () => {
+  const sendOtpEmail = require('../services/emailService').sendOtpEmail;
+
+  beforeEach(async () => {
+    await registerUser(USERS.jobSeeker);
+  });
+
+  it('returns 200 for both known and unknown emails (no enumeration)', async () => {
+    const res = await request(app)
+      .post('/api/v1/auth/forgot-password')
+      .send({ email: 'nobody@test.com' });
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+  });
+
+  it('sends OTP email for a known account', async () => {
+    sendOtpEmail.mockClear();
+
+    await request(app)
+      .post('/api/v1/auth/forgot-password')
+      .send({ email: USERS.jobSeeker.email });
+
+    expect(sendOtpEmail).toHaveBeenCalledTimes(1);
+    expect(sendOtpEmail).toHaveBeenCalledWith(
+      USERS.jobSeeker.email,
+      expect.stringMatching(/^\d{6}$/)
+    );
+  });
+
+  it('returns 400 for a wrong OTP', async () => {
+    await request(app)
+      .post('/api/v1/auth/forgot-password')
+      .send({ email: USERS.jobSeeker.email });
+
+    const res = await request(app)
+      .post('/api/v1/auth/verify-otp')
+      .send({ email: USERS.jobSeeker.email, otp: '000000' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/invalid or has expired/i);
+  });
+
+  it('returns resetToken when OTP is correct', async () => {
+    sendOtpEmail.mockClear();
+
+    await request(app)
+      .post('/api/v1/auth/forgot-password')
+      .send({ email: USERS.jobSeeker.email });
+
+    const sentOtp = sendOtpEmail.mock.calls[0][1];
+
+    const res = await request(app)
+      .post('/api/v1/auth/verify-otp')
+      .send({ email: USERS.jobSeeker.email, otp: sentOtp });
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.resetToken).toBeDefined();
   });
 });
 

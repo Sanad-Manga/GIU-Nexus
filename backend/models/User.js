@@ -50,6 +50,14 @@ const userSchema = new mongoose.Schema({
     type: Date,
     select: false,
   },
+  otp: {
+    type: String,
+    select: false,
+  },
+  otpExpire: {
+    type: Date,
+    select: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
