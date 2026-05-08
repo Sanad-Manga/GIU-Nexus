@@ -14,7 +14,7 @@ const {
   getSavedJobs,
 } = require('../controllers/jobController');
 
-const { getJobApplicants } = require("../controllers/jobApplicantsController");
+const { getJobApplicants } = require("../controllers/applicationController");
 
 /**
  * @swagger

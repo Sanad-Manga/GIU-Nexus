@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { protect, authorize } = require("../middleware/auth");
-const { getAllApplications, getAdminStats, getAdminApplications } = require("../controllers/adminController");
+const { getAllApplications, getAdminStats } = require("../controllers/adminController");
 
 /**
  * @swagger
