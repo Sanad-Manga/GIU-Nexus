@@ -3,8 +3,8 @@ const { rateLimit, MemoryStore } = require('express-rate-limit');
 const authLimiterStore = new MemoryStore();
 
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 100000,
-  max: 100000000,
+  windowMs: 15 * 60 * 1000,
+  max: parseInt(process.env.RATE_LIMIT_MAX || '10'),
   store: authLimiterStore,
   standardHeaders: true,
   legacyHeaders: false,
