@@ -1,4 +1,3 @@
-console.log('[HF_TOKEN]', process.env.HF_TOKEN);
 const CANDIDATE_LABELS = ['Frontend', 'Backend', 'AI/ML', 'DevOps', 'Data Engineering', 'Other'];
 
 async function classifyJobCategory(description) {
