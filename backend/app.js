@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
 
-app.get("/", (_req, res) => res.json({ message: "GIU-Nexus API is running" }));
+app.get("/", (_req, res) => res.redirect("/api-docs"));
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/jobs", jobRoutes);
