@@ -4,6 +4,7 @@ const {
   login,
   logout,
   forgotPassword,
+  verifyOtp,
   resetPassword,
 } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
@@ -120,7 +121,7 @@ router.post('/login', authLimiter, login);
  * @swagger
  * /auth/forgot-password:
  *   post:
- *     summary: Send a password reset email
+ *     summary: Send a 6-digit OTP to the user's email to begin password reset
  *     tags: [Auth]
  *     security: []
  *     requestBody:
@@ -136,7 +137,7 @@ router.post('/login', authLimiter, login);
  *                 example: sara@example.com
  *     responses:
  *       200:
- *         description: Password reset email sent (always 200 to avoid email enumeration)
+ *         description: Always 200 to avoid email enumeration — OTP sent if account exists
  *         content:
  *           application/json:
  *             schema:
@@ -147,9 +148,55 @@ router.post('/login', authLimiter, login);
  *                   example: true
  *                 message:
  *                   type: string
- *                   example: Password reset email sent
+ *                   example: If that email exists, an OTP has been sent
  */
 router.post('/forgot-password', authLimiter, forgotPassword);
+
+/**
+ * @swagger
+ * /auth/verify-otp:
+ *   post:
+ *     summary: Verify the 6-digit OTP and receive a password reset token
+ *     tags: [Auth]
+ *     security: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, otp]
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: sara@example.com
+ *               otp:
+ *                 type: string
+ *                 example: "483921"
+ *     responses:
+ *       200:
+ *         description: OTP verified — resetToken returned for use in /reset-password/:token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: OTP verified
+ *                 resetToken:
+ *                   type: string
+ *       400:
+ *         description: OTP is invalid or has expired
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.post('/verify-otp', authLimiter, verifyOtp);
 
 /**
  * @swagger

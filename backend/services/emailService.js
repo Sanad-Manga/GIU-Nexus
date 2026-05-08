@@ -36,6 +36,30 @@ const sendResetEmail = async (email, resetToken, resetLink) => {
   }
 };
 
+const sendOtpEmail = async (email, otp) => {
+  try {
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Your Password Reset OTP',
+      html: `
+        <p>You requested a password reset.</p>
+        <p>Your one-time code is:</p>
+        <h2 style="letter-spacing: 8px; font-size: 32px;">${otp}</h2>
+        <p>This code is valid for <strong>1 minute</strong>.</p>
+        <p>If you did not request this, please ignore this email.</p>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`OTP email sent to ${email}`);
+  } catch (err) {
+    console.error(`Error sending OTP email: ${err.message}`);
+    throw err;
+  }
+};
+
 module.exports = {
   sendResetEmail,
+  sendOtpEmail,
 };
