@@ -14,7 +14,7 @@ const {
   getSavedJobs,
 } = require('../controllers/jobController');
 
-const { getJobApplicants } = require("../controllers/applicationController");
+const { getJobApplicants, applyToJob } = require("../controllers/applicationController");
 
 /**
  * @swagger
@@ -306,6 +306,7 @@ router.route('/')
  *               $ref: '#/components/schemas/Error'
  */
 router.get("/:jobId/applicants", protect, authorize("recruiter"), getJobApplicants);
+router.post("/:jobId/apply", protect, authorize("jobSeeker"), applyToJob);
 
 /**
  * @swagger

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const {
+  getAllApplications,
   getMyApplications,
   applyToJob,
   updateApplicationStatus,
@@ -68,6 +69,7 @@ const { protect, authorize } = require("../middleware/auth");
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
+router.get("/", protect, authorize("admin"), getAllApplications);
 router.get("/my", protect, authorize("jobSeeker"), getMyApplications);
 
 /**

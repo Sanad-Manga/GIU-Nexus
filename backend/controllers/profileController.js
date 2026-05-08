@@ -116,7 +116,7 @@ exports.extractSkills = async (req, res, next) => {
       user.skills = skills;
       await user.save();
 
-      return res.status(200).json({ success: true, skills });
+      return res.status(200).json({ success: true, skills, extracted: skills });
     } catch (hfError) {
       console.error("HuggingFace NER error:", hfError);
       return res.status(200).json({ success: true, skills: user.skills });

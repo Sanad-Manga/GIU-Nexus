@@ -73,6 +73,13 @@ const createJob = async (req, res, next) => {
 // ─── PATCH /api/v1/jobs/:id ───────────────────────────────────────────────────
 const updateJob = async (req, res, next) => {
   try {
+    if (req.user.status !== 'approved') {
+      return res.status(403).json({
+        success: false,
+        message: 'Your account is pending approval. Wait for admin approval before managing jobs.',
+      });
+    }
+
     if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(404).json({ success: false, message: 'Job not found' });
     }
@@ -118,6 +125,8 @@ const getRecommendedJobs = async (req, res, next) => {
     const openJobs = await JobPost.find({ status: 'open' });
 
     if (!openJobs.length) return res.status(200).json({ success: true, jobs: [] });
+
+    if (!user.skills.length) return res.status(200).json({ success: true, jobs: openJobs });
 
     const studentText = user.skills.join(', ');
     const jobTexts = openJobs.map(job => `${job.title} ${job.requirements.join(' ')}`);

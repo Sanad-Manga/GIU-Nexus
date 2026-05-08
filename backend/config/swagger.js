@@ -10,7 +10,8 @@ const options = {
       description: 'AI-Powered Career & Talent Platform — Milestone 2',
     },
     servers: [
-      { url: 'http://localhost:5000/api/v1', description: 'Development Server' }
+      { url: 'https://giu-nexus-api.up.railway.app/api/v1', description: 'Production (Railway)' },
+      { url: 'http://localhost:5000/api/v1', description: 'Local Development' },
     ],
     components: {
       securitySchemes: {

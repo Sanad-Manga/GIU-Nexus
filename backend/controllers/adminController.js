@@ -2,27 +2,6 @@ const Application = require("../models/Application");
 const User = require("../models/User");
 const JobPost = require("../models/JobPost");
 
-const getAllApplications = async (req, res, next) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-
-    const total = await Application.countDocuments();
-
-    const applications = await Application.find()
-      .populate("user", "name email")
-      .populate("job", "title company")
-      .sort({ appliedAt: -1 })
-      .skip(skip)
-      .limit(limit);
-
-    return res.status(200).json({ success: true, total, page, applications });
-  } catch (err) {
-    next(err);
-  }
-};
-
 const getAdminStats = async (req, res, next) => {
   try {
     const [usersByRoleAgg, jobsByStatusAgg, appsByStatusAgg, topJobs] = await Promise.all([
@@ -47,7 +26,7 @@ const getAdminStats = async (req, res, next) => {
         { $limit: 5 },
         { $lookup: { from: "jobposts", localField: "_id", foreignField: "_id", as: "job" } },
         { $unwind: "$job" },
-        { $project: { _id: 0, jobId: "$job._id", title: "$job.title", company: "$job.company", applicationCount: 1 } },
+        { $project: { _id: "$job._id", title: "$job.title", company: "$job.company", applicationCount: 1 } },
       ]),
     ]);
 
@@ -69,4 +48,4 @@ const getAdminStats = async (req, res, next) => {
   }
 };
 
-module.exports = { getAllApplications, getAdminStats };
+module.exports = { getAdminStats };

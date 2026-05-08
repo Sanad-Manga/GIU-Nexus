@@ -1,6 +1,26 @@
 const Application = require("../models/Application");
 const JobPost = require("../models/JobPost");
 
+const getAllApplications = async (req, res, next) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const total = await Application.countDocuments();
+    const applications = await Application.find()
+      .populate("user", "name email")
+      .populate("job", "title company")
+      .sort({ appliedAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    return res.status(200).json({ success: true, total, page, applications });
+  } catch (err) {
+    next(err);
+  }
+};
+
 const getMyApplications = async (req, res, next) => {
   try {
     const applications = await Application.find({ user: req.user._id })
@@ -96,13 +116,14 @@ const getJobApplicants = async (req, res, next) => {
       .populate("user", "name email bio skills profilePicture")
       .sort({ appliedAt: -1 });
 
-    return res.status(200).json({ success: true, jobId, totalApplicants: applicants.length, applicants });
+    return res.status(200).json({ success: true, applications: applicants });
   } catch (err) {
     next(err);
   }
 };
 
 module.exports = {
+  getAllApplications,
   getMyApplications,
   applyToJob,
   updateApplicationStatus,

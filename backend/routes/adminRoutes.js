@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { protect, authorize } = require("../middleware/auth");
-const { getAllApplications, getAdminStats } = require("../controllers/adminController");
+const { getAdminStats } = require("../controllers/adminController");
 
 /**
  * @swagger
@@ -10,79 +10,6 @@ const { getAllApplications, getAdminStats } = require("../controllers/adminContr
  *   name: Admin
  *   description: Admin-only platform management endpoints
  */
-
-/**
- * @swagger
- * /admin/applications:
- *   get:
- *     summary: Get all applications on the platform (Admin only, paginated)
- *     tags: [Admin]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 20
- *     responses:
- *       200:
- *         description: All applications with user and job details
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 total:
- *                   type: integer
- *                 page:
- *                   type: integer
- *                 applications:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       _id:
- *                         type: string
- *                       user:
- *                         type: object
- *                         properties:
- *                           _id:
- *                             type: string
- *                           name:
- *                             type: string
- *                           email:
- *                             type: string
- *                       job:
- *                         type: object
- *                         properties:
- *                           _id:
- *                             type: string
- *                           title:
- *                             type: string
- *                           company:
- *                             type: string
- *                       status:
- *                         type: string
- *                       appliedAt:
- *                         type: string
- *                         format: date-time
- *       403:
- *         description: Admin only
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- */
-router.get("/applications", protect, authorize("admin"), getAllApplications);
 
 /**
  * @swagger
