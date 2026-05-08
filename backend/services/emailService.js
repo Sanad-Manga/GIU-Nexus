@@ -46,7 +46,7 @@ const sendOtpEmail = async (email, otp) => {
         <p>You requested a password reset.</p>
         <p>Your one-time code is:</p>
         <h2 style="letter-spacing: 8px; font-size: 32px;">${otp}</h2>
-        <p>This code is valid for <strong>10 minutes</strong>.</p>
+        <p>This code is valid for <strong>1 minute</strong>.</p>
         <p>If you did not request this, please ignore this email.</p>
       `,
     };

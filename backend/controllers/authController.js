@@ -212,7 +212,7 @@ exports.forgotPassword = async (req, res, next) => {
     const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
 
     user.otp = otpHash;
-    user.otpExpire = new Date(Date.now() + 10 * 60 * 1000);
+    user.otpExpire = new Date(Date.now() + 60 * 1000);
     await user.save();
 
     try {
