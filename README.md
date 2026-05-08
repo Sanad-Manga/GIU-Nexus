@@ -28,3 +28,14 @@ GIU Nexus is a smart job board where:
 | Mostafa Ayman |
 
 ## Project Structure
+
+## Docker Setup
+Start the backend API and MongoDB together with one command:
+
+```bash
+docker compose up --build
+```
+
+The API will be available on `http://localhost:5000` and Swagger docs on `http://localhost:5000/api-docs`.
+
+For containerized local development, copy `.env.example` to `.env` and make sure the values are set. `docker-compose.yml` forwards the backend environment variables explicitly, and defaults `MONGO_URI_DOCKER` to the local Mongo container.
