@@ -7,3 +7,5 @@ node_modules/
 .yaml
 *.postman_collection.json
 *.postman_environment.json
+.postman/
+postman/
