@@ -1,28 +1,15 @@
 const express = require('express');
-const rateLimit = require('express-rate-limit');
 const {
   register,
   login,
   logout,
   forgotPassword,
   resetPassword,
-  getProfile,
-  updateProfile,
-  changePassword,
 } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
+const { authLimiter, authLimiterStore } = require('../middleware/rateLimiter');
 const router = express.Router();
 
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    success: false,
-    message: 'Too many attempts from this IP, please try again after 15 minutes',
-  },
-});
 
 /**
  * @swagger
@@ -244,128 +231,5 @@ router.patch('/reset-password/:token', resetPassword);
  *               $ref: '#/components/schemas/Error'
  */
 router.post('/logout', protect, logout);
-
-/**
- * @swagger
- * /auth/profile:
- *   get:
- *     summary: Get the logged-in user's profile
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: User profile returned
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 user:
- *                   $ref: '#/components/schemas/User'
- *       401:
- *         description: Unauthorized
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- */
-
-/**
- * @swagger
- * /auth/profile:
- *   patch:
- *     summary: Update the logged-in user's profile
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 example: Sara Ahmed
- *               bio:
- *                 type: string
- *                 example: Experienced React and Node.js developer
- *               profilePicture:
- *                 type: string
- *                 example: https://example.com/photo.jpg
- *     responses:
- *       200:
- *         description: Profile updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 user:
- *                   $ref: '#/components/schemas/User'
- *       401:
- *         description: Unauthorized
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- */
-router.route('/profile')
-  .get(protect, getProfile)
-  .patch(protect, updateProfile);
-
-/**
- * @swagger
- * /auth/profile/change-password:
- *   patch:
- *     summary: Change password while logged in
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [currentPassword, newPassword]
- *             properties:
- *               currentPassword:
- *                 type: string
- *                 example: oldSecret123
- *               newPassword:
- *                 type: string
- *                 minLength: 6
- *                 example: newSecret456
- *     responses:
- *       200:
- *         description: Password updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: Password updated successfully
- *       401:
- *         description: Current password is incorrect
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- */
-router.route('/profile/change-password')
-  .patch(protect, changePassword);
 
 module.exports = router;
