@@ -86,6 +86,10 @@ const updateApplicationStatus = async (req, res, next) => {
       return res.status(404).json({ success: false, message: "Application not found" });
     }
 
+    if (!application.job) {
+      return res.status(404).json({ success: false, message: "Associated job not found" });
+    }
+
     if (application.job.createdBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({ success: false, message: "You are not authorised to update this application" });
     }
