@@ -7,7 +7,7 @@ const path = require("path");
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 
-const User = require("../backend/models/User");
+const User = require("./models/User");
 
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
