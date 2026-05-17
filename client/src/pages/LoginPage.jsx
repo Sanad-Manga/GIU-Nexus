@@ -40,7 +40,7 @@ const LoginPage = () => {
       });
 
       if (response.data.success) {
-        const { token, user } = response.data.data;
+        const { token, user } = response.data;
         login(token, user);
         navigate('/');
       } else {

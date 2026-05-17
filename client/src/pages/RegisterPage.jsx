@@ -50,7 +50,7 @@ const RegisterPage = () => {
       });
 
       if (response.data.success) {
-        const { token, user } = response.data.data;
+        const { token, user } = response.data;
         login(token, user);
 
         // Show pending banner if recruiter is pending approval
