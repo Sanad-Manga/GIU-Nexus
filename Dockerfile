@@ -6,7 +6,6 @@ COPY package*.json ./
 RUN npm ci --omit=dev
 
 COPY backend ./backend
-COPY server ./server
 COPY .env.example ./.env.example
 
 EXPOSE 5000
