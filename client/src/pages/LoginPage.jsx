@@ -109,7 +109,11 @@ const LoginPage = () => {
             <span className={styles.linkText}>Don't have an account? </span>
             <Link to="/register" className={styles.link}>Sign up here</Link>
           </div>
-          <Link to="/forgot-password" className={styles.link}>Forgot your password?</Link>
+          <Link
+            to="/forgot-password"
+            className={styles.link}
+            onClick={() => { if (formData.email) localStorage.setItem('resetEmail', formData.email); }}
+          >Forgot your password?</Link>
         </div>
       </div>
     </div>
