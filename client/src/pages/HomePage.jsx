@@ -3,18 +3,39 @@ import { Link } from 'react-router-dom';
 import JobCard from '../components/JobCard';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import styles from './HomePage.module.css';
 
-// Skeleton component defined outside (to avoid re-creation on each render)
-const SkeletonGrid = () => (
-  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
-    {[...Array(4)].map((_, i) => (
-      <div key={i} style={{ height: '200px', background: '#E5E7EB', borderRadius: '0.75rem', animation: 'pulse 1.5s infinite' }} />
-    ))}
+const hasScore = (score) => score !== undefined && score !== null;
+
+const SkeletonCard = () => (
+  <div className={styles.skeletonCard}>
+    <div className={styles.skeletonLine} style={{ width: '60%', height: '18px' }} />
+    <div className={styles.skeletonLine} style={{ width: '40%', height: '14px' }} />
+    <div className={styles.skeletonLine} style={{ width: '50%', height: '14px' }} />
+    <div className={styles.skeletonLine} style={{ width: '30%', height: '24px' }} />
+  </div>
+);
+
+const SkeletonGrid = ({ count = 4 }) => (
+  <div className={styles.grid}>
+    {[...Array(count)].map((_, i) => <SkeletonCard key={i} />)}
+  </div>
+);
+
+const NoSkillsState = () => (
+  <div className={styles.noSkills}>
+    <p className={styles.noSkillsText}>
+      We need your skills to recommend jobs.{' '}
+      <Link to="/profile" className={styles.link}>
+        Go to your profile to extract skills -&gt;
+      </Link>
+    </p>
   </div>
 );
 
 const HomePage = () => {
   const { user, isAuthenticated } = useAuth();
+
   const [trendingJobs, setTrendingJobs] = useState([]);
   const [trendingLoading, setTrendingLoading] = useState(true);
   const [trendingError, setTrendingError] = useState('');
@@ -23,91 +44,127 @@ const HomePage = () => {
   const [recLoading, setRecLoading] = useState(false);
   const [recError, setRecError] = useState('');
 
-  // Fetch trending jobs
   useEffect(() => {
     const fetchTrending = async () => {
       try {
         setTrendingLoading(true);
-        const res = await api.get('/jobs', { params: { limit: 8, sort: '-createdAt' } });
-        setTrendingJobs(res.data.data || []);
+        const res = await api.get('/jobs', { params: { limit: 8 } });
+        setTrendingJobs(res.data.jobs || []);
       } catch {
-        setTrendingError('Failed to load trending jobs');
+        setTrendingError('Failed to load trending jobs.');
       } finally {
         setTrendingLoading(false);
       }
     };
     fetchTrending();
-  }, []); // runs once
+  }, []);
 
-  // Fetch recommended jobs (only for jobSeeker)
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== 'jobSeeker') return;
+    if (!isAuthenticated || user?.role !== 'jobSeeker') {
+      setRecommendedJobs([]);
+      setRecLoading(false);
+      setRecError('');
+      return;
+    }
 
     const fetchRecommended = async () => {
       setRecLoading(true);
       setRecError('');
       try {
-        const res = await api.get('/jobs/recommended');
-        setRecommendedJobs(res.data.data || []);
-      } catch (err) {
-        if (err.response?.status === 400 && err.response?.data?.message?.includes('skills')) {
+        const profileRes = await api.get('/profile');
+        const skills = profileRes.data.user?.skills || [];
+        if (skills.length === 0) {
           setRecError('NO_SKILLS');
-        } else {
-          setRecError('Failed to load recommendations');
+          return;
         }
+        const res = await api.get('/jobs/recommended');
+        const sorted = [...(res.data.jobs || [])].sort((a, b) => (b.score || 0) - (a.score || 0));
+        setRecommendedJobs(sorted.slice(0, 6));
+      } catch {
+        setRecError('Failed to load recommendations.');
       } finally {
         setRecLoading(false);
       }
     };
     fetchRecommended();
-  }, [isAuthenticated, user]); // re-run only when auth state changes
+  }, [isAuthenticated, user]);
 
   const showRecommended = isAuthenticated && user?.role === 'jobSeeker';
 
   return (
-    <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '2rem 1rem' }}>
-      {/* Trending Jobs */}
-      <section style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>🔥 Trending Jobs</h2>
-        {trendingLoading && <SkeletonGrid />}
-        {trendingError && <p style={{ color: '#EF4444' }}>{trendingError}</p>}
+    <div className={styles.page}>
+      <section className={styles.hero}>
+        <div className={styles.heroContent}>
+          <span className={styles.heroBadge}>AI-powered job matching</span>
+          <h1 className={styles.heroTitle}>
+            Find your next role,<br />
+            <span className={styles.heroAccent}>matched by AI</span>
+          </h1>
+          <p className={styles.heroSub}>
+            We rank every open position by how well it fits your skills - not by how recent it was posted.
+          </p>
+          <div className={styles.heroCta}>
+            <Link to="/jobs" className={styles.btnPrimary}>Browse jobs</Link>
+            {!isAuthenticated && (
+              <Link to="/register" className={styles.btnOutline}>Get started</Link>
+            )}
+          </div>
+          <div className={styles.heroStats}>
+            <div className={styles.stat}>
+              <span className={styles.statNum}>420+</span>
+              <span className={styles.statLabel}>Open positions</span>
+            </div>
+            <div className={styles.statDivider} />
+            <div className={styles.stat}>
+              <span className={styles.statNum}>38</span>
+              <span className={styles.statLabel}>Companies hiring</span>
+            </div>
+            <div className={styles.statDivider} />
+            <div className={styles.stat}>
+              <span className={styles.statNum}>3 AI</span>
+              <span className={styles.statLabel}>Models working for you</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>Trending jobs</h2>
+          <Link to="/jobs" className={styles.sectionLink}>View all -&gt;</Link>
+        </div>
+        {trendingLoading && <SkeletonGrid count={8} />}
+        {trendingError && <p className={styles.errorText}>{trendingError}</p>}
         {!trendingLoading && !trendingError && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+          <div className={styles.grid}>
             {trendingJobs.map(job => <JobCard key={job._id} job={job} />)}
           </div>
         )}
       </section>
 
-      {/* Recommended for You (job seekers only) */}
       {showRecommended && (
-        <section>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>🎯 Recommended for You</h2>
-          {recLoading && <SkeletonGrid />}
-          {recError === 'NO_SKILLS' && (
-            <div style={{ background: '#FEF3C7', borderLeft: '4px solid #F59E0B', padding: '1rem', borderRadius: '0.5rem' }}>
-              <p>
-                We need your skills to recommend jobs.{' '}
-                <Link to="/profile" style={{ color: '#2563EB', textDecoration: 'underline' }}>
-                  Go to profile → Extract Skills from Bio
-                </Link>
-              </p>
-            </div>
+        <section className={styles.recSection}>
+          <div className={styles.recHeader}>
+            <span className={styles.recBadge}>AI match</span>
+            <h2 className={styles.sectionTitle}>Recommended for you</h2>
+            <Link to="/jobs/recommended" className={styles.sectionLink}>View all -&gt;</Link>
+          </div>
+
+          {recLoading && <SkeletonGrid count={4} />}
+          {!recLoading && recError === 'NO_SKILLS' && <NoSkillsState />}
+          {!recLoading && recError && recError !== 'NO_SKILLS' && (
+            <p className={styles.errorText}>{recError}</p>
           )}
-          {recError && recError !== 'NO_SKILLS' && <p style={{ color: '#EF4444' }}>{recError}</p>}
           {!recLoading && !recError && recommendedJobs.length === 0 && (
-            <p>No recommendations yet. Update your bio.</p>
+            <p className={styles.emptyText}>No recommendations available right now.</p>
           )}
           {!recLoading && !recError && recommendedJobs.length > 0 && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+            <div className={styles.grid}>
               {recommendedJobs.map(job => (
-                <div key={job._id} style={{ position: 'relative' }}>
+                <div key={job._id} className={styles.recCardWrapper}>
                   <JobCard job={job} />
-                  {job.score && (
-                    <span style={{
-                      position: 'absolute', top: '8px', right: '8px',
-                      background: '#10B981', color: 'white', fontSize: '0.7rem',
-                      padding: '0.2rem 0.5rem', borderRadius: '9999px'
-                    }}>
+                  {hasScore(job.score) && (
+                    <span className={styles.scoreBadge}>
                       {Math.round(job.score * 100)}% match
                     </span>
                   )}
@@ -117,13 +174,6 @@ const HomePage = () => {
           )}
         </section>
       )}
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-      `}</style>
     </div>
   );
 };

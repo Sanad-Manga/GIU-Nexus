@@ -2,12 +2,35 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import JobCard from '../components/JobCard';
 import api from '../services/api';
+import styles from './RecommendedJobsPage.module.css';
+
+const hasScore = (score) => score !== undefined && score !== null;
+
+const SkeletonCard = () => (
+  <div className={styles.skeletonCard}>
+    <div className={styles.skeletonLine} style={{ width: '55%', height: '16px' }} />
+    <div className={styles.skeletonLine} style={{ width: '38%', height: '13px' }} />
+    <div className={styles.skeletonLine} style={{ width: '45%', height: '13px' }} />
+    <div className={styles.skeletonLine} style={{ width: '28%', height: '22px' }} />
+  </div>
+);
 
 const SkeletonGrid = () => (
-  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
-    {[...Array(6)].map((_, i) => (
-      <div key={i} style={{ height: '200px', background: '#E5E7EB', borderRadius: '0.75rem', animation: 'pulse 1.5s infinite' }} />
-    ))}
+  <div className={styles.grid}>
+    {[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}
+  </div>
+);
+
+const NoSkillsState = () => (
+  <div className={styles.emptyState}>
+    <div className={styles.emptyIcon}>AI</div>
+    <h2 className={styles.emptyTitle}>No skills on your profile yet</h2>
+    <p className={styles.emptySub}>
+      Extract skills from your bio so we can rank jobs by how well they match you.
+    </p>
+    <Link to="/profile" className={styles.emptyBtn}>
+      Extract skills from bio -&gt;
+    </Link>
   </div>
 );
 
@@ -18,78 +41,99 @@ const RecommendedJobsPage = () => {
 
   useEffect(() => {
     const fetchRecommended = async () => {
+      setLoading(true);
+      setError('');
       try {
-        setLoading(true);
+        const profileRes = await api.get('/profile');
+        const skills = profileRes.data.user?.skills || [];
+        if (skills.length === 0) {
+          setError('NO_SKILLS');
+          return;
+        }
         const res = await api.get('/jobs/recommended');
-        setJobs(res.data.data || []);
+        const sorted = [...(res.data.jobs || [])].sort((a, b) => (b.score || 0) - (a.score || 0));
+        setJobs(sorted);
       } catch (err) {
         if (err.response?.status === 400 && err.response?.data?.message?.includes('skills')) {
           setError('NO_SKILLS');
         } else {
-          setError('Unable to load recommendations');
+          setError('Unable to load recommendations. Please try again.');
         }
       } finally {
         setLoading(false);
       }
     };
     fetchRecommended();
-  }, []); // runs once
-
-  if (loading) {
-    return (
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '2rem 1rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Recommended Jobs</h1>
-        <SkeletonGrid />
-      </div>
-    );
-  }
-
-  if (error === 'NO_SKILLS') {
-    return (
-      <div style={{ textAlign: 'center', padding: '4rem 1rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>No Recommendations Yet</h1>
-        <p>We need your skills to find matching jobs.</p>
-        <Link to="/profile" style={{ color: '#2563EB', textDecoration: 'underline', display: 'inline-block', marginTop: '1rem' }}>
-          Go to profile & extract skills
-        </Link>
-      </div>
-    );
-  }
-
-  if (error) {
-    return <div style={{ color: '#EF4444', textAlign: 'center', padding: '2rem' }}>{error}</div>;
-  }
+  }, []);
 
   return (
-    <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '2rem 1rem' }}>
-      <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Recommended Jobs</h1>
-      <p style={{ color: '#6B7280', marginBottom: '2rem' }}>Based on your skills and profile</p>
-      {jobs.length === 0 ? (
-        <p>No jobs match your skills right now.</p>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
-          {jobs.map(job => (
-            <div key={job._id} style={{ position: 'relative' }}>
-              <JobCard job={job} />
-              {job.score && (
-                <span style={{
-                  position: 'absolute', top: '8px', right: '8px',
-                  background: '#10B981', color: 'white', fontSize: '0.7rem',
-                  padding: '0.2rem 0.5rem', borderRadius: '9999px'
-                }}>
-                  {Math.round(job.score * 100)}% match
-                </span>
-              )}
-            </div>
-          ))}
+    <div className={styles.page}>
+      <div className={styles.pageHeader}>
+        <div className={styles.breadcrumb}>
+          <Link to="/" className={styles.breadcrumbLink}>Home</Link>
+          <span className={styles.breadcrumbSep}>/</span>
+          <Link to="/jobs" className={styles.breadcrumbLink}>Jobs</Link>
+          <span className={styles.breadcrumbSep}>/</span>
+          <span className={styles.breadcrumbCurrent}>Recommended</span>
         </div>
-      )}
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-      `}</style>
+        <div className={styles.headerTop}>
+          <span className={styles.aiBadge}>AI match</span>
+          <h1 className={styles.pageTitle}>Recommended for you</h1>
+        </div>
+        <p className={styles.pageSub}>
+          Jobs ranked by AI similarity score - highest match first
+        </p>
+      </div>
+
+      <div className={styles.content}>
+        {loading && <SkeletonGrid />}
+        {!loading && error === 'NO_SKILLS' && <NoSkillsState />}
+        {!loading && error && error !== 'NO_SKILLS' && (
+          <p className={styles.errorText}>{error}</p>
+        )}
+        {!loading && !error && jobs.length === 0 && (
+          <p className={styles.emptyText}>No jobs match your skills right now.</p>
+        )}
+        {!loading && !error && jobs.length > 0 && (
+          <>
+            <div className={styles.resultsBar}>
+              <span className={styles.resultsCount}>{jobs.length} matched jobs</span>
+            </div>
+            <div className={styles.jobList}>
+              {jobs.map((job, index) => (
+                <div key={job._id} className={styles.jobRow}>
+                  <span className={`${styles.rank} ${index < 3 ? styles.rankTop : ''}`}>
+                    {index + 1}
+                  </span>
+                  <div className={styles.cardWrapper}>
+                    <JobCard job={job} />
+                  </div>
+                  {hasScore(job.score) && (
+                    <div className={styles.scoreBlock}>
+                      <span className={`${styles.scoreNum} ${
+                        job.score >= 0.7 ? styles.scoreHigh :
+                        job.score >= 0.4 ? styles.scoreMid : styles.scoreLow
+                      }`}>
+                        {Math.round(job.score * 100)}%
+                      </span>
+                      <div className={styles.scoreBar}>
+                        <div
+                          className={`${styles.scoreFill} ${
+                            job.score >= 0.7 ? styles.fillHigh :
+                            job.score >= 0.4 ? styles.fillMid : styles.fillLow
+                          }`}
+                          style={{ width: `${Math.round(job.score * 100)}%` }}
+                        />
+                      </div>
+                      <span className={styles.scoreLabel}>match score</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 };
