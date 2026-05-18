@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from '../styles/ForgotPasswordPage.module.css';
@@ -11,6 +11,14 @@ const ForgotPasswordPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Load email from localStorage on mount
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('resetEmail');
+    if (savedEmail) {
+      setEmail(savedEmail);
+    }
+  }, []);
+
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -21,9 +29,12 @@ const ForgotPasswordPage = () => {
     setLoading(true);
     try {
       await api.post('/auth/forgot-password', { email });
+      // Save email to localStorage
+      localStorage.setItem('resetEmail', email);
       setStep('otp');
     } catch {
       // Still move to OTP step — backend always returns 200 to prevent email enumeration
+      localStorage.setItem('resetEmail', email);
       setStep('otp');
     } finally {
       setLoading(false);
@@ -40,6 +51,9 @@ const ForgotPasswordPage = () => {
     setLoading(true);
     try {
       const { data } = await api.post('/auth/verify-otp', { email, otp });
+      // Save email and token for reset password page
+      localStorage.setItem('resetEmail', email);
+      localStorage.setItem('resetToken', data.resetToken);
       navigate(`/reset-password/${data.resetToken}`);
     } catch (err) {
       setError(err.response?.data?.message || 'OTP is invalid or has expired');
