@@ -10,3 +10,7 @@ node_modules/
 .postman/
 postman/
 *.wolf
+
+#Open wolf
+.wolf/
+.claude/rules/openwolf.md
