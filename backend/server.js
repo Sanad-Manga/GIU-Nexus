@@ -1,6 +1,8 @@
 
 require("dotenv").config();
 const dns = require('dns');
+dns.setServers(['8.8.8.8', '1.1.1.1']);
+
 
 // Railway containers have no IPv6 internet connectivity — patch dns.lookup globally
 // so every net.createConnection (including nodemailer's) resolves to IPv4 only.
