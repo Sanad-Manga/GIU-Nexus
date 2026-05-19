@@ -9,3 +9,7 @@ node_modules/
 *.postman_environment.json
 .postman/
 postman/
+
+#Open wolf
+.wolf/
+.claude/rules/openwolf.md
