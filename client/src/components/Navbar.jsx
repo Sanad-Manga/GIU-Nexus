@@ -8,6 +8,7 @@ const roleLabels = {
   jobSeeker: 'Job seeker',
 }
 
+
 const getLinks = (user) => {
   if (!user) return [{ to: '/jobs', label: 'Jobs' }]
 

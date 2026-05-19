@@ -60,12 +60,7 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== 'jobSeeker') {
-      setRecommendedJobs([]);
-      setRecLoading(false);
-      setRecError('');
-      return;
-    }
+    if (!isAuthenticated || user?.role !== 'jobSeeker') return;
 
     const fetchRecommended = async () => {
       setRecLoading(true);

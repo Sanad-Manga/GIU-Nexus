@@ -12,16 +12,18 @@
 .hero {
   background: #ffffff;
   border-bottom: 1px solid #E5E7EB;
-  padding: 4rem 2rem 3rem;
+  padding: 5rem 2rem 4rem;
 }
 
 .heroContent {
   max-width: 680px;
   margin: 0 auto;
+  text-align: center;
 }
 
 .heroBadge {
-  display: inline-block;
+  display: block;
+  text-align: center;
   font-size: 12px;
   font-weight: 500;
   color: #10B981;
@@ -31,6 +33,9 @@
   padding: 4px 12px;
   margin-bottom: 1.25rem;
   letter-spacing: 0.01em;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .heroTitle {
@@ -40,6 +45,7 @@
   line-height: 1.1;
   color: #111827;
   margin-bottom: 1rem;
+  text-align: center;
 }
 
 .heroAccent {
@@ -136,14 +142,14 @@
 .section {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem 2rem;
+  padding: 3rem 2rem;
 }
 
 .recSection {
   background: #ffffff;
   border-top: 1px solid #E5E7EB;
   border-bottom: 1px solid #E5E7EB;
-  padding: 2rem;
+  padding: 3rem 2rem;
 }
 
 .sectionHeader {

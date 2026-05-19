@@ -138,4 +138,5 @@ const RecommendedJobsPage = () => {
   );
 };
 
+
 export default RecommendedJobsPage;

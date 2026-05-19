@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Modal from '../components/Modal';
 import api from '../services/api';
 import styles from './AdminUsersPage.module.css';
@@ -25,12 +25,12 @@ const AdminUsersPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [modal, setModal] = useState({ open: false, userId: null, userName: '' });
 
-  const buildParams = () => ({
+  const buildParams = useCallback(() => ({
     page,
     limit: PAGE_SIZE,
     ...(filters.role && { role: filters.role }),
     ...(filters.status && { status: filters.status }),
-  });
+  }), [page, filters.role, filters.status]);
 
   const refreshUsers = async () => {
     const res = await api.get('/users', { params: buildParams() });
@@ -57,7 +57,7 @@ const AdminUsersPage = () => {
     };
     fetchUsers();
     return () => { isMounted = false; };
-  }, [page, filters.role, filters.status]);
+  }, [page, filters.role, filters.status, buildParams]);
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
