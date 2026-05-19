@@ -1,52 +1,62 @@
 import { useState } from 'react'
 import api from '../services/api'
-import styles from '../styles/SaveJobButton.module.css'
+
+const BookmarkIcon = ({ filled }) => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6 2h12v18l-6-3-6 3V2z" fill={filled ? '#2563EB' : 'none'} stroke={filled ? '#2563EB' : '#6b7280'} strokeWidth="1.2" strokeLinejoin="round"/>
+  </svg>
+)
 
 const SaveJobButton = ({ jobId, jobStatus, status, initialSaved = false, onUnsave }) => {
-  const [saved, setSaved] = useState(initialSaved)
-  const [loading, setLoading] = useState(false)
+  const jsStatus = jobStatus ?? status
+  const storageKey = `saved_job_${jobId}`
+  const [saved, setSaved] = useState(() => {
+    const stored = localStorage.getItem(storageKey)
+    return stored !== null ? stored === 'true' : initialSaved
+  })
+  const [busy, setBusy] = useState(false)
 
   const toggle = async (e) => {
     e.preventDefault()
     e.stopPropagation()
-    if ((jobStatus ?? status) !== 'open' || loading) return
+    if (jsStatus !== 'open' || busy) return
 
-    const nextSaved = !saved
-    setSaved(nextSaved)
+    const prev = saved
+    const newState = !prev
+    setSaved(newState)
+    localStorage.setItem(storageKey, String(newState))
+    setBusy(true)
 
     try {
-      setLoading(true)
-      const { data } = await api.post(`/jobs/${jobId}/save`)
-      setSaved(data.saved)
-      if (!data.saved && onUnsave) {
+      await api.post(`/jobs/${jobId}/save`)
+      if (!newState && onUnsave) {
         onUnsave(jobId)
       }
     } catch {
-      setSaved(!nextSaved)
+      setSaved(prev)
+      localStorage.setItem(storageKey, String(prev))
     } finally {
-      setLoading(false)
+      setBusy(false)
     }
   }
 
   return (
     <button
-      className={`${styles.btn}${saved ? ` ${styles.saved}` : ''}`}
       onClick={toggle}
-      disabled={(jobStatus ?? status) !== 'open' || loading}
-      aria-label={saved ? 'Unsave job' : 'Save job'}
-      title={(jobStatus ?? status) !== 'open' ? 'Job is closed' : saved ? 'Unsave' : 'Save'}
+      disabled={jsStatus !== 'open'}
+      aria-pressed={saved}
+      style={{
+        background: 'transparent',
+        border: 'none',
+        padding: 8,
+        cursor: jsStatus !== 'open' ? 'not-allowed' : 'pointer',
+        display: 'inline-flex',
+        alignItems: 'center',
+        opacity: jsStatus !== 'open' ? 0.5 : 1
+      }}
+      title={saved ? 'Saved' : 'Save job'}
     >
-      <svg
-        className={styles.icon}
-        viewBox="0 0 24 24"
-        fill={saved ? '#2563EB' : 'none'}
-        stroke={saved ? '#2563EB' : '#6B7280'}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-      </svg>
+      <BookmarkIcon filled={saved} />
     </button>
   )
 }

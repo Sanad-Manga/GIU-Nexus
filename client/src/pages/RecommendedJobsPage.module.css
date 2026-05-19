@@ -1,0 +1,265 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+.page {
+  font-family: 'Inter', sans-serif;
+  background: #F9FAFB;
+  min-height: 100vh;
+  color: #111827;
+}
+
+/* ── PAGE HEADER ── */
+.pageHeader {
+  background: #ffffff;
+  border-bottom: 1px solid #E5E7EB;
+  padding: 2rem 2rem 1.75rem;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #9CA3AF;
+  margin-bottom: 1rem;
+}
+
+
+.breadcrumbLink {
+  color: #9CA3AF;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.breadcrumbLink:hover {
+  color: #6B7280;
+}
+
+.breadcrumbSep {
+  color: #D1D5DB;
+}
+
+.breadcrumbCurrent {
+  color: #6B7280;
+}
+
+.headerTop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 0.5rem;
+}
+
+.aiBadge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10B981;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  padding: 3px 9px;
+  border-radius: 100px;
+}
+
+.pageTitle {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #111827;
+}
+
+.pageSub {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+/* ── CONTENT ── */
+.content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.resultsBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.resultsCount {
+  font-size: 13px;
+  color: #9CA3AF;
+}
+
+/* ── JOB LIST ── */
+.jobList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.jobRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #ffffff;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.jobRow:hover {
+  border-color: #D1D5DB;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.rank {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #D1D5DB;
+  min-width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.rankTop {
+  color: #10B981;
+}
+
+.cardWrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── SCORE BLOCK ── */
+.scoreBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+  min-width: 70px;
+}
+
+.scoreNum {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.scoreHigh { color: #10B981; }
+.scoreMid  { color: #F59E0B; }
+.scoreLow  { color: #9CA3AF; }
+
+.scoreBar {
+  width: 64px;
+  height: 3px;
+  background: #E5E7EB;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.scoreFill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+.fillHigh { background: #10B981; }
+.fillMid  { background: #F59E0B; }
+.fillLow  { background: #D1D5DB; }
+
+.scoreLabel {
+  font-size: 10px;
+  color: #9CA3AF;
+  letter-spacing: 0.01em;
+}
+
+/* ── SKELETON ── */
+.skeletonCard {
+  background: #ffffff;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeletonLine {
+  background: #E5E7EB;
+  border-radius: 6px;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── EMPTY STATE ── */
+.emptyState {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: #ffffff;
+  border: 1px dashed #E5E7EB;
+  border-radius: 12px;
+}
+
+.emptyIcon {
+  font-size: 32px;
+  color: #D1D5DB;
+  margin-bottom: 1rem;
+}
+
+.emptyTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.emptySub {
+  font-size: 14px;
+  color: #6B7280;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.emptyBtn {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2563EB;
+  border: 1px solid #2563EB;
+  border-radius: 8px;
+  padding: 8px 20px;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.emptyBtn:hover {
+  background: #2563EB;
+  color: #ffffff;
+}
+
+.errorText {
+  color: #EF4444;
+  font-size: 14px;
+}
+
+.emptyText {
+  font-size: 14px;
+  color: #6B7280;
+}
