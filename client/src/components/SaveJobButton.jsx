@@ -2,14 +2,14 @@ import { useState } from 'react'
 import api from '../services/api'
 import styles from '../styles/SaveJobButton.module.css'
 
-const SaveJobButton = ({ jobId, jobStatus, initialSaved = false, onUnsave }) => {
+const SaveJobButton = ({ jobId, jobStatus, status, initialSaved = false, onUnsave }) => {
   const [saved, setSaved] = useState(initialSaved)
   const [loading, setLoading] = useState(false)
 
   const toggle = async (e) => {
     e.preventDefault()
     e.stopPropagation()
-    if (jobStatus !== 'open' || loading) return
+    if ((jobStatus ?? status) !== 'open' || loading) return
 
     const nextSaved = !saved
     setSaved(nextSaved)
@@ -32,9 +32,9 @@ const SaveJobButton = ({ jobId, jobStatus, initialSaved = false, onUnsave }) => 
     <button
       className={`${styles.btn}${saved ? ` ${styles.saved}` : ''}`}
       onClick={toggle}
-      disabled={jobStatus !== 'open' || loading}
+      disabled={(jobStatus ?? status) !== 'open' || loading}
       aria-label={saved ? 'Unsave job' : 'Save job'}
-      title={jobStatus !== 'open' ? 'Job is closed' : saved ? 'Unsave' : 'Save'}
+      title={(jobStatus ?? status) !== 'open' ? 'Job is closed' : saved ? 'Unsave' : 'Save'}
     >
       <svg
         className={styles.icon}
