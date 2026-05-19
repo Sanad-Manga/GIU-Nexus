@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../services/api'
-import ApplicationStatusBadge from '../components/ApplicationStatusBadge'
 import Spinner from '../components/Spinner'
 import styles from '../styles/MyApplicationsPage.module.css'
 
-const MyApplicationsPage = () => {
+const STATUS_CLASS = {
+  pending:     styles.pending,
+  shortlisted: styles.shortlisted,
+  rejected:    styles.rejected,
+}
+
+export default function MyApplicationsPage() {
   const [applications, setApplications] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -32,29 +37,40 @@ const MyApplicationsPage = () => {
 
       {!error && applications.length === 0 ? (
         <div className={styles.empty}>
-          <p>
-            You haven't applied to any jobs yet.{' '}
-            <Link to="/jobs" className={styles.link}>Browse available jobs.</Link>
-          </p>
+          <div className={styles.emptyIcon}>📋</div>
+          <p className={styles.emptyText}>You haven't applied to any jobs yet.</p>
+          <Link to="/jobs" className={styles.browseBtn}>Browse Jobs</Link>
         </div>
       ) : (
         <div className={styles.list}>
           {applications.map(app => (
-            <div key={app._id} className={styles.card}>
+            <Link
+              key={app._id}
+              to={app.job?._id ? `/jobs/${app.job._id}` : '/jobs'}
+              className={styles.card}
+            >
               <div className={styles.info}>
                 <h3 className={styles.jobTitle}>{app.job?.title ?? 'Unknown Job'}</h3>
                 <p className={styles.meta}>
-                  <span>{app.job?.company}</span>
+                  {app.job?.company && <span>{app.job.company}</span>}
                   {app.job?.type && (
                     <>
                       <span className={styles.dot}>·</span>
                       <span>{app.job.type}</span>
                     </>
                   )}
+                  {app.job?.location && (
+                    <>
+                      <span className={styles.dot}>·</span>
+                      <span>{app.job.location}</span>
+                    </>
+                  )}
                 </p>
               </div>
               <div className={styles.right}>
-                <ApplicationStatusBadge status={app.status} />
+                <span className={`${styles.badge} ${STATUS_CLASS[app.status] ?? ''}`}>
+                  {app.status}
+                </span>
                 <span className={styles.date}>
                   {new Date(app.appliedAt).toLocaleDateString('en-US', {
                     month: 'short',
@@ -63,12 +79,10 @@ const MyApplicationsPage = () => {
                   })}
                 </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}
     </div>
   )
 }
-
-export default MyApplicationsPage
