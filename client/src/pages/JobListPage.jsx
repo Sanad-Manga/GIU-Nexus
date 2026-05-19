@@ -1,14 +1,17 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { useSearchParams, Link } from 'react-router-dom'
+import { useSearchParams, Link, useNavigate } from 'react-router-dom'
 import api from '../services/api'
 import JobCard from '../components/JobCard'
 import Spinner from '../components/Spinner'
+import { useAuth } from '../context/AuthContext'
 
 const JOB_TYPES    = ['full-time', 'part-time', 'internship', 'contract']
 const JOB_STATUSES = ['open', 'closed']
 const LIMIT = 12
 
 export default function JobListPage() {
+  const { isAuthenticated } = useAuth()
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
 
   const keyword  = searchParams.get('keyword')  || ''
@@ -21,6 +24,7 @@ export default function JobListPage() {
   const [total,   setTotal]   = useState(0)
   const [loading, setLoading] = useState(true)
   const [error,   setError]   = useState('')
+  const [errorType, setErrorType] = useState(null) // 'auth' | 'forbidden' | null
 
   // Draft state for filter form — only pushed to URL on submit
   const [draft, setDraft] = useState({ keyword, location, type, status })
@@ -44,11 +48,21 @@ export default function JobListPage() {
       setJobs(data.jobs ?? data.data ?? [])
       setTotal(data.total ?? 0)
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load jobs. Please try again.')
+      const status = err.response?.status
+      if (status === 401) {
+        navigate('/login', { replace: true })
+        return
+      } else if (status === 403) {
+        setError('You do not have permission to view jobs.')
+        setErrorType('forbidden')
+      } else {
+        setError(err.response?.data?.message || 'Failed to load jobs. Please try again.')
+        setErrorType(null)
+      }
     } finally {
       setLoading(false)
     }
-  }, [keyword, location, type, status, page])
+  }, [keyword, location, type, status, page, navigate])
 
   useEffect(() => { fetchJobs() }, [fetchJobs])
 
@@ -97,6 +111,19 @@ export default function JobListPage() {
   }
 
   const totalPages = Math.ceil(total / LIMIT)
+
+  if (!isAuthenticated) {
+    return (
+      <div style={{ padding: '4rem 1rem', textAlign: 'center', fontFamily: 'sans-serif' }}>
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Please Log In to View Jobs</h2>
+        <p style={{ color: '#6b7280', marginBottom: '1.25rem' }}>You need an account to browse and apply for jobs.</p>
+        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
+          <Link to="/login" style={{ padding: '0.6rem 1.25rem', background: '#2563EB', color: '#fff', borderRadius: 8, textDecoration: 'none', fontWeight: 600 }}>Log In</Link>
+          <Link to="/register" style={{ padding: '0.6rem 1.25rem', background: '#f3f4f6', color: '#111827', borderRadius: 8, textDecoration: 'none', fontWeight: 600 }}>Create Account</Link>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div style={s.page}>
@@ -209,7 +236,19 @@ export default function JobListPage() {
       ) : error ? (
         <div style={s.error}>
           <p>{error}</p>
-          <button onClick={fetchJobs} style={s.retryBtn}>Try again</button>
+          {errorType === 'auth' ? (
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', marginTop: '1rem' }}>
+              <Link to="/login" style={s.searchBtn}>Log In</Link>
+              <Link to="/register" style={s.resetBtn}>Create Account</Link>
+            </div>
+          ) : errorType === 'forbidden' ? (
+            <div style={{ marginTop: '1rem' }}>
+              <p style={{ marginBottom: '0.5rem' }}>If you believe this is an error, contact support or your administrator.</p>
+              <button onClick={fetchJobs} style={s.retryBtn}>Try again</button>
+            </div>
+          ) : (
+            <button onClick={fetchJobs} style={s.retryBtn}>Try again</button>
+          )}
         </div>
       ) : jobs.length === 0 ? (
         <div style={s.empty}>

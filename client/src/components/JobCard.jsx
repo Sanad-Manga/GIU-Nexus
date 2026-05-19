@@ -1,7 +1,10 @@
 import { CATEGORY_COLORS } from '../utils/categoryColors'
+import SaveJobButton from './SaveJobButton'
+import { useAuth } from '../context/AuthContext'
 
 const JobCard = ({ job }) => {
   const { title, company, type, location, category } = job
+  const { isAuthenticated, user } = useAuth()
   const categoryColor = CATEGORY_COLORS[category] ?? '#6b7280'
 
   const s = {
@@ -74,6 +77,12 @@ const JobCard = ({ job }) => {
         e.currentTarget.style.zIndex = 0
       }}
     >
+      {/* Save button for job seekers */}
+      <div style={{ position: 'absolute', top: 10, right: 10 }}>
+        {isAuthenticated && user?.role === 'jobSeeker' && (
+          <SaveJobButton jobId={job._id} status={job.status} initialSaved={job.isSaved ?? false} />
+        )}
+      </div>
       <div style={{ textAlign: 'center' }}>
         <h3 style={s.title}>{title}</h3>
         <p style={s.company}>{company}</p>
@@ -83,5 +92,7 @@ const JobCard = ({ job }) => {
     </div>
   )
 }
+
+// no-op
 
 export default JobCard

@@ -16,6 +16,7 @@ export default function JobDetailPage() {
   const [job,            setJob]           = useState(null)
   const [loading,        setLoading]       = useState(true)
   const [error,          setError]         = useState('')
+  const [errorType,      setErrorType]     = useState(null) // 'auth'|'forbidden'|null
   const [modalOpen,      setModalOpen]     = useState(false)
   const [authModalOpen,  setAuthModalOpen] = useState(false)
   const [authMessage,    setAuthMessage]   = useState('')
@@ -26,6 +27,7 @@ export default function JobDetailPage() {
   const [myApplication,  setMyApplication] = useState(null)
 
   const isJobSeeker = isAuthenticated && user?.role === 'jobSeeker'
+  const showJobSeekerActions = isJobSeeker
 
   useEffect(() => {
     const load = async () => {
@@ -46,7 +48,17 @@ export default function JobDetailPage() {
           } catch { /* not critical */ }
         }
       } catch (err) {
-        setError(err.response?.data?.message || 'Could not load this job.')
+          const status = err.response?.status
+          if (status === 401) {
+            navigate('/login', { replace: true })
+            return
+          } else if (status === 403) {
+            setError('You do not have permission to view this job.')
+            setErrorType('forbidden')
+          } else {
+            setError(err.response?.data?.message || 'Could not load this job.')
+            setErrorType(null)
+          }
       } finally {
         setLoading(false)
       }
@@ -121,9 +133,19 @@ export default function JobDetailPage() {
   if (error) return (
     <div style={{ textAlign: 'center', padding: '4rem', fontFamily: 'sans-serif' }}>
       <p style={{ color: '#b91c1c', marginBottom: '1rem' }}>{error}</p>
-      <button onClick={() => navigate('/jobs')} style={{ padding: '0.5rem 1.25rem', background: '#f3f4f6', border: 'none', borderRadius: 8, cursor: 'pointer' }}>
-        ← Back to Jobs
-      </button>
+      {errorType === 'auth' ? (
+        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
+          <button onClick={() => navigate('/login')} style={{ padding: '0.6rem 1.25rem', background: '#2563EB', color: '#fff', borderRadius: 8, border: 'none', cursor: 'pointer' }}>Log In</button>
+          <button onClick={() => navigate('/register')} style={{ padding: '0.6rem 1.25rem', background: '#f3f4f6', color: '#111827', borderRadius: 8, border: '1px solid #e5e7eb', cursor: 'pointer' }}>Create Account</button>
+        </div>
+      ) : errorType === 'forbidden' ? (
+        <div>
+          <p style={{ color: '#6b7280', marginBottom: '1rem' }}>If you believe this is an error, contact your administrator.</p>
+          <button onClick={() => navigate('/jobs')} style={{ padding: '0.5rem 1.25rem', background: '#f3f4f6', border: 'none', borderRadius: 8, cursor: 'pointer' }}>← Back to Jobs</button>
+        </div>
+      ) : (
+        <button onClick={() => navigate('/jobs')} style={{ padding: '0.5rem 1.25rem', background: '#f3f4f6', border: 'none', borderRadius: 8, cursor: 'pointer' }}>← Back to Jobs</button>
+      )}
     </div>
   )
 
@@ -131,6 +153,8 @@ export default function JobDetailPage() {
 
   const categoryColor = CATEGORY_COLORS[job.category] ?? 'gray'
   const recruiter     = job.createdBy ?? job.recruiter ?? job.postedBy ?? null
+  const recruiterStatus = recruiter?.status
+  const recruiterApproved = recruiterStatus ? recruiterStatus === 'approved' : true
 
   return (
     <div style={s.page}>
@@ -159,36 +183,49 @@ export default function JobDetailPage() {
             </span>
           </div>
 
-          {/* Save & Apply buttons - side by side */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', width: '100%' }}>
-            <SaveJobButton jobId={job._id} status={job.status} initialSaved={job.isSaved ?? false} />
-            <div style={{ marginLeft: 'auto' }}>
-              {myApplication ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>You applied</p>
-                  <ApplicationStatusBadge status={myApplication.status} />
-                </div>
+          {showJobSeekerActions && (
+            /* Save & Apply buttons - side by side */
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', width: '100%' }}>
+              {recruiterApproved ? (
+                <SaveJobButton jobId={job._id} status={job.status} initialSaved={job.isSaved ?? false} />
               ) : (
-                <button 
-                  onClick={handleApplyClick}
-                  disabled={job.status !== 'open'}
-                  style={{ ...s.applyBtn, ...(job.status !== 'open' ? { opacity: 0.6, cursor: 'not-allowed' } : {}), width: 'auto' }}
-                  onMouseEnter={(e) => {
-                    e.target.style.background = '#1d4ed8'
-                    e.target.style.boxShadow = '0 8px 16px rgba(37, 99, 235, 0.3)'
-                    e.target.style.transform = 'translateY(-2px)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.background = '#2563EB'
-                    e.target.style.boxShadow = 'none'
-                    e.target.style.transform = 'scale(1)'
-                  }}
-                >
-                  Apply Now
-                </button>
+                <button disabled style={{ padding: '0.6rem 1rem', background: '#f3f4f6', color: '#9ca3af', borderRadius: 8, border: '1px solid #e5e7eb', cursor: 'not-allowed' }}>Save</button>
               )}
+              <div style={{ marginLeft: 'auto' }}>
+                {myApplication ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>You applied</p>
+                    <ApplicationStatusBadge status={myApplication.status} />
+                  </div>
+                ) : (
+                  <button 
+                    onClick={handleApplyClick}
+                    disabled={job.status !== 'open' || !recruiterApproved}
+                    style={{ ...s.applyBtn, ...(job.status !== 'open' ? { opacity: 0.6, cursor: 'not-allowed' } : {}), width: 'auto' }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = '#1d4ed8'
+                      e.target.style.boxShadow = '0 8px 16px rgba(37, 99, 235, 0.3)'
+                      e.target.style.transform = 'translateY(-2px)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = '#2563EB'
+                      e.target.style.boxShadow = 'none'
+                      e.target.style.transform = 'scale(1)'
+                    }}
+                  >
+                    Apply Now
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Recruiter status message when actions are disabled */}
+          {showJobSeekerActions && !recruiterApproved && (
+            <div style={{ marginTop: '0.75rem', padding: '0.75rem', background: '#fffbeb', border: '1px solid #fef3c7', borderRadius: 8, color: '#92400e' }}>
+              This recruiter's account is {recruiterStatus}. Applying and saving are disabled for listings from unapproved recruiters.
+            </div>
+          )}
         </div>
 
         {/* ── Body ── */}
