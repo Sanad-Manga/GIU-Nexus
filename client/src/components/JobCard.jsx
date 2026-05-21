@@ -59,6 +59,17 @@ const JobCard = ({ job }) => {
       width: 'fit-content',
       margin: '0 auto',
     },
+    pendingBadge: {
+      display: 'inline-block',
+      padding: '4px 12px',
+      borderRadius: 16,
+      fontSize: '0.75rem',
+      fontWeight: 600,
+      color: '#1e40af',
+      border: '1px solid #60a5fa',
+      background: '#eff6ff',
+      width: 'fit-content',
+    },
   }
 
   return (
@@ -77,6 +88,12 @@ const JobCard = ({ job }) => {
         e.currentTarget.style.zIndex = 0
       }}
     >
+      {/* Pending badge for top left */}
+      {job.myApplication && job.myApplication.status === 'pending' && (
+        <div style={{ position: 'absolute', top: 10, left: 10 }}>
+          <span style={s.pendingBadge}>Pending</span>
+        </div>
+      )}
       {/* Save button for job seekers */}
       <div style={{ position: 'absolute', top: 10, right: 10 }}>
         {isAuthenticated && user?.role === 'jobSeeker' && (
