@@ -1,0 +1,260 @@
+.shell {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid #e5e7eb;
+  backdrop-filter: blur(14px);
+}
+
+.nav {
+  width: 100%;
+  max-width: 1280px;
+  min-height: 72px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 20px;
+  padding: 0 28px;
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui, sans-serif;
+  margin: 0 auto;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #111827;
+  text-decoration: none;
+  min-width: max-content;
+}
+
+.brandMark {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: #2563eb;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.18);
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  text-align: left;
+}
+
+.brandName {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.brandTag {
+  margin-top: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #10b981;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.navLink,
+.loginLink {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  padding: 0 12px;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.navLink:hover,
+.loginLink:hover {
+  color: #111827;
+  background: #f3f4f6;
+}
+
+.activeLink {
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: max-content;
+}
+
+.welcomeText {
+  color: #374151;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.primaryAction,
+.logoutBtn {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  padding: 0 16px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.primaryAction {
+  color: #ffffff;
+  background: #2563eb;
+  border: 1px solid #2563eb;
+}
+
+.primaryAction:hover {
+  background: #1e40af;
+  border-color: #1e40af;
+}
+
+.logoutBtn {
+  color: #ef4444;
+  background: #ffffff;
+  border: 1px solid #fee2e2;
+}
+
+.logoutBtn:hover {
+  color: #dc2626;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.userPill {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 4px 10px 4px 5px;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  background: #ffffff;
+}
+
+.userInitial {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563eb;
+  background: #eff6ff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.userMeta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+  text-align: left;
+}
+
+.userName {
+  max-width: 112px;
+  overflow: hidden;
+  color: #111827;
+  font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.userRole {
+  margin-top: 3px;
+  color: #9ca3af;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 900px) {
+  .nav {
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+    padding: 12px 18px;
+  }
+
+  .links {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  .links::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .nav {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .brand,
+  .actions {
+    width: 100%;
+  }
+
+  .actions {
+    justify-content: space-between;
+  }
+
+  .welcomeText {
+    display: none;
+  }
+
+  .links {
+    width: 100%;
+  }
+
+  .navLink {
+    padding: 0 10px;
+  }
+
+  .userPill {
+    min-width: 0;
+  }
+}
