@@ -137,7 +137,6 @@ const EditJobPage = () => {
                 <option value="full-time">Full-time</option>
                 <option value="part-time">Part-time</option>
                 <option value="internship">Internship</option>
-                <option value="remote">Remote</option>
               </select>
             </div>
           </div>
