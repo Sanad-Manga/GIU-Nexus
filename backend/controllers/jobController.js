@@ -1,4 +1,5 @@
 const JobPost = require('../models/JobPost');
+const Application = require('../models/Application');
 const User = require('../models/User');
 const { classifyJobCategory } = require('../services/classificationService');
 const hf = require('../services/hfService');
@@ -28,7 +29,18 @@ const getJobs = async (req, res, next) => {
 const getMyJobs = async (req, res, next) => {
   try {
     const jobs = await JobPost.find({ createdBy: req.user._id }).sort({ createdAt: -1 });
-    res.status(200).json({ success: true, jobs });
+
+    // Attach applicant counts for each job so the frontend can display them
+    const jobsWithCounts = await Promise.all(
+      jobs.map(async (job) => {
+        const count = await Application.countDocuments({ job: job._id });
+        const obj = job.toObject ? job.toObject() : job;
+        obj.applicantCount = count;
+        return obj;
+      })
+    );
+
+    res.status(200).json({ success: true, jobs: jobsWithCounts });
   } catch (err) { next(err); }
 };
 
