@@ -186,9 +186,9 @@ function AdminDashboard() {
               {stats.topJobs.map((job, index) => (
                 <li key={job._id} className="admin-leaderboard-row">
                   <span className="admin-rank">{index + 1}</span>
-                  <div>
-                    <strong>{job.title}</strong>
-                    <p>{job.company}</p>
+                  <div className="admin-leaderboard-info">
+                    <strong className="admin-leaderboard-title">{job.title}</strong>
+                    <p className="admin-leaderboard-company">{job.company}</p>
                   </div>
                   <span className="admin-pill">{job.applicationCount} applications</span>
                 </li>
