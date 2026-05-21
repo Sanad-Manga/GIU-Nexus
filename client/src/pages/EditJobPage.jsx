@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react'
-`import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import api from '../services/api'
 import Spinner from '../components/Spinner'
 import JobForm from '../components/JobForm'
-
-const JOB_TYPES = ['full-time', 'part-time', 'internship', 'contract']
 
 const EditJobPage = () => {
   const navigate = useNavigate()
@@ -33,7 +31,7 @@ const EditJobPage = () => {
       try {
         setLoading(true)
         const { data } = await api.get(`/jobs/${id}`)
-        const jobData = data.job
+        const jobData = data.job;
         setJob(jobData)
         setForm({
           title: jobData.title || '',
