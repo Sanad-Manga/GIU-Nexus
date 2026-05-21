@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import api from '../services/api'
 
 const BookmarkIcon = ({ filled }) => (
@@ -7,11 +7,10 @@ const BookmarkIcon = ({ filled }) => (
   </svg>
 )
 
-const SaveJobButton = ({ jobId, status, initialSaved = false, jobStatus }) => {
+const SaveJobButton = ({ jobId, jobStatus, status, initialSaved = false, onUnsave }) => {
   const jsStatus = jobStatus ?? status
   const storageKey = `saved_job_${jobId}`
   const [saved, setSaved] = useState(() => {
-    // Check localStorage first, then initialSaved
     const stored = localStorage.getItem(storageKey)
     return stored !== null ? stored === 'true' : initialSaved
   })
@@ -27,10 +26,13 @@ const SaveJobButton = ({ jobId, status, initialSaved = false, jobStatus }) => {
     setSaved(newState)
     localStorage.setItem(storageKey, String(newState))
     setBusy(true)
-    
+
     try {
       await api.post(`/jobs/${jobId}/save`)
-    } catch (err) {
+      if (!newState && onUnsave) {
+        onUnsave(jobId)
+      }
+    } catch {
       setSaved(prev)
       localStorage.setItem(storageKey, String(prev))
     } finally {
@@ -44,11 +46,11 @@ const SaveJobButton = ({ jobId, status, initialSaved = false, jobStatus }) => {
       disabled={jsStatus !== 'open'}
       aria-pressed={saved}
       style={{
-        background: 'transparent', 
-        border: 'none', 
-        padding: 8, 
-        cursor: jsStatus !== 'open' ? 'not-allowed' : 'pointer', 
-        display: 'inline-flex', 
+        background: 'transparent',
+        border: 'none',
+        padding: 8,
+        cursor: jsStatus !== 'open' ? 'not-allowed' : 'pointer',
+        display: 'inline-flex',
         alignItems: 'center',
         opacity: jsStatus !== 'open' ? 0.5 : 1
       }}

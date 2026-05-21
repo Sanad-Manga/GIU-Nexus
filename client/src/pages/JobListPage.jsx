@@ -45,7 +45,38 @@ export default function JobListPage() {
       if (type)     params.type     = type
       if (status)   params.status   = status
       const { data } = await api.get('/jobs', { params })
-      setJobs(data.jobs ?? data.data ?? [])
+      let jobsData = data.jobs ?? data.data ?? []
+      
+      // If user is authenticated and is a job seeker, fetch applications to enrich job data
+      if (isAuthenticated) {
+        try {
+          const { data: appData } = await api.get('/applications/my')
+          const applications = appData.applications ?? appData.data ?? appData
+          
+          // Enrich jobs with application status
+          jobsData = jobsData.map(job => ({
+            ...job,
+            myApplication: applications.find(app => app.job?._id === job._id || app.job === job._id)
+          }))
+          
+          // Sort: pending jobs first (newest first), then the rest
+          jobsData.sort((a, b) => {
+            const aPending = a.myApplication?.status === 'pending'
+            const bPending = b.myApplication?.status === 'pending'
+            
+            if (aPending && !bPending) return -1
+            if (!aPending && bPending) return 1
+            if (aPending && bPending) {
+              return new Date(b.myApplication?.appliedAt || 0) - new Date(a.myApplication?.appliedAt || 0)
+            }
+            return 0
+          })
+        } catch {
+          // If fetching applications fails, continue with just jobs data
+        }
+      }
+      
+      setJobs(jobsData)
       setTotal(data.total ?? 0)
     } catch (err) {
       const status = err.response?.status
@@ -62,7 +93,7 @@ export default function JobListPage() {
     } finally {
       setLoading(false)
     }
-  }, [keyword, location, type, status, page, navigate])
+  }, [keyword, location, type, status, page, navigate, isAuthenticated])
 
   useEffect(() => { fetchJobs() }, [fetchJobs])
 
@@ -308,7 +339,7 @@ const s = {
   header:    { marginBottom: '2rem', animation: 'fadeInDown 0.6s ease-out' },
   title:     { fontSize: '2rem', fontWeight: 700, color: 'var(--text-h)', margin: 0 },
   subtitle:  { color: 'var(--text)', marginTop: '0.375rem', fontSize: '0.95rem' },
-  filterBar: { display: 'flex', flexWrap: 'wrap', gap: '0.625rem', marginBottom: '1rem', background: 'var(--bg)', border: '1px solid var(--accent)', borderRadius: 12, padding: '0.75rem', animation: 'fadeInDown 0.6s ease-out 0.1s backwards', overflow: 'visible', position: 'relative', boxShadow: '0 6px 20px var(--accent-bg)' },
+  filterBar: { display: 'flex', flexWrap: 'wrap', gap: '0.625rem', marginBottom: '1rem', background: 'var(--bg)', border: '1px solid #60a5fa', borderRadius: 12, padding: '0.75rem', animation: 'fadeInDown 0.6s ease-out 0.1s backwards', overflow: 'visible', position: 'relative', boxShadow: '0 6px 20px rgba(96, 165, 250, 0.2)' },
   input:     { flex: '1 1 180px', padding: '0.6rem 0.875rem', border: '1px solid var(--border)', borderRadius: 8, fontSize: '0.9rem', outline: 'none', background: 'var(--code-bg)', color: 'var(--text-h)' },
   select:    { width: '100%', padding: '0.6rem 0.875rem', border: '1px solid var(--border)', borderRadius: 12, fontSize: '0.9rem', background: 'var(--code-bg)', color: 'var(--text-h)', cursor: 'pointer', transition: 'all 0.2s ease', appearance: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center', textAlign: 'center' },
   searchBtn: { padding: '0.6rem 1.5rem', background: '#2563EB', color: '#fff', border: 'none', borderRadius: 8, fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer' },

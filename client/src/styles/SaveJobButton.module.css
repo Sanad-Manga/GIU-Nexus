@@ -1,0 +1,35 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.btn:hover:not(:disabled) {
+  border-color: #2563EB;
+  background: #eff6ff;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.saved {
+  border-color: #2563EB;
+  background: #eff6ff;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}
