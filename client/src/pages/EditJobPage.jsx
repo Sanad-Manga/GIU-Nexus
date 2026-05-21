@@ -87,13 +87,15 @@ const EditJobPage = () => {
     </div>
   )
 
+  const badgeColors = categoryColors[category] || categoryColors.Other
+
   return (
     <div className={styles.page}>
       <div className={styles.card}>
         <div className={styles.cardHeader}>
           <h1 className={styles.title}>Edit Job</h1>
           {category && (
-            <span className={styles.categoryBadge} style={{ backgroundColor: categoryColors[category]?.bg, color: categoryColors[category]?.text }}>
+            <span className={styles.categoryBadge} style={{ backgroundColor: badgeColors?.bg, color: badgeColors?.text }}>
               {category}
             </span>
           )}
