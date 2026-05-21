@@ -17,11 +17,24 @@ export const AuthProvider = ({ children }) => {
     setUser(user);
   };
 
-  const logout = () => {
+  const logout = (navigate) => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setToken(null);
     setUser(null);
+
+    // Redirect to login unless on HomePage, JobListPage, or JobDetailPage
+    if (navigate) {
+      const pathname = window.location.pathname;
+      const isExceptionPage =
+        pathname === "/" ||
+        pathname === "/jobs" ||
+        pathname.startsWith("/jobs/");
+
+      if (!isExceptionPage) {
+        navigate("/login");
+      }
+    }
   };
 
   return (

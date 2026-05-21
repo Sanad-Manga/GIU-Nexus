@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "bugs": [
+    {
+      "id": "bug-001",
+      "timestamp": "2026-05-12T17:35:44.881Z",
+      "error_message": "Incorrect value in code",
+      "file": "backend/seed.js",
+      "root_cause": "Had \"../backend/models/User\"",
+      "fix": "Changed to \"./models/User\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "js"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T17:35:44.881Z"
+    },
+    {
+      "id": "bug-002",
+      "timestamp": "2026-05-12T17:35:47.184Z",
+      "error_message": "Incorrect value in code",
+      "file": "package.json",
+      "root_cause": "Had \"node server/seed.js\"",
+      "fix": "Changed to \"node backend/seed.js\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "json"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T17:35:47.184Z"
+    }
+  ]
+}
