@@ -73,7 +73,12 @@ const ProfilePage = () => {
           <h2 className={styles.sectionTitle}>Skills</h2>
           <div className={styles.chips}>
             {user.skills?.length > 0
-              ? user.skills.map((skill, i) => <SkillChip key={i} skill={skill} />)
+              ? user.skills.map((skill) => (
+                  <SkillChip
+                    key={`${skill}-${user.skills.indexOf(skill)}`}
+                    skill={skill}
+                  />
+                ))
               : <p className={styles.empty}>No skills extracted yet.</p>
             }
           </div>
