@@ -194,7 +194,19 @@ export default function JobDetailPage() {
               <div style={{ marginLeft: 'auto' }}>
                 {myApplication ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>You applied</p>
+                    <span
+                      style={{
+                        backgroundColor: '#f0f9ff',
+                        color: '#0c4a6e',
+                        padding: '0.375rem 0.75rem',
+                        borderRadius: '0.375rem',
+                        fontSize: '0.875rem',
+                        fontWeight: '500',
+                        display: 'inline-block',
+                      }}
+                    >
+                      You applied!
+                    </span>
                     <ApplicationStatusBadge status={myApplication.status} />
                   </div>
                 ) : (

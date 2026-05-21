@@ -9,6 +9,7 @@ node_modules/
 *.postman_environment.json
 .postman/
 postman/
+*.wolf
 
 #Open wolf
 .wolf/
