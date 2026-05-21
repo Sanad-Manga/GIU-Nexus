@@ -31,8 +31,8 @@ const EditJobPage = () => {
           requirements: Array.isArray(j.requirements) ? j.requirements.join(', ') : '',
           location: j.location || '',
           type: j.type || 'full-time',
-          salary: j.salary || '',
-          totalSlots: j.totalSlots || '',
+          salary: j.salary ?? '',
+          totalSlots: j.totalSlots ?? '',
         })
         setCategory(j.category || '')
       })
