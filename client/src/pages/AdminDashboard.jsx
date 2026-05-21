@@ -168,10 +168,6 @@ function AdminDashboard() {
       </header>
 
       <div className="admin-grid">
-        <SummarySection title="Users By Role" data={stats?.usersByRole || {}} />
-        <SummarySection title="Jobs By Status" data={stats?.jobsByStatus || {}} />
-        <SummarySection title="Applications By Status" data={stats?.appsByStatus || {}} />
-
         <section className="admin-card">
           <div className="admin-card-header">
             <div>
@@ -183,16 +179,29 @@ function AdminDashboard() {
           {/* Testing note: the non-empty leaderboard needs job/application flows to create real application data. */}
           {stats?.topJobs?.length ? (
             <ol className="admin-leaderboard">
-              {stats.topJobs.map((job, index) => (
-                <li key={job._id} className="admin-leaderboard-row">
-                  <span className="admin-rank">{index + 1}</span>
-                  <div className="admin-leaderboard-info">
-                    <strong className="admin-leaderboard-title">{job.title}</strong>
-                    <p className="admin-leaderboard-company">{job.company}</p>
-                  </div>
-                  <span className="admin-pill">{job.applicationCount} applications</span>
-                </li>
-              ))}
+              {stats.topJobs.map((job, index) => {
+                const applicationCount = Number(job.applicationCount || 0)
+                const applicationLabel = applicationCount === 1 ? 'application' : 'applications'
+
+                return (
+                  <li key={job._id || `${job.title}-${index}`} className="admin-leaderboard-row">
+                    <span className="admin-rank">{index + 1}</span>
+
+                    <div className="admin-leaderboard-info">
+                      <strong className="admin-leaderboard-title">
+                        {job.title || 'Untitled Job'}
+                      </strong>
+                      <p className="admin-leaderboard-company">
+                        {job.company || 'Unknown Company'}
+                      </p>
+                    </div>
+
+                    <span className="admin-pill">
+                      {applicationCount} {applicationLabel}
+                    </span>
+                  </li>
+                )
+              })}
             </ol>
           ) : (
             <div className="admin-empty-state">
@@ -200,6 +209,10 @@ function AdminDashboard() {
             </div>
           )}
         </section>
+
+        <SummarySection title="Jobs By Status" data={stats?.jobsByStatus || {}} />
+        <SummarySection title="Applications By Status" data={stats?.appsByStatus || {}} />
+        <SummarySection title="Users By Role" data={stats?.usersByRole || {}} />
       </div>
 
       {/* Testing note: the SCRUM-64 chart appears only when the backend returns weekly application stats. */}
