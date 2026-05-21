@@ -8,33 +8,32 @@ const roleLabels = {
   jobSeeker: 'Job seeker',
 }
 
-
 const getLinks = (user) => {
-  if (!user) return [{ to: '/jobs', label: 'Jobs' }]
+  if (!user) return [{ to: '/jobs', label: 'Jobs', end: true }]
 
   if (user.role === 'jobSeeker') {
     return [
-      { to: '/jobs', label: 'Jobs' },
-      { to: '/jobs/recommended', label: 'Recommended' },
-      { to: '/jobs/saved', label: 'Saved' },
-      { to: '/applications/my', label: 'Applications' },
-      { to: '/profile', label: 'Profile' },
+      { to: '/jobs', label: 'Jobs', end: true },
+      { to: '/jobs/recommended', label: 'Recommended', end: false },
+      { to: '/jobs/saved', label: 'Saved', end: false },
+      { to: '/applications/my', label: 'Applications', end: false },
+      { to: '/profile', label: 'Profile', end: false },
     ]
   }
 
   if (user.role === 'recruiter') {
     return [
-      { to: '/recruiter/dashboard', label: 'Dashboard' },
-      { to: '/recruiter/jobs/create', label: 'Post job' },
+      { to: '/recruiter/dashboard', label: 'Dashboard', end: false },
+      { to: '/recruiter/jobs/create', label: 'Post job', end: false },
     ]
   }
 
   if (user.role === 'admin') {
     return [
-      { to: '/admin/dashboard', label: 'Dashboard' },
-      { to: '/admin/recruiters', label: 'Recruiters' },
-      { to: '/admin/jobs', label: 'Jobs' },
-      { to: '/admin/users', label: 'Users' },
+      { to: '/admin/dashboard', label: 'Dashboard', end: false },
+      { to: '/admin/recruiters', label: 'Recruiters', end: false },
+      { to: '/admin/jobs', label: 'Jobs', end: false },
+      { to: '/admin/users', label: 'Users', end: false },
     ]
   }
 
@@ -61,6 +60,7 @@ const Navbar = () => {
             <NavLink
               key={link.to}
               to={link.to}
+              end={link.end}
               className={({ isActive }) =>
                 `${styles.navLink} ${isActive ? styles.activeLink : ''}`
               }
