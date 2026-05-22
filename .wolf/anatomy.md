@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-22T16:31:38.940Z
-> Files: 24 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-22T18:42:13.183Z
+> Files: 27 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -66,12 +66,14 @@
 
 - `AdminJobsPage.jsx` — Job governance; admin-hero + admin-card + admin-table, Delete action, uses AdminPages.css (~2100 tok)
 - `AdminUsersPage.jsx` — PAGE_SIZE — renders table, modal (~3275 tok)
-- `CreateJobPage.jsx` — JOB_TYPES — renders form (~4513 tok)
+- `ApplicantsPage.jsx` — COLORS — renders table (~2412 tok)
+- `CreateJobPage.jsx` — JOB_TYPES — renders form (~4615 tok)
 - `HomePage.jsx` — hasScore (~4610 tok)
-- `HomePage.module.css` — Styles: 57 rules (~2794 tok)
-- `JobDetailPage.jsx` — JobDetailPage (~8343 tok)
+- `HomePage.module.css` — Styles: 57 rules (~2800 tok)
+- `JobDetailPage.jsx` — JobDetailPage (~8446 tok)
 - `JobListPage.jsx` — JOB_TYPES — renders form (~5776 tok)
 - `RecommendedJobsPage.jsx` — hasScore (~1551 tok)
+- `RecommendedJobsPage.module.css` — Styles: 44 rules (~1702 tok)
 - `RecruiterDashboard.jsx` — statusColors (~2006 tok)
 
 ## client/src/services/
@@ -80,6 +82,7 @@
 ## client/src/styles/
 
 - `AdminPages.css` — Styles: 87 rules (~3919 tok)
+- `EditProfilePage.module.css` — Styles: 29 rules (~1413 tok)
 - `LoginPage.module.css` — Styles: 24 rules (~801 tok)
 - `ProfilePage.module.css` — Styles: 30 rules (~1322 tok)
 - `SavedJobsPage.module.css` — Styles: 14 rules (~501 tok)

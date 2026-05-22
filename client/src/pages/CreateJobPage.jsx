@@ -102,10 +102,10 @@ export default function CreateJobPage() {
       <div style={s.page}>
         <div style={s.successCard}>
           <div style={s.successIcon}>✓</div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 0.375rem', color: '#111827' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 0.375rem', color: 'var(--text-primary)' }}>
             Job Posted!
           </h2>
-          <p style={{ color: '#6b7280', margin: '0 0 2rem' }}>
+          <p style={{ color: 'var(--text-secondary)', margin: '0 0 2rem' }}>
             Your listing is live. The AI assigned a category automatically.
           </p>
 
@@ -123,10 +123,10 @@ export default function CreateJobPage() {
                 ✨ AI-assigned
               </span>
             </div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 0.375rem', color: '#111827' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 0.375rem', color: 'var(--text-primary)' }}>
               {createdJob.title}
             </h3>
-            <p style={{ color: '#4b5563', margin: '0 0 0.375rem', fontSize: '0.9rem' }}>
+            <p style={{ color: 'var(--text-secondary)', margin: '0 0 0.375rem', fontSize: '0.9rem' }}>
               {createdJob.company} · {createdJob.location}
             </p>
             {createdJob.salary && (
@@ -160,10 +160,10 @@ export default function CreateJobPage() {
   return (
     <div style={s.page}>
       <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, margin: '0 0 0.375rem', color: '#111827' }}>
+        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, margin: '0 0 0.375rem', color: 'var(--text-primary)' }}>
           Post a New Job
         </h1>
-        <p style={{ color: '#6b7280', margin: 0 }}>
+        <p style={{ color: 'var(--text-secondary)', margin: 0 }}>
           Fill in the details. The AI will automatically assign a category to your listing.
         </p>
       </div>
@@ -238,7 +238,7 @@ export default function CreateJobPage() {
                 {requirements.length > 1 && (
                   <button
                     type="button" onClick={() => removeReq(i)}
-                    style={{ width: 32, height: 32, background: '#fee2e2', color: '#b91c1c', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: '1.1rem', flexShrink: 0 }}
+                    style={{ width: 32, height: 32, background: 'rgba(239,68,68,0.12)', color: '#ef4444', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: '1.1rem', flexShrink: 0 }}
                   >×</button>
                 )}
               </div>
@@ -247,7 +247,7 @@ export default function CreateJobPage() {
           {errors.requirements && <p style={s.ferr}>{errors.requirements}</p>}
           <button
             type="button" onClick={addReq}
-            style={{ alignSelf: 'flex-start', marginTop: '0.375rem', padding: '0.45rem 1rem', background: '#eff6ff', color: '#2563EB', border: '1px solid #bfdbfe', borderRadius: 8, fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
+            style={{ alignSelf: 'flex-start', marginTop: '0.375rem', padding: '0.45rem 1rem', background: 'rgba(37,99,235,0.1)', color: '#2563EB', border: '1px solid rgba(37,99,235,0.3)', borderRadius: 8, fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
           >+ Add Requirement</button>
         </div>
 
@@ -278,18 +278,18 @@ export default function CreateJobPage() {
         </div>
 
         {/* AI notice — no category field */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: 10, padding: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', background: 'rgba(91,33,182,0.08)', border: '1px solid rgba(167,139,250,0.3)', borderRadius: 10, padding: '1rem' }}>
           <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>✨</span>
-          <p style={{ margin: 0, color: '#5b21b6', fontSize: '0.875rem', lineHeight: 1.5 }}>
+          <p style={{ margin: 0, color: '#7c3aed', fontSize: '0.875rem', lineHeight: 1.5 }}>
             <strong>Category is auto-assigned by AI</strong> — you'll see the result after posting.
           </p>
         </div>
 
         {submitError && (
-          <div style={{ 
-            background: '#fef2f2', 
-            border: '1px solid #fecaca', 
-            borderRadius: 10, 
+          <div style={{
+            background: 'rgba(239,68,68,0.08)',
+            border: '1px solid rgba(239,68,68,0.3)',
+            borderRadius: 10,
             padding: '1rem',
             display: 'flex',
             gap: '0.75rem',
@@ -297,8 +297,8 @@ export default function CreateJobPage() {
           }}>
             <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>⚠️</span>
             <div style={{ flex: 1 }}>
-              <p style={{ color: '#b91c1c', fontSize: '0.95rem', fontWeight: 600, margin: '0 0 0.25rem' }}>Cannot Post Job</p>
-              <p style={{ color: '#7f1d1d', fontSize: '0.875rem', margin: 0, lineHeight: 1.5 }}>{submitError}</p>
+              <p style={{ color: 'var(--error)', fontSize: '0.95rem', fontWeight: 600, margin: '0 0 0.25rem' }}>Cannot Post Job</p>
+              <p style={{ color: 'var(--error)', fontSize: '0.875rem', margin: 0, lineHeight: 1.5, opacity: 0.8 }}>{submitError}</p>
             </div>
           </div>
         )}
@@ -317,15 +317,15 @@ export default function CreateJobPage() {
 const s = {
   page:         { width: '720px', margin: '0 auto', padding: '2rem 1.5rem 4rem', fontFamily: 'sans-serif' },
   pendingBanner:{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 12, padding: '1.5rem' },
-  form:         { background: '#fff', border: '1px solid #e5e7eb', borderRadius: 16, padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' },
+  form:         { background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: 16, padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' },
   field:        { display: 'flex', flexDirection: 'column', gap: '0.375rem' },
-  label:        { fontSize: '0.875rem', fontWeight: 600, color: '#374151' },
-  input:        { padding: '0.65rem 0.875rem', border: '1px solid #d1d5db', borderRadius: 8, fontSize: '0.9rem', outline: 'none', width: '100%', boxSizing: 'border-box', background: '#fff' },
-  inputErr:     { borderColor: '#ef4444', background: '#fff5f5' },
+  label:        { fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' },
+  input:        { padding: '0.65rem 0.875rem', border: '1px solid var(--border)', borderRadius: 8, fontSize: '0.9rem', outline: 'none', width: '100%', boxSizing: 'border-box', background: 'var(--card-bg)', color: 'var(--text-primary)' },
+  inputErr:     { borderColor: '#ef4444', background: 'rgba(239,68,68,0.08)' },
   ferr:         { color: '#ef4444', fontSize: '0.8rem', margin: 0 },
-  cancelBtn:    { padding: '0.65rem 1.25rem', background: '#f3f4f6', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 500 },
+  cancelBtn:    { padding: '0.65rem 1.25rem', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, cursor: 'pointer', fontWeight: 500, color: 'var(--text-primary)' },
   submitBtn:    { padding: '0.65rem 1.75rem', background: '#2563EB', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: '0.95rem', cursor: 'pointer' },
-  successCard:  { background: '#fff', border: '1px solid #e5e7eb', borderRadius: 16, padding: '2.5rem', textAlign: 'center' },
+  successCard:  { background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: 16, padding: '2.5rem', textAlign: 'center' },
   successIcon:  { width: 56, height: 56, background: '#dcfce7', color: '#166534', borderRadius: '50%', fontSize: '1.5rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' },
-  resultJob:    { background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 12, padding: '1.5rem', marginBottom: '2rem', textAlign: 'left' },
+  resultJob:    { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: '1.5rem', marginBottom: '2rem', textAlign: 'left' },
 }
