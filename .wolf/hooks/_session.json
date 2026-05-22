@@ -87,7 +87,7 @@
       "tokens": 0,
       "first_read": "2026-05-22T20:23:48.905Z"
     },
-    "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/JobListPage.jsx": {
+    "c:/Programming/Software_Engineering/GIU-Nexus/client/src/context/AuthContext.jsx": {
       "count": 1,
       "tokens": 0,
       "first_read": "2026-05-22T20:37:40.584Z"
@@ -274,4 +274,11 @@
   "repeated_reads_warned": 5,
   "cerebrum_warnings": 0,
   "stop_count": 8
+    "client/src/components/Footer.jsx": 1
+  },
+  "anatomy_hits": 2,
+  "anatomy_misses": 15,
+  "repeated_reads_warned": 5,
+  "cerebrum_warnings": 0,
+  "stop_count": 7
 }

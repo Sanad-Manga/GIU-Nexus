@@ -10,6 +10,14 @@
     "anatomy_misses": 944,
     "repeated_reads_blocked": 361,
     "estimated_savings_vs_bare_cli": 710945
+    "total_tokens_estimated": 899400,
+    "total_reads": 1078,
+    "total_writes": 1436,
+    "total_sessions": 23,
+    "anatomy_hits": 150,
+    "anatomy_misses": 928,
+    "repeated_reads_blocked": 356,
+    "estimated_savings_vs_bare_cli": 705636
   },
   "sessions": [
     {
