@@ -157,22 +157,29 @@ export default function JobDetailPage() {
   const recruiterApproved = recruiterStatus ? recruiterStatus === 'approved' : true
 
   return (
-    <div style={s.page}>
-      <button onClick={() => navigate(-1)} style={s.backLink} className="backLink">← Back</button>
+    <div style={s.pageWrapper}>
+      <div style={s.page}>
+        <button onClick={() => navigate(-1)} style={s.backLink} className="backLink">← Back</button>
 
-      <div style={s.card}>
+        <div style={s.card}>
         {/* ── Header ── */}
         <div style={s.cardHeader}>
-          <span style={{ ...s.badge, color: categoryColor, border: `1px solid ${categoryColor}`, background: `${categoryColor}18` }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+            <h1 style={s.jobTitle}>{job.title}</h1>
+            {job.type && (
+              <span style={{ background: '#f3f4f6', color: '#4b5563', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', padding: '4px 10px', borderRadius: 12 }}>
+                {job.type}
+              </span>
+            )}
+          </div>
+          <span style={{ ...s.badge, color: '#4b5563', border: '1px solid #d1d5db', background: '#f3f4f6', marginBottom: '1rem' }}>
             {job.category || 'Other'}
           </span>
-          <h1 style={s.jobTitle}>{job.title}</h1>
           <p style={s.company}>{job.company}</p>
           
-          {/* Meta row with location, type, status */}
+          {/* Meta row with location and status */}
           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
             {job.location && <span style={s.metaItem}>📍 {job.location}</span>}
-            {job.type     && <span style={s.metaItem}>{job.type}</span>}
             <span style={{
               ...s.metaItem,
               color: job.status === 'open' ? '#166534' : '#991b1b',
@@ -185,13 +192,15 @@ export default function JobDetailPage() {
 
           {showJobSeekerActions && (
             /* Save & Apply buttons - side by side */
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', width: '100%' }}>
-              {recruiterApproved ? (
-                <SaveJobButton jobId={job._id} status={job.status} initialSaved={job.isSaved ?? false} />
-              ) : (
-                <button disabled style={{ padding: '0.6rem 1rem', background: '#f3f4f6', color: '#9ca3af', borderRadius: 8, border: '1px solid #e5e7eb', cursor: 'not-allowed' }}>Save</button>
-              )}
-              <div style={{ marginLeft: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '0.75rem', width: '100%' }}>
+              <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                {recruiterApproved ? (
+                  <SaveJobButton jobId={job._id} status={job.status} initialSaved={job.isSaved ?? false} />
+                ) : (
+                  <button disabled style={{ padding: '0.5rem 0.75rem', background: '#f3f4f6', color: '#9ca3af', borderRadius: 8, border: '1px solid #e5e7eb', cursor: 'not-allowed', minWidth: '44px', minHeight: '44px' }}>
+                    <span style={{ fontSize: '1.2rem' }}>🔖</span>
+                  </button>
+                )}
                 {myApplication ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <span
@@ -201,8 +210,10 @@ export default function JobDetailPage() {
                         padding: '0.375rem 0.75rem',
                         borderRadius: '0.375rem',
                         fontSize: '0.875rem',
-                        fontWeight: '500',
+                        fontWeight: '700',
                         display: 'inline-block',
+                        border: '1px solid rgba(6, 120, 180, 0.15)',
+                        boxShadow: '0 2px 6px rgba(6, 120, 180, 0.08)',
                       }}
                     >
                       You applied!
@@ -213,7 +224,7 @@ export default function JobDetailPage() {
                   <button 
                     onClick={handleApplyClick}
                     disabled={job.status !== 'open' || !recruiterApproved}
-                    style={{ ...s.applyBtn, ...(job.status !== 'open' ? { opacity: 0.6, cursor: 'not-allowed' } : {}), width: 'auto' }}
+                    style={{ ...s.applyBtn, ...(job.status !== 'open' ? { opacity: 0.6, cursor: 'not-allowed' } : {}), width: 'auto', minHeight: '44px' }}
                     onMouseEnter={(e) => {
                       e.target.style.background = '#1d4ed8'
                       e.target.style.boxShadow = '0 8px 16px rgba(37, 99, 235, 0.3)'
@@ -244,15 +255,15 @@ export default function JobDetailPage() {
         <div style={s.body}>
           {/* Salary + slots */}
           {(job.salary || job.totalSlots) && (
-            <div style={s.highlights}>
+            <div style={s.highlightRow}>
               {job.salary     && (
-                <div style={s.highlight}>
+                <div style={s.highlightContainer}>
                   <span style={s.hlLabel}>Salary</span>
                   <span style={s.hlValue}>${Number(job.salary).toLocaleString()}</span>
                 </div>
               )}
               {job.totalSlots && (
-                <div style={s.highlight}>
+                <div style={s.highlightContainer}>
                   <span style={s.hlLabel}>Open Slots</span>
                   <span style={s.hlValue}>{job.totalSlots}</span>
                 </div>
@@ -489,11 +500,13 @@ export default function JobDetailPage() {
         }
         button.backLink:hover {
           transform: none;
-          box-shadow: none;
+          box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+          background: 'rgba(37, 99, 235, 0.12)';
+          border-color: rgba(37, 99, 235, 0.25);
         }
         button.backLink:active {
-          transform: none;
-          box-shadow: none;
+          transform: scale(0.98);
+          box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
         }
         button:active:not(:disabled) {
           transform: translateY(0);
@@ -504,33 +517,38 @@ export default function JobDetailPage() {
           cursor: not-allowed;
         }
       `}</style>
+      </div>
     </div>
   )
 }
 
 const s = {
+  pageWrapper: { minHeight: '100vh', width: '100%', background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), rgba(255, 255, 255, 0.94))' },
   page:        { width: '720px', margin: '0 auto', padding: '2rem 1.5rem 4rem', fontFamily: 'sans-serif' },
-  backLink:    { background: 'none', border: 'none', color: 'var(--text)', fontSize: '0.9rem', cursor: 'pointer', marginBottom: '1.25rem', padding: 0, transition: 'color 0.2s ease' },
-  card:        { background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden', boxShadow: '0 1px 6px rgba(0,0,0,0.06)' },
-  cardHeader:  { display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)' },
-  badge:       { display: 'inline-block', padding: '3px 12px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 600, marginBottom: '0.75rem' },
-  jobTitle:    { fontSize: '1.65rem', fontWeight: 700, color: 'var(--text-h)', margin: '0 0 0.375rem' },
-  company:     { fontSize: '1rem', color: 'var(--text)', margin: '0 0 0.75rem', fontWeight: 500 },
+  backLink:    { background: 'rgba(37, 99, 235, 0.06)', border: '1px solid rgba(37, 99, 235, 0.15)', color: '#2563EB', fontSize: '0.9rem', cursor: 'pointer', marginBottom: '1.25rem', padding: '0.5rem 1rem', borderRadius: '8px', transition: 'all 0.2s ease', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.4rem' },
+  card:        { background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), rgba(255, 255, 255, 0.94))', border: '1px solid rgba(37, 99, 235, 0.12)', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)' },
+  cardHeader:  { display: 'flex', flexDirection: 'column', gap: '1rem', padding: '28px' },
+  kicker:      { color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: '12px', fontWeight: 700, margin: 0 },
+  badge:       { display: 'inline-flex', width: 'fit-content', margin: '0 0 0.75rem', padding: '6px 16px', borderRadius: 20, fontSize: '0.85rem', fontWeight: 600, boxShadow: '0 2px 6px rgba(0, 0, 0, 0.06)' },
+  jobTitle:    { fontSize: 'clamp(1.6rem, 2vw, 2.25rem)', fontWeight: 700, color: 'var(--text-h)', margin: '8px 0 0.375rem', lineHeight: 1.1 },
+  company:     { fontSize: '1.125rem', color: 'var(--text-h)', margin: '0.5rem 0 1rem', fontWeight: 600 },
   metaRow:     { display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center', justifyContent: 'space-between' },
   metaItem:    { fontSize: '0.875rem', color: 'var(--text)' },
   actions:     { display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.75rem', minWidth: 160 },
-  applyBtn:    { padding: '0.65rem 1.5rem', background: '#2563EB', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 600, fontSize: '0.95rem', cursor: 'pointer', transition: 'all 0.3s ease', transform: 'scale(1)' },
-  body:        { padding: '1.5rem' },
-  highlights:  { display: 'flex', gap: '1.5rem', background: 'var(--code-bg)', borderRadius: 10, padding: '1rem 1.5rem', marginBottom: '2rem' },
+  applyBtn:    { padding: '0.65rem 1.5rem', background: '#2563EB', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 600, fontSize: '0.95rem', cursor: 'pointer', transition: 'all 0.3s ease', transform: 'scale(1)', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  body:        { padding: '28px', borderTop: '1px solid rgba(37, 99, 235, 0.12)' },
+  highlights:  { display: 'flex', gap: '1.5rem', background: 'linear-gradient(180deg, #ffffff, #f8fbff)', borderRadius: '18px', padding: '1rem 1.5rem', marginBottom: '2rem', border: '1px solid rgba(37, 99, 235, 0.08)' },
+  highlightRow: { display: 'flex', gap: '2rem', alignItems: 'center', marginBottom: '1.5rem' },
+  highlightContainer: { display: 'flex', alignItems: 'center', gap: '0.5rem' },
   highlight:   { display: 'flex', flexDirection: 'column', gap: '0.2rem' },
-  hlLabel:     { fontSize: '0.7rem', color: 'var(--text)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' },
-  hlValue:     { fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-h)' },
+  hlLabel:     { fontSize: '0.75rem', color: '#6b7280', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' },
+  hlValue:     { fontSize: '1rem', fontWeight: 700, color: 'var(--text-h)' },
   section:     { marginBottom: '2rem' },
   sectionTitle:{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text)', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' },
   description: { color: 'var(--text)', lineHeight: 1.7, whiteSpace: 'pre-wrap', margin: 0 },
   list:        { listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' },
   listItem:    { color: 'var(--text)', lineHeight: 1.6 },
-  recruiterCard:{ display: 'flex', alignItems: 'center', gap: '0.875rem', background: 'var(--code-bg)', borderRadius: 10, padding: '1rem 1.25rem', border: '1px solid var(--border)' },
+  recruiterCard:{ display: 'flex', alignItems: 'center', gap: '0.875rem', background: 'linear-gradient(180deg, #ffffff, #f8fbff)', borderRadius: '18px', padding: '1rem 1.25rem', border: '1px solid rgba(37, 99, 235, 0.08)' },
   avatar:      { width: 44, height: 44, borderRadius: '50%', background: '#2563EB', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.1rem', flexShrink: 0 },
   modalOverlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9998, animation: 'fadeIn 0.2s ease-out' },
   modalContent: { background: 'var(--bg)', borderRadius: 16, padding: '2rem', maxWidth: 500, width: '90%', boxShadow: '0 20px 25px rgba(0,0,0,0.15)', animation: 'modalSlideIn 0.3s ease-out' },

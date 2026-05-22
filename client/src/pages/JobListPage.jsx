@@ -179,9 +179,15 @@ export default function JobListPage() {
         }
       `}</style>
       <div style={s.header}>
+        <p style={s.kicker}>Job Opportunities</p>
         <h1 style={s.title}>Find Your Next Role</h1>
         <p style={s.subtitle}>
-          {total > 0 ? `${total} job${total !== 1 ? 's' : ''} available` : 'Browse open positions'}
+          <span style={s.jobCount}>
+            {total > 0 ? `${total}` : '0'}
+          </span>
+          <span style={s.jobCountLabel}>
+            {total > 0 ? `job${total !== 1 ? 's' : ''}` : 'jobs'} Available
+          </span>
         </p>
       </div>
 
@@ -336,9 +342,12 @@ export default function JobListPage() {
 
 const s = {
   page:      { maxWidth: 'none', margin: '0 auto', padding: '2rem 0.5rem 4rem', fontFamily: 'sans-serif' },
-  header:    { marginBottom: '2rem', animation: 'fadeInDown 0.6s ease-out' },
-  title:     { fontSize: '2rem', fontWeight: 700, color: 'var(--text-h)', margin: 0 },
-  subtitle:  { color: 'var(--text)', marginTop: '0.375rem', fontSize: '0.95rem' },
+  header:    { marginBottom: '2rem', padding: '28px', border: '1px solid rgba(37, 99, 235, 0.12)', borderRadius: '24px', background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), rgba(255, 255, 255, 0.94))', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)', animation: 'fadeInDown 0.6s ease-out' },
+  kicker:    { color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: '12px', fontWeight: 700, margin: 0, marginBottom: '0.5rem' },
+  title:     { fontSize: 'clamp(1.6rem, 2vw, 2.25rem)', fontWeight: 700, color: 'var(--text-h)', margin: '8px 0 0.375rem', lineHeight: 1.1 },
+  subtitle:  { color: 'var(--text-secondary)', marginTop: '0.75rem', fontSize: '1.05rem', fontWeight: 500, margin: 0, display: 'flex', alignItems: 'baseline', gap: '0.5rem' },
+  jobCount:  { color: '#2563EB', fontSize: '1.1rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', background: 'rgba(37, 99, 235, 0.08)', padding: '0.15rem 0.4rem', borderRadius: '8px', border: '1px solid rgba(37, 99, 235, 0.2)', minWidth: '1.75rem', justifyContent: 'center' },
+  jobCountLabel: { color: 'var(--text)', fontWeight: 600, fontSize: '1rem', letterSpacing: '0.01em' },
   filterBar: { display: 'flex', flexWrap: 'wrap', gap: '0.625rem', marginBottom: '1rem', background: 'var(--bg)', border: '1px solid #60a5fa', borderRadius: 12, padding: '0.75rem', animation: 'fadeInDown 0.6s ease-out 0.1s backwards', overflow: 'visible', position: 'relative', boxShadow: '0 6px 20px rgba(96, 165, 250, 0.2)' },
   input:     { flex: '1 1 180px', padding: '0.6rem 0.875rem', border: '1px solid var(--border)', borderRadius: 8, fontSize: '0.9rem', outline: 'none', background: 'var(--code-bg)', color: 'var(--text-h)' },
   select:    { width: '100%', padding: '0.6rem 0.875rem', border: '1px solid var(--border)', borderRadius: 12, fontSize: '0.9rem', background: 'var(--code-bg)', color: 'var(--text-h)', cursor: 'pointer', transition: 'all 0.2s ease', appearance: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center', textAlign: 'center' },
