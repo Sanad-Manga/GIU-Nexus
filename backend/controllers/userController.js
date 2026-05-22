@@ -85,6 +85,23 @@ exports.updateUserStatus = async (req, res, next) => {
   }
 };
 
+// GET /api/v1/users/:id/profile (any authenticated user)
+exports.getPublicProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id)
+      .select('name email role bio skills profilePicture status')
+      .lean();
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    res.status(200).json({ success: true, user });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // DELETE /api/v1/users/:id
 exports.deleteUser = async (req, res, next) => {
   try {

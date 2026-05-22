@@ -111,16 +111,16 @@ const RecommendedJobsPage = () => {
                   {hasScore(job.score) && (
                     <div className={styles.scoreBlock}>
                       <span className={`${styles.scoreNum} ${
-                        job.score >= 0.7 ? styles.scoreHigh :
-                        job.score >= 0.4 ? styles.scoreMid : styles.scoreLow
+                        job.score >= 0.5 ? styles.scoreHigh :
+                        job.score >= 0.12 ? styles.scoreMid : styles.scoreLow
                       }`}>
                         {Math.round(job.score * 100)}%
                       </span>
                       <div className={styles.scoreBar}>
                         <div
                           className={`${styles.scoreFill} ${
-                            job.score >= 0.7 ? styles.fillHigh :
-                            job.score >= 0.4 ? styles.fillMid : styles.fillLow
+                            job.score >= 0.5 ? styles.fillHigh :
+                            job.score >= 0.12 ? styles.fillMid : styles.fillLow
                           }`}
                           style={{ width: `${Math.round(job.score * 100)}%` }}
                         />

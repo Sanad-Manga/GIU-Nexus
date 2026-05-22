@@ -7,6 +7,7 @@ const {
   getUserById,
   updateUserStatus,
   deleteUser,
+  getPublicProfile,
 } = require('../controllers/userController');
 
 /**
@@ -74,6 +75,9 @@ const {
  *               $ref: '#/components/schemas/Error'
  */
 router.get('/', protect, authorize('admin'), getUsers);
+
+// Public profile — any authenticated user can view
+router.get('/:id/profile', protect, getPublicProfile);
 
 /**
  * @swagger

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import styles from '../styles/ResetPasswordPage.module.css';
@@ -9,9 +9,16 @@ export default function ResetPasswordPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState(''); // extra safety, not required by spec
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [tokenValid, setTokenValid] = useState(null); // null=checking, true=ok, false=invalid
+
+  useEffect(() => {
+    api.get(`/auth/validate-reset-token/${token}`)
+      .then(() => setTokenValid(true))
+      .catch(() => setTokenValid(false));
+  }, [token]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,15 +40,37 @@ export default function ResetPasswordPage() {
       login(data.token, data.user);
       navigate('/');
     } catch (err) {
-      if (err.response?.status === 400 || err.response?.status === 401) {
-        setError('Token is invalid or has expired');
-      } else {
-        setError('Reset failed. Please try again.');
-      }
+      setError(err.response?.data?.message || 'Reset failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+
+  if (tokenValid === null) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.card}>
+          <p className={styles.subtitle}>Verifying your reset link…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (tokenValid === false) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.card}>
+          <h1 className={styles.title}>Link Expired</h1>
+          <p className={styles.subtitle}>This password reset link is invalid or has expired.</p>
+          <div className={styles.expiredActions}>
+            <Link to="/forgot-password" className={styles.btnPrimary} style={{ textAlign: 'center', textDecoration: 'none' }}>
+              Request a new link
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.page}>
@@ -58,6 +87,7 @@ export default function ResetPasswordPage() {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               className={styles.input}
+              autoComplete="new-password"
               required
               disabled={loading}
             />
@@ -71,6 +101,7 @@ export default function ResetPasswordPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               className={styles.input}
+              autoComplete="new-password"
               required
               disabled={loading}
             />

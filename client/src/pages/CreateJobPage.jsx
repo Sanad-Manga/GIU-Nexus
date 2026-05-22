@@ -176,6 +176,7 @@ export default function CreateJobPage() {
 
   // ── Form ──
   return (
+    <div style={s.pageWrapper}>
     <div style={s.page}>
       <div style={{ marginBottom: '2rem' }}>
         <h1 style={{ fontSize: '1.75rem', fontWeight: 700, margin: '0 0 0.375rem', color: 'var(--text-primary)' }}>
@@ -321,13 +322,32 @@ export default function CreateJobPage() {
           </div>
         )}
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
-          <button type="button" onClick={() => navigate(-1)} style={s.cancelBtn}>Cancel</button>
-          <button type="submit" style={s.submitBtn} disabled={submitting}>
-            {submitting ? 'Posting…' : 'Post Job'}
-          </button>
+        <div style={s.actionBar}>
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            style={s.cancelBtn}
+            onMouseEnter={e => e.currentTarget.style.filter = 'brightness(0.97)'}
+            onMouseLeave={e => e.currentTarget.style.filter = 'none'}
+          >Cancel</button>
+          <button
+            type="submit"
+            style={s.submitBtn}
+            disabled={submitting}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = '#1d4ed8'
+              e.currentTarget.style.boxShadow = '0 8px 16px rgba(37,99,235,0.3)'
+              e.currentTarget.style.transform = 'translateY(-2px)'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = '#2563EB'
+              e.currentTarget.style.boxShadow = 'none'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }}
+          >{submitting ? 'Posting…' : 'Post Job'}</button>
         </div>
       </form>
+    </div>
     </div>
   )
 }
@@ -345,8 +365,9 @@ const s = {
   input:        { padding: '0.65rem 0.875rem', border: '1px solid var(--border)', borderRadius: 8, fontSize: '0.9rem', outline: 'none', width: '100%', boxSizing: 'border-box', background: 'var(--card-bg)', color: 'var(--text-primary)' },
   inputErr:     { borderColor: '#ef4444', background: 'rgba(239,68,68,0.08)' },
   ferr:         { color: '#ef4444', fontSize: '0.8rem', margin: 0 },
-  cancelBtn:    { padding: '0.65rem 1.25rem', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, cursor: 'pointer', fontWeight: 500, color: 'var(--text-primary)' },
-  submitBtn:    { padding: '0.65rem 1.75rem', background: '#2563EB', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: '0.95rem', cursor: 'pointer' },
+  actionBar:    { position: 'sticky', bottom: 0, display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', padding: '0.75rem 0', background: 'linear-gradient(180deg, transparent, var(--card-bg))', marginTop: '1rem' },
+  cancelBtn:    { padding: '0.5rem 1.25rem', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, cursor: 'pointer', fontWeight: 600, color: 'var(--text-primary)', minWidth: 44, minHeight: 44, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' },
+  submitBtn:    { padding: '0.5rem 1.5rem', background: '#2563EB', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: '0.95rem', cursor: 'pointer', minWidth: 44, minHeight: 44, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.15s, box-shadow 0.15s, transform 0.15s' },
   successCard:  { background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: 16, padding: '2.5rem', textAlign: 'center' },
   successIcon:  { width: 56, height: 56, background: '#dcfce7', color: '#166534', borderRadius: '50%', fontSize: '1.5rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' },
   resultJob:    { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: '1.5rem', marginBottom: '2rem', textAlign: 'left' },
