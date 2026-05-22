@@ -14,7 +14,6 @@
   padding: 2rem;
 }
 
-
 .pageTitle {
   font-size: 24px;
   font-weight: 800;
@@ -188,30 +187,6 @@
   border-color: #2563EB;
 }
 
-/* ── STATUS BADGE ── */
-.statusBadge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 8px;
-  border-radius: 100px;
-  text-transform: capitalize;
-}
-
-.status_approved {
-  background: rgba(16, 185, 129, 0.1);
-  color: #059669;
-}
-
-.status_pending {
-  background: rgba(245, 158, 11, 0.1);
-  color: #D97706;
-}
-
-.status_rejected {
-  background: rgba(239, 68, 68, 0.1);
-  color: #DC2626;
-}
-
 /* ── DELETE BUTTON ── */
 .deleteBtn {
   font-family: 'Inter', sans-serif;
@@ -329,4 +304,69 @@
   font-size: 14px;
   text-align: center;
   padding: 2rem;
+}
+
+/* ── STAT CARDS – GREY HOVER, BLUE ACTIVE ── */
+.statsCards {
+  display: flex;
+  gap: 1rem;
+}
+
+.statCard {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 0.75rem 1.25rem;
+  min-width: 80px;
+  text-align: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+/* Hover effect – grey border (original style) */
+.statCard:hover {
+  border-color: #9CA3AF;
+  background: #F9FAFB;
+}
+
+/* Active filter – blue border, blue text, light blue background */
+.statCardActive {
+  border-color: #2563EB;
+  background: #EFF6FF;
+}
+
+.statCardActive .statNumber {
+  color: #2563EB;
+}
+
+.statCardActive .statLabel {
+  color: #1E40AF;
+}
+
+.statNumber {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.2;
+  transition: color 0.2s ease;
+}
+
+.statLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6B7280;
+  transition: color 0.2s ease;
+}
+
+.headerTop {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
 }

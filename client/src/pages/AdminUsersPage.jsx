@@ -11,9 +11,32 @@ const STATUS_OPTIONS = [
   { value: 'rejected', label: 'Rejected' },
 ];
 
+const ROLE_OPTIONS = [
+  { value: 'jobSeeker', label: 'Job Seeker' },
+  { value: 'recruiter', label: 'Recruiter' },
+  { value: 'admin', label: 'Admin' },
+];
+
 const getTotalPages = (data) => {
   if (data.totalPages) return data.totalPages;
   return Math.max(1, Math.ceil((data.total || 0) / PAGE_SIZE));
+};
+
+// Helper to fetch global stats (fallback to fetching users if stats endpoint missing)
+const fetchGlobalStats = async () => {
+  try {
+    const res = await api.get('/users/stats');
+    return res.data;
+  } catch {
+    console.warn('⚠️ /users/stats endpoint missing – fetching users for stats');
+    const fallbackRes = await api.get('/users', { params: { page: 1, limit: 1000 } });
+    const allUsers = fallbackRes.data.users || [];
+    const total = fallbackRes.data.total || allUsers.length;
+    const approved = allUsers.filter(u => u.status === 'approved').length;
+    const pending = allUsers.filter(u => u.status === 'pending').length;
+    const rejected = allUsers.filter(u => u.status === 'rejected').length;
+    return { total, approved, pending, rejected };
+  }
 };
 
 const AdminUsersPage = () => {
@@ -24,6 +47,12 @@ const AdminUsersPage = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [modal, setModal] = useState({ open: false, userId: null, userName: '' });
+  const [globalStats, setGlobalStats] = useState({
+    total: 0,
+    approved: 0,
+    pending: 0,
+    rejected: 0,
+  });
 
   const buildParams = useCallback(() => ({
     page,
@@ -38,11 +67,26 @@ const AdminUsersPage = () => {
     setTotalPages(getTotalPages(res.data));
   };
 
+  const refreshStats = async () => {
+    const stats = await fetchGlobalStats();
+    setGlobalStats(stats);
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+    const loadStats = async () => {
+      const stats = await fetchGlobalStats();
+      if (isMounted) setGlobalStats(stats);
+    };
+    loadStats();
+    return () => { isMounted = false; };
+  }, []);
+
   useEffect(() => {
     let isMounted = true;
     const fetchUsers = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
         const res = await api.get('/users', { params: buildParams() });
         if (isMounted) {
           setUsers(res.data.users || []);
@@ -68,6 +112,7 @@ const AdminUsersPage = () => {
     try {
       await api.patch(`/users/${userId}/status`, { status: newStatus });
       await refreshUsers();
+      await refreshStats();
     } catch {
       alert('Status update failed.');
     }
@@ -78,40 +123,97 @@ const AdminUsersPage = () => {
       await api.delete(`/users/${modal.userId}`);
       setModal({ open: false, userId: null, userName: '' });
       await refreshUsers();
+      await refreshStats();
     } catch {
       alert('Delete failed.');
     }
   };
 
+  const getRoleBadgeStyle = (role) => {
+    switch (role) {
+      case 'admin':
+        return styles.roleAdmin;
+      case 'recruiter':
+        return styles.roleRecruiter;
+      default:
+        return styles.roleSeeker;
+    }
+  };
+
+  const handleStatusFilter = (statusValue) => {
+    setFilters(prev => ({ ...prev, status: statusValue }));
+    setPage(1);
+  };
+
   return (
     <div className={styles.page}>
       <div className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>Manage Users</h1>
-        <p className={styles.pageSub}>View, filter, and manage all platform users</p>
+        <div className={styles.headerTop}>
+          <div>
+            <h1 className={styles.pageTitle}>USERS REGISTRY</h1>
+            <p className={styles.pageSub}>View, filter, and manage all platform users</p>
+          </div>
+          <div className={styles.statsCards}>
+            <div
+              className={`${styles.statCard} ${!filters.status ? styles.statCardActive : ''}`}
+              onClick={() => handleStatusFilter('')}
+            >
+              <span className={styles.statNumber}>{globalStats.total}</span>
+              <span className={styles.statLabel}>Total Users</span>
+            </div>
+            <div
+              className={`${styles.statCard} ${filters.status === 'approved' ? styles.statCardActive : ''}`}
+              onClick={() => handleStatusFilter('approved')}
+            >
+              <span className={styles.statNumber}>{globalStats.approved}</span>
+              <span className={styles.statLabel}>Approved</span>
+            </div>
+            <div
+              className={`${styles.statCard} ${filters.status === 'pending' ? styles.statCardActive : ''}`}
+              onClick={() => handleStatusFilter('pending')}
+            >
+              <span className={styles.statNumber}>{globalStats.pending}</span>
+              <span className={styles.statLabel}>Pending</span>
+            </div>
+            <div
+              className={`${styles.statCard} ${filters.status === 'rejected' ? styles.statCardActive : ''}`}
+              onClick={() => handleStatusFilter('rejected')}
+            >
+              <span className={styles.statNumber}>{globalStats.rejected}</span>
+              <span className={styles.statLabel}>Rejected</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className={styles.content}>
         <div className={styles.filterBar}>
-          <select
-            className={styles.filterSelect}
-            value={filters.role}
-            onChange={e => handleFilterChange('role', e.target.value)}
-          >
-            <option value="">All roles</option>
-            <option value="jobSeeker">Job Seeker</option>
-            <option value="recruiter">Recruiter</option>
-            <option value="admin">Admin</option>
-          </select>
-          <select
-            className={styles.filterSelect}
-            value={filters.status}
-            onChange={e => handleFilterChange('status', e.target.value)}
-          >
-            <option value="">All statuses</option>
-            {STATUS_OPTIONS.map(s => (
-              <option key={s.value} value={s.value}>{s.label}</option>
-            ))}
-          </select>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Role</label>
+            <select
+              className={styles.filterSelect}
+              value={filters.role}
+              onChange={e => handleFilterChange('role', e.target.value)}
+            >
+              <option value="">All roles</option>
+              {ROLE_OPTIONS.map(role => (
+                <option key={role.value} value={role.value}>{role.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Status</label>
+            <select
+              className={styles.filterSelect}
+              value={filters.status}
+              onChange={e => handleFilterChange('status', e.target.value)}
+            >
+              <option value="">All statuses</option>
+              {STATUS_OPTIONS.map(s => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
+          </div>
           {(filters.role || filters.status) && (
             <button
               className={styles.clearBtn}
@@ -127,12 +229,12 @@ const AdminUsersPage = () => {
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th className={styles.th}>Name</th>
-                  <th className={styles.th}>Email</th>
-                  <th className={styles.th}>Role</th>
-                  <th className={styles.th}>Status</th>
-                  <th className={styles.th}>Registered</th>
-                  <th className={styles.th}>Actions</th>
+                  <th className={styles.th}>NAME</th>
+                  <th className={styles.th}>EMAIL</th>
+                  <th className={styles.th}>ROLE</th>
+                  <th className={styles.th}>STATUS</th>
+                  <th className={styles.th}>REGISTERED</th>
+                  <th className={styles.th}>ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
@@ -150,21 +252,19 @@ const AdminUsersPage = () => {
           </div>
         )}
 
-        {!loading && error && (
-          <p className={styles.errorText}>{error}</p>
-        )}
+        {!loading && error && <p className={styles.errorText}>{error}</p>}
 
         {!loading && !error && (
           <div className={styles.tableWrapper}>
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th className={styles.th}>Name</th>
-                  <th className={styles.th}>Email</th>
-                  <th className={styles.th}>Role</th>
-                  <th className={styles.th}>Status</th>
-                  <th className={styles.th}>Registered</th>
-                  <th className={styles.th}>Actions</th>
+                  <th className={styles.th}>NAME</th>
+                  <th className={styles.th}>EMAIL</th>
+                  <th className={styles.th}>ROLE</th>
+                  <th className={styles.th}>STATUS</th>
+                  <th className={styles.th}>REGISTERED</th>
+                  <th className={styles.th}>ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
@@ -178,7 +278,7 @@ const AdminUsersPage = () => {
                     <td className={styles.td}>
                       <div className={styles.nameCell}>
                         <div className={styles.avatar}>
-                          {user.name.charAt(0).toUpperCase()}
+                          {user.name?.charAt(0).toUpperCase() || 'U'}
                         </div>
                         <span className={styles.userName}>{user.name}</span>
                       </div>
@@ -187,7 +287,9 @@ const AdminUsersPage = () => {
                       <span className={styles.emailText}>{user.email}</span>
                     </td>
                     <td className={styles.td}>
-                      <span className={styles.roleText}>{user.role}</span>
+                      <span className={`${styles.roleBadge} ${getRoleBadgeStyle(user.role)}`}>
+                        {user.role === 'jobSeeker' ? 'Job Seeker' : user.role}
+                      </span>
                     </td>
                     <td className={styles.td}>
                       <select
@@ -202,8 +304,10 @@ const AdminUsersPage = () => {
                     </td>
                     <td className={styles.td}>
                       <span className={styles.dateText}>
-                        {new Date(user.createdAt).toLocaleDateString('en-GB', {
-                          day: 'numeric', month: 'short', year: 'numeric'
+                        {new Date(user.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
                         })}
                       </span>
                     </td>

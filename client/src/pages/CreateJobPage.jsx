@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import api from '../services/api'
 import { useAuth } from '../context/AuthContext'
 import { CATEGORY_COLORS } from '../utils/categoryColors'
-import JobForm from '../components/JobForm'
+
+const JOB_TYPES = ['full-time', 'part-time', 'internship', 'contract']
 
 export default function CreateJobPage() {
   const navigate = useNavigate()
@@ -183,22 +184,148 @@ export default function CreateJobPage() {
         </p>
       </div>
 
-      <JobForm
-        form={form}
-        errors={errors}
-        requirements={requirements}
-        onChange={handleChange}
-        onUpdateRequirement={updateReq}
-        onAddRequirement={addReq}
-        onRemoveRequirement={removeReq}
-        onSubmit={handleSubmit}
-        submitting={submitting}
-        submitError={submitError}
-        submitLabel={submitting ? 'Posting…' : 'Post Job'}
-        cancelLabel="Cancel"
-        onCancel={() => navigate(-1)}
-        showAiNotice={true}
-      />
+      <form onSubmit={handleSubmit} style={s.form} noValidate>
+
+        {/* Title */}
+        <div style={s.field}>
+          <label style={s.label}>Job Title <span style={{ color: '#ef4444' }}>*</span></label>
+          <input
+            style={{ ...s.input, ...(errors.title ? s.inputErr : {}) }}
+            type="text" placeholder="e.g. Senior Frontend Engineer"
+            value={form.title} onChange={handleChange('title')}
+          />
+          {errors.title && <p style={s.ferr}>{errors.title}</p>}
+        </div>
+
+        {/* Company */}
+        <div style={s.field}>
+          <label style={s.label}>Company <span style={{ color: '#ef4444' }}>*</span></label>
+          <input
+            style={{ ...s.input, ...(errors.company ? s.inputErr : {}) }}
+            type="text" placeholder="e.g. Acme Corp"
+            value={form.company} onChange={handleChange('company')}
+          />
+          {errors.company && <p style={s.ferr}>{errors.company}</p>}
+        </div>
+
+        {/* Location + Type */}
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <div style={{ ...s.field, flex: 1 }}>
+            <label style={s.label}>Location <span style={{ color: '#ef4444' }}>*</span></label>
+            <input
+              style={{ ...s.input, ...(errors.location ? s.inputErr : {}) }}
+              type="text" placeholder="e.g. Cairo, Egypt"
+              value={form.location} onChange={handleChange('location')}
+            />
+            {errors.location && <p style={s.ferr}>{errors.location}</p>}
+          </div>
+          <div style={{ ...s.field, flex: 1 }}>
+            <label style={s.label}>Job Type <span style={{ color: '#ef4444' }}>*</span></label>
+            <select style={s.input} value={form.type} onChange={handleChange('type')}>
+              {JOB_TYPES.map(t => (
+                <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Description */}
+        <div style={s.field}>
+          <label style={s.label}>Description <span style={{ color: '#ef4444' }}>*</span></label>
+          <textarea
+            style={{ ...s.input, resize: 'vertical', lineHeight: 1.6, fontFamily: 'inherit', ...(errors.description ? s.inputErr : {}) }}
+            rows={5} placeholder="Describe the role and responsibilities…"
+            value={form.description} onChange={handleChange('description')}
+          />
+          {errors.description && <p style={s.ferr}>{errors.description}</p>}
+        </div>
+
+        {/* Requirements — dynamic add/remove */}
+        <div style={s.field}>
+          <label style={s.label}>Requirements <span style={{ color: '#ef4444' }}>*</span></label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {requirements.map((req, i) => (
+              <div key={i} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <input
+                  style={{ ...s.input, flex: 1 }}
+                  type="text" placeholder={`Requirement ${i + 1}`}
+                  value={req} onChange={e => updateReq(i, e.target.value)}
+                />
+                {requirements.length > 1 && (
+                  <button
+                    type="button" onClick={() => removeReq(i)}
+                    style={{ width: 32, height: 32, background: '#fee2e2', color: '#b91c1c', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: '1.1rem', flexShrink: 0 }}
+                  >×</button>
+                )}
+              </div>
+            ))}
+          </div>
+          {errors.requirements && <p style={s.ferr}>{errors.requirements}</p>}
+          <button
+            type="button" onClick={addReq}
+            style={{ alignSelf: 'flex-start', marginTop: '0.375rem', padding: '0.45rem 1rem', background: '#eff6ff', color: '#2563EB', border: '1px solid #bfdbfe', borderRadius: 8, fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
+          >+ Add Requirement</button>
+        </div>
+
+        {/* Salary + Total Slots */}
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <div style={{ ...s.field, flex: 1 }}>
+            <label style={s.label}>
+              Salary (USD/yr) <span style={{ fontSize: '0.75rem', fontWeight: 400, color: '#9ca3af' }}>optional</span>
+            </label>
+            <input
+              style={{ ...s.input, ...(errors.salary ? s.inputErr : {}) }}
+              type="number" min={0} placeholder="e.g. 60000"
+              value={form.salary} onChange={handleChange('salary')}
+            />
+            {errors.salary && <p style={s.ferr}>{errors.salary}</p>}
+          </div>
+          <div style={{ ...s.field, flex: 1 }}>
+            <label style={s.label}>
+              Total Slots <span style={{ fontSize: '0.75rem', fontWeight: 400, color: '#9ca3af' }}>optional</span>
+            </label>
+            <input
+              style={{ ...s.input, ...(errors.totalSlots ? s.inputErr : {}) }}
+              type="number" min={1} placeholder="e.g. 3"
+              value={form.totalSlots} onChange={handleChange('totalSlots')}
+            />
+            {errors.totalSlots && <p style={s.ferr}>{errors.totalSlots}</p>}
+          </div>
+        </div>
+
+        {/* AI notice — no category field */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: 10, padding: '1rem' }}>
+          <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>✨</span>
+          <p style={{ margin: 0, color: '#5b21b6', fontSize: '0.875rem', lineHeight: 1.5 }}>
+            <strong>Category is auto-assigned by AI</strong> — you'll see the result after posting.
+          </p>
+        </div>
+
+        {submitError && (
+          <div style={{ 
+            background: '#fef2f2', 
+            border: '1px solid #fecaca', 
+            borderRadius: 10, 
+            padding: '1rem',
+            display: 'flex',
+            gap: '0.75rem',
+            alignItems: 'flex-start'
+          }}>
+            <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>⚠️</span>
+            <div style={{ flex: 1 }}>
+              <p style={{ color: '#b91c1c', fontSize: '0.95rem', fontWeight: 600, margin: '0 0 0.25rem' }}>Cannot Post Job</p>
+              <p style={{ color: '#7f1d1d', fontSize: '0.875rem', margin: 0, lineHeight: 1.5 }}>{submitError}</p>
+            </div>
+          </div>
+        )}
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+          <button type="button" onClick={() => navigate(-1)} style={s.cancelBtn}>Cancel</button>
+          <button type="submit" style={s.submitBtn} disabled={submitting}>
+            {submitting ? 'Posting…' : 'Post Job'}
+          </button>
+        </div>
+      </form>
     </div>
   )
 }
