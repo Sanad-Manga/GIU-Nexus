@@ -22,6 +22,23 @@ const getTotalPages = (data) => {
   return Math.max(1, Math.ceil((data.total || 0) / PAGE_SIZE));
 };
 
+// Helper to fetch global stats (fallback to fetching users if stats endpoint missing)
+const fetchGlobalStats = async () => {
+  try {
+    const res = await api.get('/users/stats');
+    return res.data;
+  } catch {
+    console.warn('⚠️ /users/stats endpoint missing – fetching users for stats');
+    const fallbackRes = await api.get('/users', { params: { page: 1, limit: 1000 } });
+    const allUsers = fallbackRes.data.users || [];
+    const total = fallbackRes.data.total || allUsers.length;
+    const approved = allUsers.filter(u => u.status === 'approved').length;
+    const pending = allUsers.filter(u => u.status === 'pending').length;
+    const rejected = allUsers.filter(u => u.status === 'rejected').length;
+    return { total, approved, pending, rejected };
+  }
+};
+
 const AdminUsersPage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,8 +46,13 @@ const AdminUsersPage = () => {
   const [filters, setFilters] = useState({ role: '', status: '' });
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalUsers, setTotalUsers] = useState(0);
   const [modal, setModal] = useState({ open: false, userId: null, userName: '' });
+  const [globalStats, setGlobalStats] = useState({
+    total: 0,
+    approved: 0,
+    pending: 0,
+    rejected: 0,
+  });
 
   const buildParams = useCallback(() => ({
     page,
@@ -42,20 +64,32 @@ const AdminUsersPage = () => {
   const refreshUsers = async () => {
     const res = await api.get('/users', { params: buildParams() });
     setUsers(res.data.users || []);
-    const total = res.data.total || 0;
-    setTotalUsers(total);
     setTotalPages(getTotalPages(res.data));
+  };
+
+  const refreshStats = async () => {
+    const stats = await fetchGlobalStats();
+    setGlobalStats(stats);
   };
 
   useEffect(() => {
     let isMounted = true;
+    const loadStats = async () => {
+      const stats = await fetchGlobalStats();
+      if (isMounted) setGlobalStats(stats);
+    };
+    loadStats();
+    return () => { isMounted = false; };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
     const fetchUsers = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
         const res = await api.get('/users', { params: buildParams() });
         if (isMounted) {
           setUsers(res.data.users || []);
-          setTotalUsers(res.data.total || 0);
           setTotalPages(getTotalPages(res.data));
           setError('');
         }
@@ -78,6 +112,7 @@ const AdminUsersPage = () => {
     try {
       await api.patch(`/users/${userId}/status`, { status: newStatus });
       await refreshUsers();
+      await refreshStats();
     } catch {
       alert('Status update failed.');
     }
@@ -88,6 +123,7 @@ const AdminUsersPage = () => {
       await api.delete(`/users/${modal.userId}`);
       setModal({ open: false, userId: null, userName: '' });
       await refreshUsers();
+      await refreshStats();
     } catch {
       alert('Delete failed.');
     }
@@ -104,6 +140,11 @@ const AdminUsersPage = () => {
     }
   };
 
+  const handleStatusFilter = (statusValue) => {
+    setFilters(prev => ({ ...prev, status: statusValue }));
+    setPage(1);
+  };
+
   return (
     <div className={styles.page}>
       <div className={styles.pageHeader}>
@@ -113,26 +154,32 @@ const AdminUsersPage = () => {
             <p className={styles.pageSub}>View, filter, and manage all platform users</p>
           </div>
           <div className={styles.statsCards}>
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>{totalUsers}</span>
+            <div
+              className={`${styles.statCard} ${!filters.status ? styles.statCardActive : ''}`}
+              onClick={() => handleStatusFilter('')}
+            >
+              <span className={styles.statNumber}>{globalStats.total}</span>
               <span className={styles.statLabel}>Total Users</span>
             </div>
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>
-                {users.filter(u => u.status === 'approved').length}
-              </span>
+            <div
+              className={`${styles.statCard} ${filters.status === 'approved' ? styles.statCardActive : ''}`}
+              onClick={() => handleStatusFilter('approved')}
+            >
+              <span className={styles.statNumber}>{globalStats.approved}</span>
               <span className={styles.statLabel}>Approved</span>
             </div>
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>
-                {users.filter(u => u.status === 'pending').length}
-              </span>
+            <div
+              className={`${styles.statCard} ${filters.status === 'pending' ? styles.statCardActive : ''}`}
+              onClick={() => handleStatusFilter('pending')}
+            >
+              <span className={styles.statNumber}>{globalStats.pending}</span>
               <span className={styles.statLabel}>Pending</span>
             </div>
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>
-                {users.filter(u => u.status === 'rejected').length}
-              </span>
+            <div
+              className={`${styles.statCard} ${filters.status === 'rejected' ? styles.statCardActive : ''}`}
+              onClick={() => handleStatusFilter('rejected')}
+            >
+              <span className={styles.statNumber}>{globalStats.rejected}</span>
               <span className={styles.statLabel}>Rejected</span>
             </div>
           </div>
@@ -205,9 +252,7 @@ const AdminUsersPage = () => {
           </div>
         )}
 
-        {!loading && error && (
-          <p className={styles.errorText}>{error}</p>
-        )}
+        {!loading && error && <p className={styles.errorText}>{error}</p>}
 
         {!loading && !error && (
           <div className={styles.tableWrapper}>
