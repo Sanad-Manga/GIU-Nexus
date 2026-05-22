@@ -37,11 +37,11 @@ const normalizeWeeklyStats = (stats) => {
   }))
 }
 
-const SummarySection = ({ title, data }) => (
+const SummarySection = ({ title, data, eyebrow = 'Snapshot' }) => (
   <section className="admin-card">
     <div className="admin-card-header">
       <div>
-        <p className="admin-eyebrow">Snapshot</p>
+        <p className="admin-eyebrow">{eyebrow}</p>
         <h2>{title}</h2>
       </div>
     </div>
@@ -210,9 +210,23 @@ function AdminDashboard() {
           )}
         </section>
 
-        <SummarySection title="Jobs By Status" data={stats?.jobsByStatus || {}} />
-        <SummarySection title="Applications By Status" data={stats?.appsByStatus || {}} />
-        <SummarySection title="Users By Role" data={stats?.usersByRole || {}} />
+        <SummarySection
+          title="Jobs By Status"
+          eyebrow="Job Activity"
+          data={stats?.jobsByStatus || {}}
+        />
+
+        <SummarySection
+          title="Applications By Status"
+          eyebrow="Application Flow"
+          data={stats?.appsByStatus || {}}
+        />
+
+        <SummarySection
+          title="Users By Role"
+          eyebrow="User Metrics"
+          data={stats?.usersByRole || {}}
+        />
       </div>
 
       {/* Testing note: the SCRUM-64 chart appears only when the backend returns weekly application stats. */}
