@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-22T18:42:13.183Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-22T18:49:07.234Z
 > Files: 27 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
@@ -67,7 +67,7 @@
 - `AdminJobsPage.jsx` — Job governance; admin-hero + admin-card + admin-table, Delete action, uses AdminPages.css (~2100 tok)
 - `AdminUsersPage.jsx` — PAGE_SIZE — renders table, modal (~3275 tok)
 - `ApplicantsPage.jsx` — COLORS — renders table (~2412 tok)
-- `CreateJobPage.jsx` — JOB_TYPES — renders form (~4615 tok)
+- `CreateJobPage.jsx` — JOB_TYPES — renders form (~4996 tok)
 - `HomePage.jsx` — hasScore (~4610 tok)
 - `HomePage.module.css` — Styles: 57 rules (~2800 tok)
 - `JobDetailPage.jsx` — JobDetailPage (~8446 tok)

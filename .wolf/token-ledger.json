@@ -2,14 +2,14 @@
   "version": 1,
   "created_at": "2026-05-12T17:30:32.005Z",
   "lifetime": {
-    "total_tokens_estimated": 641588,
-    "total_reads": 529,
-    "total_writes": 1025,
-    "total_sessions": 17,
-    "anatomy_hits": 80,
+    "total_tokens_estimated": 646380,
+    "total_reads": 530,
+    "total_writes": 1026,
+    "total_sessions": 18,
+    "anatomy_hits": 81,
     "anatomy_misses": 449,
-    "repeated_reads_blocked": 296,
-    "estimated_savings_vs_bare_cli": 620946
+    "repeated_reads_blocked": 297,
+    "estimated_savings_vs_bare_cli": 625761
   },
   "sessions": [
     {
@@ -9310,6 +9310,34 @@
         "writes_count": 16,
         "repeated_reads_blocked": 4,
         "anatomy_lookups": 4
+      }
+    },
+    {
+      "id": "session-2026-05-22-2148",
+      "started": "2026-05-22T18:48:01.038Z",
+      "ended": "2026-05-22T18:49:16.342Z",
+      "reads": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/CreateJobPage.jsx",
+          "tokens_estimated": 4615,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/CreateJobPage.jsx",
+          "tokens_estimated": 177,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 4615,
+        "output_tokens_estimated": 177,
+        "reads_count": 1,
+        "writes_count": 1,
+        "repeated_reads_blocked": 1,
+        "anatomy_lookups": 1
       }
     }
   ],
