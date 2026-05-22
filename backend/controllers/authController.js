@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
 const blacklist = require("../middleware/tokenBlacklist");
 const validator = require("validator");
 const xss = require("xss");
@@ -212,7 +213,7 @@ exports.forgotPassword = async (req, res, next) => {
     const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
 
     user.otp = otpHash;
-    user.otpExpire = new Date(Date.now() + 60 * 1000);
+    user.otpExpire = new Date(Date.now() + 2 * 60 * 1000);
     await user.save();
 
     try {
@@ -281,6 +282,23 @@ exports.verifyOtp = async (req, res, next) => {
   }
 };
 
+// GET /api/v1/auth/validate-reset-token/:token
+exports.validateResetToken = async (req, res, next) => {
+  try {
+    const tokenHash = crypto.createHash("sha256").update(req.params.token).digest("hex");
+    const user = await User.findOne({
+      resetPasswordToken: tokenHash,
+      resetPasswordExpire: { $gt: Date.now() },
+    }).select("+resetPasswordToken +resetPasswordExpire");
+    if (!user) {
+      return res.status(400).json({ success: false, message: "Token is invalid or has expired" });
+    }
+    res.status(200).json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // PATCH /api/v1/auth/reset-password/:token
 exports.resetPassword = async (req, res, next) => {
   try {
@@ -309,7 +327,7 @@ exports.resetPassword = async (req, res, next) => {
     const user = await User.findOne({
       resetPasswordToken: resetTokenHash,
       resetPasswordExpire: { $gt: Date.now() },
-    }).select("+resetPasswordToken +resetPasswordExpire +password");
+    }).select("+resetPasswordToken +resetPasswordExpire +password +passwordHistory");
 
     if (!user) {
       return res.status(400).json({
@@ -317,6 +335,31 @@ exports.resetPassword = async (req, res, next) => {
         message: "Token is invalid or has expired",
       });
     }
+
+    // Check new password is not the same as current password
+    const isSameAsCurrent = await bcrypt.compare(password, user.password);
+    if (isSameAsCurrent) {
+      return res.status(400).json({
+        success: false,
+        message: "New password cannot be the same as your current password",
+      });
+    }
+
+    // Check new password against last 5 password history
+    const history = user.passwordHistory || [];
+    for (const oldHash of history) {
+      const reused = await bcrypt.compare(password, oldHash);
+      if (reused) {
+        return res.status(400).json({
+          success: false,
+          message: "You cannot reuse any of your last 5 passwords",
+        });
+      }
+    }
+
+    // Push current hash to history (keep last 5)
+    history.push(user.password);
+    user.passwordHistory = history.slice(-5);
 
     user.password = password;
     user.resetPasswordToken = undefined;

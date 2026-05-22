@@ -157,7 +157,8 @@
   border-color: #fecaca;
 }
 
-.userPill {
+.userPill,
+.userPillLink {
   min-height: 38px;
   display: inline-flex;
   align-items: center;
@@ -166,12 +167,29 @@
   border: 1px solid #e5e7eb;
   border-radius: 999px;
   background: #ffffff;
+  text-decoration: none;
 }
 
-.userInitial {
+.userPillLink {
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.userPillLink:hover {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  background: #f8faff;
+}
+
+.userInitial,
+.userAvatar {
   width: 28px;
   height: 28px;
   border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.userInitial {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -179,6 +197,11 @@
   background: #eff6ff;
   font-size: 12px;
   font-weight: 800;
+}
+
+.userAvatar {
+  object-fit: cover;
+  border: 1.5px solid #e5e7eb;
 }
 
 .userMeta {
@@ -205,6 +228,19 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+}
+
+.profileIconWrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  transition: color 0.15s;
+  margin-left: -2px;
+}
+
+.userPillLink:hover .profileIconWrap {
+  color: #2563eb;
 }
 
 .themeToggle {
@@ -269,14 +305,33 @@
   border-color: #ef4444;
 }
 
-[data-theme="dark"] .userPill {
+[data-theme="dark"] .userPill,
+[data-theme="dark"] .userPillLink {
   background: #1E293B;
   border-color: #334155;
+}
+
+[data-theme="dark"] .userPillLink:hover {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  background: #1e3356;
+}
+
+[data-theme="dark"] .profileIconWrap {
+  color: #64748B;
+}
+
+[data-theme="dark"] .userPillLink:hover .profileIconWrap {
+  color: #60A5FA;
 }
 
 [data-theme="dark"] .userInitial {
   background: rgba(37, 99, 235, 0.2);
   color: #93C5FD;
+}
+
+[data-theme="dark"] .userAvatar {
+  border-color: #334155;
 }
 
 [data-theme="dark"] .userName {

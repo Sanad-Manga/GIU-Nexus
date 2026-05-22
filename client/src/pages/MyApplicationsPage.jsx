@@ -42,45 +42,44 @@ export default function MyApplicationsPage() {
           <Link to="/jobs" className={styles.browseBtn}>Browse Jobs</Link>
         </div>
       ) : (
-        <div className={styles.list}>
-          {applications.map(app => (
-            <Link
-              key={app._id}
-              to={app.job?._id ? `/jobs/${app.job._id}` : '/jobs'}
-              className={styles.card}
-            >
-              <div className={styles.info}>
+        <div className={styles.grid}>
+          {applications.map(app => {
+            const company = app.job?.company ?? ''
+            const initials = company.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase() || '?'
+            return (
+              <Link
+                key={app._id}
+                to={app.job?._id ? `/jobs/${app.job._id}` : '/jobs'}
+                className={styles.card}
+              >
+                <div className={styles.cardTop}>
+                  <span className={`${styles.badge} ${STATUS_CLASS[app.status] ?? ''}`}>
+                    {app.status}
+                  </span>
+                  <span className={styles.date}>
+                    {new Date(app.appliedAt).toLocaleDateString('en-US', {
+                      month: 'short', day: 'numeric', year: 'numeric',
+                    })}
+                  </span>
+                </div>
+
                 <h3 className={styles.jobTitle}>{app.job?.title ?? 'Unknown Job'}</h3>
+
+                <div className={styles.companyRow}>
+                  <div className={styles.avatar}>{initials}</div>
+                  <p className={styles.company}>{company}</p>
+                </div>
+
+                <div className={styles.divider} />
+
                 <p className={styles.meta}>
-                  {app.job?.company && <span>{app.job.company}</span>}
-                  {app.job?.type && (
-                    <>
-                      <span className={styles.dot}>·</span>
-                      <span>{app.job.type}</span>
-                    </>
-                  )}
-                  {app.job?.location && (
-                    <>
-                      <span className={styles.dot}>·</span>
-                      <span>{app.job.location}</span>
-                    </>
-                  )}
+                  {app.job?.type && <span>{app.job.type}</span>}
+                  {app.job?.type && app.job?.location && <span className={styles.dot}>•</span>}
+                  {app.job?.location && <span>{app.job.location}</span>}
                 </p>
-              </div>
-              <div className={styles.right}>
-                <span className={`${styles.badge} ${STATUS_CLASS[app.status] ?? ''}`}>
-                  {app.status}
-                </span>
-                <span className={styles.date}>
-                  {new Date(app.appliedAt).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })}
-                </span>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            )
+          })}
         </div>
       )}
     </div>

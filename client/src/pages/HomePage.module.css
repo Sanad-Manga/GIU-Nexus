@@ -9,18 +9,19 @@
 }
 
 .pageGuest {
-  background: #ffffff;
+  background: transparent;
   min-height: auto;
 }
 
 .pageGuest .hero {
   border-bottom: none;
+  background: transparent;
 }
 
 /* ── Dark mode ── */
 [data-theme="dark"] .page { background: #0F172A; color: #F1F5F9; }
-[data-theme="dark"] .pageGuest { background: #1E293B; }
-[data-theme="dark"] .hero { background: #1E293B; border-color: #334155; }
+[data-theme="dark"] .pageGuest { background: transparent; }
+[data-theme="dark"] .hero { background: transparent; border-color: #1E293B; }
 [data-theme="dark"] .pageGuest .hero { border-bottom: none; }
 [data-theme="dark"] .heroTitle { color: #F1F5F9; }
 [data-theme="dark"] .heroAccent { color: #60A5FA; }
@@ -35,7 +36,7 @@
 [data-theme="dark"] .sectionTitle { color: #F1F5F9; }
 [data-theme="dark"] .sectionLink { color: #64748B; }
 [data-theme="dark"] .sectionLink:hover { color: #60A5FA; }
-[data-theme="dark"] .recSection { background: #1E293B; border-color: #334155; }
+[data-theme="dark"] .recSection { background: rgba(30,41,59,0.45); border-color: #1E293B; }
 [data-theme="dark"] .recruiterJobCard { background: #1E293B; border-color: #334155; }
 [data-theme="dark"] .recruiterJobCard:hover { border-color: #60A5FA; }
 [data-theme="dark"] .recruiterJobTitle { color: #F1F5F9; }

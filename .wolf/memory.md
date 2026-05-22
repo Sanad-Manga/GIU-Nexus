@@ -323,3 +323,132 @@
 |------|--------|---------|---------|--------|
 | 21:49 | Edited client/src/pages/CreateJobPage.jsx | 5→5 lines | ~177 |
 | 21:49 | Session end: 1 writes across 1 files (CreateJobPage.jsx) | 1 reads | ~4792 tok |
+| 21:55 | Edited client/src/pages/CreateJobPage.jsx | 3→4 lines | ~24 |
+| 21:55 | Edited client/src/pages/CreateJobPage.jsx | 6→7 lines | ~16 |
+| 21:56 | Edited client/src/pages/EditJobPage.jsx | 26→25 lines | ~916 |
+| 21:58 | Edited client/src/components/JobForm.jsx | CSS: opacity | ~1259 |
+| 21:59 | Edited client/src/pages/EditJobPage.jsx | 20→18 lines | ~172 |
+
+## Session: 2026-05-22 22:02
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-22 22:02
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-22 22:02
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 22:05 | Edited backend/services/classificationService.js | modified classifyJobCategory() | ~329 |
+| 22:05 | Edited backend/controllers/jobController.js | 3→3 lines | ~46 |
+| 22:05 | Edited backend/controllers/jobController.js | inline fix | ~37 |
+| 22:05 | Session end: 3 writes across 2 files (classificationService.js, jobController.js) | 3 reads | ~412 tok |
+| 22:06 | Edited client/src/pages/CreateJobPage.jsx | expanded (+18 lines) | ~284 |
+| 22:06 | Edited client/src/pages/CreateJobPage.jsx | 2→3 lines | ~246 |
+| 22:06 | Session end: 5 writes across 3 files (classificationService.js, jobController.js, CreateJobPage.jsx) | 3 reads | ~942 tok |
+| 22:07 | Session end: 5 writes across 3 files (classificationService.js, jobController.js, CreateJobPage.jsx) | 3 reads | ~942 tok |
+| 22:09 | Edited backend/services/classificationService.js | added optional chaining | ~193 |
+| 22:10 | Session end: 6 writes across 3 files (classificationService.js, jobController.js, CreateJobPage.jsx) | 3 reads | ~1135 tok |
+| 22:11 | Session end: 6 writes across 3 files (classificationService.js, jobController.js, CreateJobPage.jsx) | 3 reads | ~1135 tok |
+| 22:12 | Edited client/src/utils/categoryColors.js | 17→17 lines | ~177 |
+| 22:12 | Session end: 7 writes across 4 files (classificationService.js, jobController.js, CreateJobPage.jsx, categoryColors.js) | 4 reads | ~1312 tok |
+| 22:14 | Created client/src/styles/MyApplicationsPage.module.css | — | ~1137 |
+| 22:15 | Session end: 8 writes across 5 files (classificationService.js, jobController.js, CreateJobPage.jsx, categoryColors.js, MyApplicationsPage.module.css) | 8 reads | ~2449 tok |
+| 22:16 | Edited client/src/styles/EditProfilePage.module.css | 8→12 lines | ~84 |
+| 22:17 | Created client/src/styles/MyApplicationsPage.module.css | — | ~1355 |
+| 22:17 | Edited client/src/pages/MyApplicationsPage.jsx | 42→41 lines | ~464 |
+| 22:17 | Session end: 11 writes across 7 files (classificationService.js, jobController.js, CreateJobPage.jsx, categoryColors.js, MyApplicationsPage.module.css) | 9 reads | ~4352 tok |
+| 22:18 | Edited client/src/pages/EditProfilePage.jsx | added optional chaining | ~165 |
+| 22:19 | Session end: 12 writes across 8 files (classificationService.js, jobController.js, CreateJobPage.jsx, categoryColors.js, MyApplicationsPage.module.css) | 11 reads | ~4517 tok |
+| 22:22 | Session end: 12 writes across 8 files (classificationService.js, jobController.js, CreateJobPage.jsx, categoryColors.js, MyApplicationsPage.module.css) | 12 reads | ~4517 tok |
+| 22:23 | Edited client/src/pages/HomePage.module.css | inline fix | ~22 |
+
+## Session: 2026-05-22 22:25
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 22:26 | Edited client/src/pages/HomePage.module.css | inline fix | ~26 |
+| 22:26 | Edited client/src/components/SaveJobButton.jsx | 5→5 lines | ~88 |
+| 22:26 | Edited client/src/components/SaveJobButton.jsx | CSS: borderRadius, color, transition | ~157 |
+| 22:26 | Session end: 3 writes across 2 files (HomePage.module.css, SaveJobButton.jsx) | 1 reads | ~271 tok |
+| 22:30 | Edited client/src/components/Footer.jsx | 6→5 lines | ~30 |
+| 22:30 | Session end: 4 writes across 3 files (HomePage.module.css, SaveJobButton.jsx, Footer.jsx) | 3 reads | ~301 tok |
+| 22:32 | Edited client/src/components/Footer.jsx | CSS: borderTop | ~44 |
+| 22:32 | Edited client/src/pages/HomePage.module.css | inline fix | ~17 |
+| 22:32 | Edited client/src/pages/HomePage.module.css | 4→4 lines | ~18 |
+| 22:32 | Session end: 7 writes across 3 files (HomePage.module.css, SaveJobButton.jsx, Footer.jsx) | 3 reads | ~380 tok |
+| 22:43 | Edited client/src/pages/HomePage.module.css | CSS: background | ~20 |
+| 22:43 | Edited client/src/pages/RecommendedJobsPage.jsx | 10→10 lines | ~155 |
+| 22:44 | Edited client/src/pages/RecommendedJobsPage.module.css | 3→3 lines | ~27 |
+| 22:44 | Edited client/src/pages/RecommendedJobsPage.module.css | 3→3 lines | ~30 |
+| 22:44 | Edited client/src/pages/RecommendedJobsPage.module.css | 2→2 lines | ~30 |
+| 22:44 | Edited client/src/styles/ResetPasswordPage.module.css | expanded (+12 lines) | ~239 |
+| 22:44 | Edited client/src/pages/ResetPasswordPage.jsx | 7→8 lines | ~89 |
+| 22:44 | Edited client/src/pages/ResetPasswordPage.jsx | 7→8 lines | ~92 |
+| 22:45 | Session end: 15 writes across 7 files (HomePage.module.css, SaveJobButton.jsx, Footer.jsx, RecommendedJobsPage.jsx, RecommendedJobsPage.module.css) | 43 reads | ~14086 tok |
+| 22:51 | Edited backend/controllers/authController.js | added 2 condition(s) | ~380 |
+| 22:51 | Edited backend/controllers/authController.js | 3→4 lines | ~42 |
+| 22:51 | Session end: 17 writes across 8 files (HomePage.module.css, SaveJobButton.jsx, Footer.jsx, RecommendedJobsPage.jsx, RecommendedJobsPage.module.css) | 46 reads | ~17258 tok |
+| 22:53 | Session end: 17 writes across 8 files (HomePage.module.css, SaveJobButton.jsx, Footer.jsx, RecommendedJobsPage.jsx, RecommendedJobsPage.module.css) | 46 reads | ~17258 tok |
+| 22:55 | Edited backend/controllers/authController.js | added error handling | ~197 |
+| 22:55 | Edited backend/routes/authRoutes.js | 8→9 lines | ~44 |
+| 22:55 | Edited backend/routes/authRoutes.js | 1→2 lines | ~34 |
+| 22:55 | Edited client/src/pages/ResetPasswordPage.jsx | modified ResetPasswordPage() | ~249 |
+| 22:55 | Edited client/src/pages/ResetPasswordPage.jsx | CSS: textAlign, textDecoration | ~285 |
+| 22:58 | Edited client/src/styles/ResetPasswordPage.module.css | CSS: margin-top | ~19 |
+| 22:58 | Session end: 23 writes across 9 files (HomePage.module.css, SaveJobButton.jsx, Footer.jsx, RecommendedJobsPage.jsx, RecommendedJobsPage.module.css) | 46 reads | ~18096 tok |
+| 22:59 | Edited client/src/pages/ResetPasswordPage.jsx | modified catch() | ~34 |
+| 22:59 | Session end: 24 writes across 9 files (HomePage.module.css, SaveJobButton.jsx, Footer.jsx, RecommendedJobsPage.jsx, RecommendedJobsPage.module.css) | 46 reads | ~19301 tok |
+| 23:01 | Edited backend/services/emailService.js | modified catch() | ~983 |
+| 23:01 | Edited backend/services/emailService.js | modified catch() | ~796 |
+| 23:03 | Edited backend/controllers/authController.js | 2→2 lines | ~24 |
+| 23:03 | Edited backend/services/emailService.js | 10 → 2 | ~11 |
+| 23:03 | Edited backend/services/emailService.js | 10 → 2 | ~6 |
+| 23:03 | Session end: 29 writes across 10 files (HomePage.module.css, SaveJobButton.jsx, Footer.jsx, RecommendedJobsPage.jsx, RecommendedJobsPage.module.css) | 47 reads | ~21296 tok |
+| 23:05 | Edited client/src/styles/ChangePasswordPage.module.css | expanded (+15 lines) | ~322 |
+| 23:06 | Session end: 30 writes across 11 files (HomePage.module.css, SaveJobButton.jsx, Footer.jsx, RecommendedJobsPage.jsx, RecommendedJobsPage.module.css) | 48 reads | ~21618 tok |
+| 23:08 | Edited backend/services/emailService.js | 3→3 lines | ~84 |
+| 23:08 | Edited backend/services/emailService.js | 9→12 lines | ~235 |
+| 23:08 | Session end: 32 writes across 11 files (HomePage.module.css, SaveJobButton.jsx, Footer.jsx, RecommendedJobsPage.jsx, RecommendedJobsPage.module.css) | 48 reads | ~23877 tok |
+
+## Session: 2026-05-22 23:10
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 23:14 | Edited backend/controllers/userController.js | added error handling | ~152 |
+| 23:14 | Edited backend/routes/userRoutes.js | 6→7 lines | ~39 |
+| 23:14 | Edited backend/routes/userRoutes.js | 2→5 lines | ~47 |
+| 23:14 | Created client/src/pages/PublicProfilePage.jsx | — | ~922 |
+| 23:15 | Edited client/src/pages/ProfilePage.jsx | 30→34 lines | ~362 |
+| 23:15 | Edited client/src/App.jsx | added 1 import(s) | ~94 |
+| 23:15 | Edited client/src/App.jsx | 2→5 lines | ~72 |
+| 23:15 | Edited client/src/pages/JobDetailPage.jsx | inline fix | ~18 |
+| 23:15 | Edited client/src/pages/JobDetailPage.jsx | CSS: display | ~319 |
+| 23:16 | Added public profile feature: getPublicProfile endpoint, PublicProfilePage.jsx, profile open to all roles, recruiter name clickable in JobDetailPage | backend/controllers/userController.js, backend/routes/userRoutes.js, client/src/pages/PublicProfilePage.jsx, client/src/pages/ProfilePage.jsx, client/src/App.jsx, client/src/pages/JobDetailPage.jsx | success | ~1200 |
+| 23:16 | Session end: 9 writes across 6 files (userController.js, userRoutes.js, PublicProfilePage.jsx, ProfilePage.jsx, App.jsx) | 13 reads | ~7358 tok |
+| 23:19 | Edited client/src/components/Navbar.jsx | 19→23 lines | ~267 |
+| 23:19 | Edited client/src/components/Navbar.jsx | modified if() | ~73 |
+| 23:19 | Edited client/src/components/Navbar.module.css | expanded (+13 lines) | ~134 |
+| 23:20 | Edited client/src/components/Navbar.module.css | CSS: userPillLink, box-shadow | ~74 |
+| 23:20 | Edited client/src/components/Footer.jsx | modified if() | ~205 |
+| 23:20 | Session end: 14 writes across 9 files (userController.js, userRoutes.js, PublicProfilePage.jsx, ProfilePage.jsx, App.jsx) | 16 reads | ~9477 tok |
+| 23:21 | Edited client/src/components/Navbar.jsx | expanded (+7 lines) | ~88 |
+| 23:21 | Edited client/src/components/Navbar.jsx | 5→8 lines | ~112 |
+| 23:21 | Edited client/src/components/Navbar.module.css | expanded (+13 lines) | ~77 |
+| 23:21 | Edited client/src/components/Navbar.module.css | CSS: color, color | ~81 |
+| 23:22 | Session end: 18 writes across 9 files (userController.js, userRoutes.js, PublicProfilePage.jsx, ProfilePage.jsx, App.jsx) | 16 reads | ~9835 tok |
+| 23:23 | Edited client/src/pages/ProfilePage.jsx | CSS: jobSeeker, recruiter, admin | ~35 |
+| 23:23 | Edited client/src/pages/ProfilePage.jsx | added nullish coalescing | ~26 |
+| 23:23 | Session end: 20 writes across 9 files (userController.js, userRoutes.js, PublicProfilePage.jsx, ProfilePage.jsx, App.jsx) | 16 reads | ~12265 tok |
+| 23:24 | Edited client/src/components/Navbar.jsx | expanded (+8 lines) | ~165 |
+| 23:24 | Edited client/src/components/Navbar.module.css | CSS: flex-shrink, object-fit, border | ~98 |
+| 23:24 | Edited client/src/components/Navbar.module.css | CSS: border-color | ~44 |
+| 23:24 | Session end: 23 writes across 9 files (userController.js, userRoutes.js, PublicProfilePage.jsx, ProfilePage.jsx, App.jsx) | 17 reads | ~12572 tok |
+| 23:24 | Edited client/src/pages/ProfilePage.jsx | 3→3 lines | ~50 |
+| 23:25 | Edited client/src/pages/ProfilePage.jsx | 34→32 lines | ~357 |
+| 23:25 | Session end: 25 writes across 9 files (userController.js, userRoutes.js, PublicProfilePage.jsx, ProfilePage.jsx, App.jsx) | 17 reads | ~13029 tok |
+| 23:28 | Session end: 25 writes across 9 files (userController.js, userRoutes.js, PublicProfilePage.jsx, ProfilePage.jsx, App.jsx) | 17 reads | ~13029 tok |

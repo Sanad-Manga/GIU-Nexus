@@ -18,6 +18,13 @@ const MoonIcon = () => (
   </svg>
 )
 
+const ProfileIcon = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="12" cy="8" r="4"/>
+    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+  </svg>
+)
+
 const roleLabels = {
   admin: 'Admin',
   recruiter: 'Recruiter',
@@ -34,7 +41,6 @@ const getLinks = (user) => {
       { to: '/jobs/recommended', label: 'Recommended' },
       { to: '/jobs/saved', label: 'Saved' },
       { to: '/applications/my', label: 'Applications' },
-      { to: '/profile', label: 'Profile' },
     ]
   }
 
@@ -109,15 +115,30 @@ const Navbar = () => {
               <span className={styles.welcomeText}>
                 Welcome, {user?.name?.split(' ')[0] || 'there'}
               </span>
-              <div className={styles.userPill}>
-                <span className={styles.userInitial}>
-                  {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
-                </span>
+              <Link
+                to="/profile"
+                className={styles.userPillLink}
+                title="View your profile"
+              >
+                {user?.profilePicture ? (
+                  <img
+                    src={user.profilePicture}
+                    alt={user.name}
+                    className={styles.userAvatar}
+                  />
+                ) : (
+                  <span className={styles.userInitial}>
+                    {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
+                  </span>
+                )}
                 <span className={styles.userMeta}>
                   <span className={styles.userName}>{user?.name || 'Account'}</span>
                   <span className={styles.userRole}>{roleLabels[user?.role] || 'User'}</span>
                 </span>
-              </div>
+                <span className={styles.profileIconWrap}>
+                  <ProfileIcon />
+                </span>
+              </Link>
               <button className={styles.logoutBtn} type="button" onClick={logout}>
                 Logout
               </button>

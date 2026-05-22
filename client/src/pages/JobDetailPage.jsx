@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import api from '../services/api'
 import { useAuth } from '../context/AuthContext'
 import { CATEGORY_COLORS } from '../utils/categoryColors'
@@ -313,9 +313,20 @@ export default function JobDetailPage() {
               <div style={s.recruiterCard}>
                 <div style={s.avatar}>{(recruiter.name || 'R')[0].toUpperCase()}</div>
                 <div>
-                  <p style={{ fontWeight: 600, color: 'var(--text-h)', margin: 0 }}>{recruiter.name}</p>
+                  {recruiter._id ? (
+                    <Link
+                      to={`/users/${recruiter._id}`}
+                      style={{ fontWeight: 600, color: '#2563EB', margin: 0, textDecoration: 'none', display: 'block' }}
+                      onMouseEnter={e => e.target.style.textDecoration = 'underline'}
+                      onMouseLeave={e => e.target.style.textDecoration = 'none'}
+                    >
+                      {recruiter.name}
+                    </Link>
+                  ) : (
+                    <p style={{ fontWeight: 600, color: 'var(--text-h)', margin: 0 }}>{recruiter.name}</p>
+                  )}
                   {recruiter.email && (
-                    <a href={`mailto:${recruiter.email}`} style={{ color: '#2563EB', fontSize: '0.875rem', textDecoration: 'none' }}>
+                    <a href={`mailto:${recruiter.email}`} style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', textDecoration: 'none' }}>
                       {recruiter.email}
                     </a>
                   )}

@@ -4,6 +4,12 @@ import api from '../services/api'
 import SkillChip from '../components/SkillChip'
 import styles from '../styles/ProfilePage.module.css'
 
+const ROLE_LABEL = {
+  jobSeeker: 'Job Seeker',
+  recruiter: 'Recruiter',
+  admin: 'Admin',
+}
+
 const ProfilePage = () => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -55,7 +61,7 @@ const ProfilePage = () => {
           <div className={styles.headerInfo}>
             <h1 className={styles.name}>{user.name}</h1>
             <p className={styles.email}>{user.email}</p>
-            <span className={styles.roleBadge}>{user.role}</span>
+            <span className={styles.roleBadge}>{ROLE_LABEL[user.role] ?? user.role}</span>
           </div>
         </div>
 
@@ -68,36 +74,38 @@ const ProfilePage = () => {
           }
         </section>
 
-        {/* Skills */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Skills</h2>
-          <div className={styles.chips}>
-            {user.skills?.length > 0
-              ? user.skills.map((skill) => (
-                  <SkillChip
-                    key={`${skill}-${user.skills.indexOf(skill)}`}
-                    skill={skill}
-                  />
-                ))
-              : <p className={styles.empty}>No skills extracted yet.</p>
-            }
-          </div>
-          <button
-            className={styles.extractBtn}
-            onClick={handleExtractSkills}
-            disabled={extracting}
-          >
-            {extracting ? <><span className={styles.btnSpinner} /> Extracting...</> : 'Extract Skills from Bio'}
-          </button>
-          {extractError && (
-            <p className={styles.extractError}>
-              {extractError}{' '}
-              {extractError.includes('Bio is empty') && (
-                <Link to="/profile/edit" className={styles.link}>Edit Profile</Link>
-              )}
-            </p>
-          )}
-        </section>
+        {/* Skills — job seekers only */}
+        {user.role === 'jobSeeker' && (
+          <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>Skills</h2>
+            <div className={styles.chips}>
+              {user.skills?.length > 0
+                ? user.skills.map((skill) => (
+                    <SkillChip
+                      key={`${skill}-${user.skills.indexOf(skill)}`}
+                      skill={skill}
+                    />
+                  ))
+                : <p className={styles.empty}>No skills added yet.</p>
+              }
+            </div>
+            <button
+              className={styles.extractBtn}
+              onClick={handleExtractSkills}
+              disabled={extracting}
+            >
+              {extracting ? <><span className={styles.btnSpinner} /> Extracting...</> : 'Extract Skills from Bio'}
+            </button>
+            {extractError && (
+              <p className={styles.extractError}>
+                {extractError}{' '}
+                {extractError.includes('Bio is empty') && (
+                  <Link to="/profile/edit" className={styles.link}>Edit Profile</Link>
+                )}
+              </p>
+            )}
+          </section>
+        )}
 
         {/* Action links */}
         <div className={styles.actions}>

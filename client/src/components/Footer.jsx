@@ -51,6 +51,7 @@ const getNav = (role, isAuthenticated) => {
       {
         heading: 'My Account',
         items: [
+          { label: 'My Profile', to: '/profile' },
           { label: 'Dashboard', to: '/recruiter/dashboard' },
           { label: 'Post a Job', to: '/recruiter/jobs/create' },
         ],
@@ -63,6 +64,7 @@ const getNav = (role, isAuthenticated) => {
       {
         heading: 'Admin',
         items: [
+          { label: 'My Profile', to: '/profile' },
           { label: 'Dashboard', to: '/admin/dashboard' },
           { label: 'Manage Users', to: '/admin/users' },
           { label: 'Manage Jobs', to: '/admin/jobs' },

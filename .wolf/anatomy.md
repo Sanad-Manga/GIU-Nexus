@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-22T18:49:07.234Z
-> Files: 27 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-22T20:25:16.157Z
+> Files: 29 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -26,8 +26,9 @@
 
 ## backend/controllers/
 
-- `jobController.js` — Declares JobPost (~3032 tok)
-- `profileController.js` — User: extractSkillsFromText (~2352 tok)
+- `authController.js` — Declares User (~2936 tok)
+- `jobController.js` — Declares JobPost (~3042 tok)
+- `userController.js` — Declares User (~813 tok)
 
 ## backend/middleware/
 
@@ -37,58 +38,59 @@
 
 ## backend/routes/
 
-- `jobRoutes.js` — API routes: GET, POST, PATCH (7 endpoints) (~4009 tok)
+- `authRoutes.js` — API routes: POST, GET, PATCH (7 endpoints) (~2322 tok)
+- `userRoutes.js` — API routes: GET, PATCH, DELETE (5 endpoints) (~1588 tok)
 
 ## backend/services/
 
+- `classificationService.js` — hf: classifyJobCategory (~199 tok)
+- `emailService.js` — Declares nodemailer (~1996 tok)
 
 ## client/
 
 
 ## client/src/
 
-- `App.jsx` — App (~1122 tok)
-- `index.css` — Styles: 2 rules, 40 vars (~682 tok)
+- `App.jsx` — App (~1174 tok)
 
 ## client/src/components/
 
-- `Footer.jsx` — TEAM (~1309 tok)
-- `JobCard.jsx` — TYPE_LABELS (~1562 tok)
-- `Navbar.jsx` — SunIcon (~1272 tok)
-- `Navbar.module.css` — Styles: 30 rules (~1765 tok)
-- `PendingApprovalBanner.jsx` — ClockIcon (~1057 tok)
+- `Footer.jsx` — TEAM (~1396 tok)
+- `JobForm.jsx` — JOB_TYPES — renders form (~3805 tok)
+- `Navbar.jsx` — SunIcon (~1488 tok)
+- `Navbar.module.css` — Styles: 38 rules (~2064 tok)
+- `SaveJobButton.jsx` — BookmarkIcon (~611 tok)
 
 ## client/src/context/
 
-- `ThemeContext.jsx` — ThemeContext (~186 tok)
 
 ## client/src/pages/
 
-- `AdminJobsPage.jsx` — Job governance; admin-hero + admin-card + admin-table, Delete action, uses AdminPages.css (~2100 tok)
-- `AdminUsersPage.jsx` — PAGE_SIZE — renders table, modal (~3275 tok)
-- `ApplicantsPage.jsx` — COLORS — renders table (~2412 tok)
-- `CreateJobPage.jsx` — JOB_TYPES — renders form (~4996 tok)
-- `HomePage.jsx` — hasScore (~4610 tok)
-- `HomePage.module.css` — Styles: 57 rules (~2800 tok)
-- `JobDetailPage.jsx` — JobDetailPage (~8446 tok)
-- `JobListPage.jsx` — JOB_TYPES — renders form (~5776 tok)
-- `RecommendedJobsPage.jsx` — hasScore (~1551 tok)
+- `CreateJobPage.jsx` — JOB_TYPES — renders form (~5333 tok)
+- `EditJobPage.jsx` — EditJobPage (~2836 tok)
+- `EditProfilePage.jsx` — EditProfilePage — renders form (~1771 tok)
+- `HomePage.module.css` — Styles: 57 rules (~2814 tok)
+- `JobDetailPage.jsx` — JobDetailPage (~8609 tok)
+- `MyApplicationsPage.jsx` — STATUS_CLASS (~925 tok)
+- `ProfilePage.jsx` — ROLE_LABEL (~1226 tok)
+- `PublicProfilePage.jsx` — ROLE_LABEL (~922 tok)
+- `RecommendedJobsPage.jsx` — hasScore (~1552 tok)
 - `RecommendedJobsPage.module.css` — Styles: 44 rules (~1702 tok)
-- `RecruiterDashboard.jsx` — statusColors (~2006 tok)
+- `ResetPasswordPage.jsx` — ResetPasswordPage — renders form (~1135 tok)
 
 ## client/src/services/
 
 
 ## client/src/styles/
 
-- `AdminPages.css` — Styles: 87 rules (~3919 tok)
-- `EditProfilePage.module.css` — Styles: 29 rules (~1413 tok)
-- `LoginPage.module.css` — Styles: 24 rules (~801 tok)
-- `ProfilePage.module.css` — Styles: 30 rules (~1322 tok)
-- `SavedJobsPage.module.css` — Styles: 14 rules (~501 tok)
+- `ChangePasswordPage.module.css` — Styles: 20 rules (~979 tok)
+- `EditProfilePage.module.css` — Styles: 29 rules (~1439 tok)
+- `MyApplicationsPage.module.css` — Styles: 28 rules (~1355 tok)
+- `ResetPasswordPage.module.css` — Styles: 16 rules (~778 tok)
 
 ## client/src/utils/
 
+- `categoryColors.js` — Exports CATEGORY_COLORS, categoryColors (~182 tok)
 
 ## postman/collections/GIU Nexus — Full API/.resources/
 
