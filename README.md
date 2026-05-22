@@ -2,19 +2,17 @@
 
 A RESTful backend API connecting German International University students with internships and jobs using AI-powered skill matching, job classification, and recommendations.
 
-## Team Members
+## Contributors
 
-| Name |
-|------|
-| Ziad Mohamed |
-| Abdelrahman ELGabarty |
-| Ali Issa |
-| Ahmed Sanad |
-| Baraa Ibrahim |
-| Eyad Nader |
-| Mohamed Walid |
-| Mostafa Ayman |
-| Mohamed Nazmy |
+- [Ahmed Sanad](https://github.com/Sanad-Manga/GIU-Nexus/commits?author=Sanad-Manga)
+- [Ziad Mohsen](https://github.com/Sanad-Manga/GIU-Nexus/commits?author=ziadmosen06)
+- [Abdelrahman ElGabarty](https://github.com/Sanad-Manga/GIU-Nexus/commits?author=AbdelrahmanElGabarty)
+- [Ali Issa](https://github.com/Sanad-Manga/GIU-Nexus/commits?author=Ali-Issa-8792)
+- [Baraa Tantawy](https://github.com/Sanad-Manga/GIU-Nexus/commits?author=baraatantawy16008335)
+- [Eyad Nader](https://github.com/Sanad-Manga/GIU-Nexus/commits?author=EyadNader101)
+- [Mohamed Walid](https://github.com/Sanad-Manga/GIU-Nexus/commits?author=MohamedWalid16006402)
+- [Mohamed Nazmy](https://github.com/Sanad-Manga/GIU-Nexus/commits?author=mohamednazmy23)
+- [Mostafa Ayman](https://github.com/Sanad-Manga/GIU-Nexus/commits?author=Mostafa11Ayman)
 
 ---
 
