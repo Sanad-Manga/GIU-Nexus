@@ -1,15 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import Modal from '../components/Modal';
 import api from '../services/api';
-import styles from './AdminUsersPage.module.css';
+import '../styles/AdminPages.css';
 
 const PAGE_SIZE = 10;
-
-const STATUS_OPTIONS = [
-  { value: 'approved', label: 'Approved' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'rejected', label: 'Rejected' },
-];
 
 const ROLE_OPTIONS = [
   { value: 'jobSeeker', label: 'Job Seeker' },
@@ -17,25 +11,31 @@ const ROLE_OPTIONS = [
   { value: 'admin', label: 'Admin' },
 ];
 
+const formatDate = (value) =>
+  new Date(value).toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+
 const getTotalPages = (data) => {
   if (data.totalPages) return data.totalPages;
   return Math.max(1, Math.ceil((data.total || 0) / PAGE_SIZE));
 };
 
-// Helper to fetch global stats (fallback to fetching users if stats endpoint missing)
 const fetchGlobalStats = async () => {
   try {
     const res = await api.get('/users/stats');
     return res.data;
   } catch {
-    console.warn('⚠️ /users/stats endpoint missing – fetching users for stats');
     const fallbackRes = await api.get('/users', { params: { page: 1, limit: 1000 } });
     const allUsers = fallbackRes.data.users || [];
-    const total = fallbackRes.data.total || allUsers.length;
-    const approved = allUsers.filter(u => u.status === 'approved').length;
-    const pending = allUsers.filter(u => u.status === 'pending').length;
-    const rejected = allUsers.filter(u => u.status === 'rejected').length;
-    return { total, approved, pending, rejected };
+    return {
+      total: fallbackRes.data.total || allUsers.length,
+      approved: allUsers.filter(u => u.status === 'approved').length,
+      pending: allUsers.filter(u => u.status === 'pending').length,
+      rejected: allUsers.filter(u => u.status === 'rejected').length,
+    };
   }
 };
 
@@ -47,12 +47,7 @@ const AdminUsersPage = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [modal, setModal] = useState({ open: false, userId: null, userName: '' });
-  const [globalStats, setGlobalStats] = useState({
-    total: 0,
-    approved: 0,
-    pending: 0,
-    rejected: 0,
-  });
+  const [globalStats, setGlobalStats] = useState({ total: 0, approved: 0, pending: 0, rejected: 0 });
 
   const buildParams = useCallback(() => ({
     page,
@@ -74,11 +69,7 @@ const AdminUsersPage = () => {
 
   useEffect(() => {
     let isMounted = true;
-    const loadStats = async () => {
-      const stats = await fetchGlobalStats();
-      if (isMounted) setGlobalStats(stats);
-    };
-    loadStats();
+    fetchGlobalStats().then(stats => { if (isMounted) setGlobalStats(stats); });
     return () => { isMounted = false; };
   }, []);
 
@@ -103,8 +94,8 @@ const AdminUsersPage = () => {
     return () => { isMounted = false; };
   }, [page, filters.role, filters.status, buildParams]);
 
-  const handleFilterChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+  const handleStatusFilter = (statusValue) => {
+    setFilters(prev => ({ ...prev, status: statusValue }));
     setPage(1);
   };
 
@@ -129,94 +120,67 @@ const AdminUsersPage = () => {
     }
   };
 
-  const getRoleBadgeStyle = (role) => {
-    switch (role) {
-      case 'admin':
-        return styles.roleAdmin;
-      case 'recruiter':
-        return styles.roleRecruiter;
-      default:
-        return styles.roleSeeker;
-    }
-  };
+  const roleLabel = (role) =>
+    role === 'jobSeeker' ? 'Job Seeker' : role.charAt(0).toUpperCase() + role.slice(1);
 
-  const handleStatusFilter = (statusValue) => {
-    setFilters(prev => ({ ...prev, status: statusValue }));
-    setPage(1);
+  const roleClass = (role) => {
+    if (role === 'admin') return 'admin-role-admin';
+    if (role === 'recruiter') return 'admin-role-recruiter';
+    return 'admin-role-seeker';
   };
 
   return (
-    <div className={styles.page}>
-      <div className={styles.pageHeader}>
-        <div className={styles.headerTop}>
-          <div>
-            <h1 className={styles.pageTitle}>USERS REGISTRY</h1>
-            <p className={styles.pageSub}>View, filter, and manage all platform users</p>
-          </div>
-          <div className={styles.statsCards}>
-            <div
-              className={`${styles.statCard} ${!filters.status ? styles.statCardActive : ''}`}
-              onClick={() => handleStatusFilter('')}
-            >
-              <span className={styles.statNumber}>{globalStats.total}</span>
-              <span className={styles.statLabel}>Total Users</span>
-            </div>
-            <div
-              className={`${styles.statCard} ${filters.status === 'approved' ? styles.statCardActive : ''}`}
-              onClick={() => handleStatusFilter('approved')}
-            >
-              <span className={styles.statNumber}>{globalStats.approved}</span>
-              <span className={styles.statLabel}>Approved</span>
-            </div>
-            <div
-              className={`${styles.statCard} ${filters.status === 'pending' ? styles.statCardActive : ''}`}
-              onClick={() => handleStatusFilter('pending')}
-            >
-              <span className={styles.statNumber}>{globalStats.pending}</span>
-              <span className={styles.statLabel}>Pending</span>
-            </div>
-            <div
-              className={`${styles.statCard} ${filters.status === 'rejected' ? styles.statCardActive : ''}`}
-              onClick={() => handleStatusFilter('rejected')}
-            >
-              <span className={styles.statNumber}>{globalStats.rejected}</span>
-              <span className={styles.statLabel}>Rejected</span>
-            </div>
-          </div>
+    <section className="admin-page">
+      <header className="admin-hero">
+        <div>
+          <p className="admin-kicker">User Governance</p>
+          <h1>All Platform Users</h1>
+          <p className="admin-subtitle">
+            Review, moderate, and manage every account on the platform.
+          </p>
         </div>
-      </div>
+        <div className="admin-hero-stats">
+          {[
+            { label: 'Total Users', value: globalStats.total, filter: '' },
+            { label: 'Approved', value: globalStats.approved, filter: 'approved' },
+            { label: 'Pending', value: globalStats.pending, filter: 'pending' },
+            { label: 'Rejected', value: globalStats.rejected, filter: 'rejected' },
+          ].map(({ label, value, filter }) => (
+            <div
+              key={label}
+              className={`admin-hero-stat${filters.status === filter ? ' admin-hero-stat-active' : ''}`}
+              onClick={() => handleStatusFilter(filter)}
+            >
+              <span className="admin-stat-label">{label}</span>
+              <span className="admin-stat-value">{value}</span>
+            </div>
+          ))}
+        </div>
+      </header>
 
-      <div className={styles.content}>
-        <div className={styles.filterBar}>
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Role</label>
-            <select
-              className={styles.filterSelect}
-              value={filters.role}
-              onChange={e => handleFilterChange('role', e.target.value)}
-            >
-              <option value="">All roles</option>
-              {ROLE_OPTIONS.map(role => (
-                <option key={role.value} value={role.value}>{role.label}</option>
-              ))}
-            </select>
+      <section className="admin-card">
+        <div className="admin-card-header">
+          <div>
+            <p className="admin-eyebrow">Users Registry</p>
+            <h2>All Accounts</h2>
           </div>
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Status</label>
-            <select
-              className={styles.filterSelect}
-              value={filters.status}
-              onChange={e => handleFilterChange('status', e.target.value)}
-            >
-              <option value="">All statuses</option>
-              {STATUS_OPTIONS.map(s => (
-                <option key={s.value} value={s.value}>{s.label}</option>
-              ))}
-            </select>
-          </div>
+          <span className="admin-pill">{globalStats.total} users</span>
+        </div>
+
+        <div className="admin-filter-bar">
+          <select
+            className="admin-filter-select"
+            value={filters.role}
+            onChange={e => { setFilters(prev => ({ ...prev, role: e.target.value })); setPage(1); }}
+          >
+            <option value="">All roles</option>
+            {ROLE_OPTIONS.map(r => (
+              <option key={r.value} value={r.value}>{r.label}</option>
+            ))}
+          </select>
           {(filters.role || filters.status) && (
             <button
-              className={styles.clearBtn}
+              className="admin-button admin-button-secondary"
               onClick={() => { setFilters({ role: '', status: '' }); setPage(1); }}
             >
               Clear filters
@@ -224,25 +188,23 @@ const AdminUsersPage = () => {
           )}
         </div>
 
-        {loading && (
-          <div className={styles.tableWrapper}>
-            <table className={styles.table}>
+        {error ? <p className="admin-error">{error}</p> : null}
+
+        {loading ? (
+          <div className="admin-table-shell">
+            <table className="admin-table">
               <thead>
                 <tr>
-                  <th className={styles.th}>NAME</th>
-                  <th className={styles.th}>EMAIL</th>
-                  <th className={styles.th}>ROLE</th>
-                  <th className={styles.th}>STATUS</th>
-                  <th className={styles.th}>REGISTERED</th>
-                  <th className={styles.th}>ACTIONS</th>
+                  <th>Name</th><th>Email</th><th>Role</th>
+                  <th>Status</th><th>Registered</th><th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {[...Array(5)].map((_, i) => (
-                  <tr key={i} className={styles.tr}>
+                  <tr key={i}>
                     {[...Array(6)].map((__, j) => (
-                      <td key={j} className={styles.td}>
-                        <div className={styles.skeletonLine} style={{ width: j === 1 ? '80%' : '60%' }} />
+                      <td key={j}>
+                        <div className="admin-skeleton-line" style={{ width: j === 1 ? '80%' : '60%' }} />
                       </td>
                     ))}
                   </tr>
@@ -250,74 +212,73 @@ const AdminUsersPage = () => {
               </tbody>
             </table>
           </div>
-        )}
-
-        {!loading && error && <p className={styles.errorText}>{error}</p>}
-
-        {!loading && !error && (
-          <div className={styles.tableWrapper}>
-            <table className={styles.table}>
+        ) : users.length === 0 ? (
+          <div className="admin-empty-state">
+            <h3>No Users Found</h3>
+            <p>Try adjusting your filters.</p>
+          </div>
+        ) : (
+          <div className="admin-table-shell">
+            <table className="admin-table">
               <thead>
                 <tr>
-                  <th className={styles.th}>NAME</th>
-                  <th className={styles.th}>EMAIL</th>
-                  <th className={styles.th}>ROLE</th>
-                  <th className={styles.th}>STATUS</th>
-                  <th className={styles.th}>REGISTERED</th>
-                  <th className={styles.th}>ACTIONS</th>
+                  <th>Name</th><th>Email</th><th>Role</th>
+                  <th>Status</th><th>Registered</th><th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {users.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className={styles.emptyRow}>No users found.</td>
-                  </tr>
-                )}
                 {users.map(user => (
-                  <tr key={user._id} className={styles.tr}>
-                    <td className={styles.td}>
-                      <div className={styles.nameCell}>
-                        <div className={styles.avatar}>
+                  <tr key={user._id}>
+                    <td>
+                      <div className="admin-name-cell">
+                        <div className="admin-avatar">
                           {user.name?.charAt(0).toUpperCase() || 'U'}
                         </div>
-                        <span className={styles.userName}>{user.name}</span>
+                        <span>{user.name}</span>
                       </div>
                     </td>
-                    <td className={styles.td}>
-                      <span className={styles.emailText}>{user.email}</span>
-                    </td>
-                    <td className={styles.td}>
-                      <span className={`${styles.roleBadge} ${getRoleBadgeStyle(user.role)}`}>
-                        {user.role === 'jobSeeker' ? 'Job Seeker' : user.role}
+                    <td style={{ color: 'var(--text-secondary)', fontSize: 14 }}>{user.email}</td>
+                    <td>
+                      <span className={`admin-role-badge ${roleClass(user.role)}`}>
+                        {roleLabel(user.role)}
                       </span>
                     </td>
-                    <td className={styles.td}>
-                      <select
-                        className={styles.statusSelect}
-                        value={user.status}
-                        onChange={e => handleStatusChange(user._id, e.target.value)}
-                      >
-                        {STATUS_OPTIONS.map(s => (
-                          <option key={s.value} value={s.value}>{s.label}</option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className={styles.td}>
-                      <span className={styles.dateText}>
-                        {new Date(user.createdAt).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                        })}
+                    <td>
+                      <span className={`admin-status-badge admin-status-${user.status}`}>
+                        {user.status}
                       </span>
                     </td>
-                    <td className={styles.td}>
-                      <button
-                        className={styles.deleteBtn}
-                        onClick={() => setModal({ open: true, userId: user._id, userName: user.name })}
-                      >
-                        Delete
-                      </button>
+                    <td style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
+                      {formatDate(user.createdAt)}
+                    </td>
+                    <td>
+                      <div className="admin-action-group">
+                        {user.status !== 'approved' && (
+                          <button
+                            type="button"
+                            className="admin-button admin-button-success"
+                            onClick={() => handleStatusChange(user._id, 'approved')}
+                          >
+                            Approve
+                          </button>
+                        )}
+                        {user.status !== 'rejected' && (
+                          <button
+                            type="button"
+                            className="admin-button admin-button-warn"
+                            onClick={() => handleStatusChange(user._id, 'rejected')}
+                          >
+                            Reject
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          className="admin-button admin-button-danger"
+                          onClick={() => setModal({ open: true, userId: user._id, userName: user.name })}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -327,19 +288,19 @@ const AdminUsersPage = () => {
         )}
 
         {!loading && !error && totalPages > 1 && (
-          <div className={styles.pagination}>
+          <div className="admin-pagination">
             <button
-              className={styles.pageBtn}
+              className="admin-button admin-button-secondary"
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1}
             >
               Previous
             </button>
-            <div className={styles.pageNumbers}>
+            <div className="admin-page-numbers">
               {[...Array(totalPages)].map((_, i) => (
                 <button
                   key={i}
-                  className={`${styles.pageNum} ${page === i + 1 ? styles.pageNumActive : ''}`}
+                  className={`admin-page-num${page === i + 1 ? ' admin-page-num-active' : ''}`}
                   onClick={() => setPage(i + 1)}
                 >
                   {i + 1}
@@ -347,7 +308,7 @@ const AdminUsersPage = () => {
               ))}
             </div>
             <button
-              className={styles.pageBtn}
+              className="admin-button admin-button-secondary"
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
             >
@@ -355,7 +316,7 @@ const AdminUsersPage = () => {
             </button>
           </div>
         )}
-      </div>
+      </section>
 
       <Modal
         isOpen={modal.open}
@@ -363,7 +324,7 @@ const AdminUsersPage = () => {
         onCancel={() => setModal({ open: false, userId: null, userName: '' })}
         message={`Delete user "${modal.userName}"? This action cannot be undone.`}
       />
-    </div>
+    </section>
   );
 };
 

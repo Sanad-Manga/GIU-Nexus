@@ -7,8 +7,8 @@ A RESTful backend API connecting German International University students with i
 | Name |
 |------|
 | Ziad Mohamed |
-| Abdelrahman ALGabarty |
-| Aly Issa |
+| Abdelrahman ELGabarty |
+| Ali Issa |
 | Ahmed Sanad |
 | Baraa Ibrahim |
 | Eyad Nader |

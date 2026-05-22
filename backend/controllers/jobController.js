@@ -162,7 +162,11 @@ const getRecommendedJobs = async (req, res, next) => {
         .map((job, i) => ({ ...job.toObject(), score: cosineSimilarity(studentVec, embeddings[i + 1]) }))
         .sort((a, b) => b.score - a.score);
 
-      return res.status(200).json({ success: true, jobs: ranked });
+      // Normalize so the top match = 1.0 (100%) — raw cosine similarity is always low
+      const maxScore = ranked[0]?.score || 1;
+      const normalized = ranked.map(j => ({ ...j, score: maxScore > 0 ? j.score / maxScore : 0 }));
+
+      return res.status(200).json({ success: true, jobs: normalized });
     } catch (hfErr) {
       console.error('[getRecommendedJobs] HF call failed:', hfErr.message);
       return res.status(200).json({ success: true, jobs: openJobs });
@@ -210,6 +214,47 @@ const getSavedJobs = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+// ─── POST /api/v1/jobs/:id/cover-letter ──────────────────────────────────────
+const generateCoverLetter = async (req, res, next) => {
+  try {
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(404).json({ success: false, message: 'Job not found' });
+    }
+
+    const job = await JobPost.findById(req.params.id);
+    if (!job) return res.status(404).json({ success: false, message: 'Job not found' });
+
+    const user = await User.findById(req.user._id);
+    if (!user.bio?.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please add a bio to your profile before generating a cover letter.',
+      });
+    }
+
+    const prompt = `Write a professional cover letter for this job application. Be concise and specific. Write only the cover letter, starting with "Dear Hiring Manager,".
+
+Job Title: ${job.title}
+Company: ${job.company}
+Job Description: ${job.description}
+Requirements: ${job.requirements.join(', ')}
+
+Applicant Background: ${user.bio}`;
+
+    const result = await hf.chatCompletion({
+      model: 'Qwen/Qwen2.5-7B-Instruct',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 450,
+      temperature: 0.7,
+    });
+
+    const coverLetter = result.choices[0].message.content.trim();
+    res.status(200).json({ success: true, coverLetter });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getJobs,
   getMyJobs,
@@ -220,4 +265,5 @@ module.exports = {
   getRecommendedJobs,
   saveJob,
   getSavedJobs,
+  generateCoverLetter,
 };

@@ -1,7 +1,7 @@
 .page {
-  max-width: none;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem 0.5rem 4rem;
+  padding: 2.5rem 2rem 4rem;
   font-family: 'Inter', sans-serif;
 }
 
@@ -89,3 +89,9 @@
   from { opacity: 0; transform: translateY(-10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ── Dark mode ── */
+[data-theme="dark"] .title { color: #F1F5F9; }
+[data-theme="dark"] .subtitle { color: #94A3B8; }
+[data-theme="dark"] .empty { color: #64748B; }
+[data-theme="dark"] .error { color: #F87171; }
