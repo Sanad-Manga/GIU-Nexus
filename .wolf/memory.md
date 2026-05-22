@@ -277,3 +277,49 @@
 | 19:31 | Edited client/src/pages/JobListPage.jsx | inline fix | ~106 |
 | 19:31 | Edited client/src/pages/JobListPage.jsx | 3→3 lines | ~244 |
 | 19:31 | Session end: 28 writes across 14 files (HomePage.jsx, ThemeContext.jsx, index.css, App.jsx, HomePage.module.css) | 14 reads | ~35049 tok |
+| 20:33 | Edited client/src/pages/JobDetailPage.jsx | 4→4 lines | ~280 |
+| 21:22 | Edited client/src/pages/JobDetailPage.jsx | 8→8 lines | ~267 |
+| 21:23 | Edited client/src/pages/JobDetailPage.jsx | 7→7 lines | ~140 |
+| 21:23 | Edited client/src/pages/JobDetailPage.jsx | 2→2 lines | ~36 |
+| 21:23 | Edited client/src/pages/JobDetailPage.jsx | 13→13 lines | ~346 |
+| 21:23 | Edited client/src/pages/JobDetailPage.jsx | "var(--bg)" → "var(--card-bg)" | ~57 |
+| 21:24 | Edited client/src/pages/JobDetailPage.jsx | CSS: background | ~246 |
+| 21:24 | Edited client/src/pages/JobDetailPage.jsx | CSS: color | ~111 |
+| 21:24 | Edited client/src/pages/JobDetailPage.jsx | 4→4 lines | ~82 |
+| 21:24 | Edited client/src/pages/JobDetailPage.jsx | 15→15 lines | ~237 |
+| 21:24 | Session end: 38 writes across 15 files (HomePage.jsx, ThemeContext.jsx, index.css, App.jsx, HomePage.module.css) | 14 reads | ~36851 tok |
+| 21:31 | Edited client/src/pages/RecommendedJobsPage.module.css | expanded (+26 lines) | ~434 |
+
+## Session: 2026-05-22 21:33
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 21:34 | Edited client/src/components/Navbar.module.css | 16→16 lines | ~76 |
+| 21:35 | Edited client/src/styles/EditProfilePage.module.css | expanded (+21 lines) | ~424 |
+| 21:35 | Session end: 2 writes across 2 files (Navbar.module.css, EditProfilePage.module.css) | 2 reads | ~2265 tok |
+| 21:37 | Edited client/src/pages/RecommendedJobsPage.module.css | 1→2 lines | ~27 |
+| 21:37 | Session end: 3 writes across 3 files (Navbar.module.css, EditProfilePage.module.css, RecommendedJobsPage.module.css) | 2 reads | ~2292 tok |
+| 21:37 | Edited client/src/components/Navbar.module.css | 16→16 lines | ~76 |
+| 21:37 | Session end: 4 writes across 3 files (Navbar.module.css, EditProfilePage.module.css, RecommendedJobsPage.module.css) | 2 reads | ~2368 tok |
+| 21:38 | Edited client/src/pages/HomePage.module.css | CSS: min-height | ~17 |
+| 21:38 | Session end: 5 writes across 4 files (Navbar.module.css, EditProfilePage.module.css, RecommendedJobsPage.module.css, HomePage.module.css) | 4 reads | ~9789 tok |
+| 21:39 | Edited client/src/pages/ApplicantsPage.jsx | 11→11 lines | ~76 |
+| 21:39 | Edited client/src/pages/ApplicantsPage.jsx | 2→2 lines | ~31 |
+| 21:40 | Edited client/src/pages/ApplicantsPage.jsx | 3→3 lines | ~37 |
+| 21:40 | Session end: 8 writes across 5 files (Navbar.module.css, EditProfilePage.module.css, RecommendedJobsPage.module.css, HomePage.module.css, ApplicantsPage.jsx) | 5 reads | ~12342 tok |
+| 21:41 | Edited client/src/pages/CreateJobPage.jsx | 15→15 lines | ~552 |
+| 21:41 | Edited client/src/pages/CreateJobPage.jsx | 4→4 lines | ~67 |
+| 21:41 | Edited client/src/pages/CreateJobPage.jsx | 4→4 lines | ~78 |
+| 21:41 | Edited client/src/pages/CreateJobPage.jsx | 4→4 lines | ~63 |
+| 21:41 | Edited client/src/pages/CreateJobPage.jsx | 4→4 lines | ~90 |
+| 21:41 | Edited client/src/pages/CreateJobPage.jsx | inline fix | ~76 |
+| 21:42 | Edited client/src/pages/CreateJobPage.jsx | 3→3 lines | ~104 |
+| 21:42 | Edited client/src/pages/CreateJobPage.jsx | CSS: opacity | ~212 |
+| 21:42 | Session end: 16 writes across 6 files (Navbar.module.css, EditProfilePage.module.css, RecommendedJobsPage.module.css, HomePage.module.css, ApplicantsPage.jsx) | 6 reads | ~18097 tok |
+
+## Session: 2026-05-22 21:48
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 21:49 | Edited client/src/pages/CreateJobPage.jsx | 5→5 lines | ~177 |
+| 21:49 | Session end: 1 writes across 1 files (CreateJobPage.jsx) | 1 reads | ~4792 tok |

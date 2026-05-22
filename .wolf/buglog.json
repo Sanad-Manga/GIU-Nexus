@@ -784,6 +784,166 @@
       "related_bugs": [],
       "occurrences": 2,
       "last_seen": "2026-05-22T16:31:38.955Z"
+    },
+    {
+      "id": "bug-050",
+      "timestamp": "2026-05-22T17:33:37.340Z",
+      "error_message": "CSS fix: pageWrapper, card",
+      "file": "client/src/pages/JobDetailPage.jsx",
+      "root_cause": "pageWrapper: { minHeight: '100vh', width: '100%', background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), rgba(255, 255, 255, 0.94))' → { minHeight: '100vh', width: '100%', background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), var(--gradient-end))'; card: { background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), rgba(255, 255, 255, 0.94))', border: '1px solid rgba(37, 99, 235, 0.12)', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)' → { background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), var(--gradient-end))', border: '1px solid rgba(37, 99, 235, 0.12)', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'",
+      "fix": "Changed pageWrapper: { minHeight: '100vh', width: '100%', background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), rgba(255, 255, 255, 0.94))' → { minHeight: '100vh', width: '100%', background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), var(--gradient-end))'; card: { background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), rgba(255, 255, 255, 0.94))', border: '1px solid rgba(37, 99, 235, 0.12)', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)' → { background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), var(--gradient-end))', border: '1px solid rgba(37, 99, 235, 0.12)', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T17:33:37.340Z"
+    },
+    {
+      "id": "bug-051",
+      "timestamp": "2026-05-22T18:22:54.213Z",
+      "error_message": "CSS fix: hlLabel, sectionTitle, recruiterCard",
+      "file": "client/src/pages/JobDetailPage.jsx",
+      "root_cause": "hlLabel: { fontSize: '0.75rem', color: '#6b7280', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' → { fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em'; sectionTitle: { fontSize: '0.8rem', fontWeight: 700, color: 'var(--text)', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' → { fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em'; recruiterCard: { display: 'flex', alignItems: 'center', gap: '0.875rem', background: 'linear-gradient(180deg, #ffffff, #f8fbff)', borderRadius: '18px', padding: '1rem 1.25rem', border: '1px solid rgba(37, 99, 235, 0.08)' → { display: 'flex', alignItems: 'center', gap: '0.875rem', background: 'linear-gradient(180deg, var(--card-bg), var(--surface))', borderRadius: '18px', padding: '1rem 1.25rem', border: '1px solid rgba(37, 99, 235, 0.1)'",
+      "fix": "Changed hlLabel: { fontSize: '0.75rem', color: '#6b7280', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' → { fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em'; sectionTitle: { fontSize: '0.8rem', fontWeight: 700, color: 'var(--text)', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' → { fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em'; recruiterCard: { display: 'flex', alignItems: 'center', gap: '0.875rem', background: 'linear-gradient(180deg, #ffffff, #f8fbff)', borderRadius: '18px', padding: '1rem 1.25rem', border: '1px solid rgba(37, 99, 235, 0.08)' → { display: 'flex', alignItems: 'center', gap: '0.875rem', background: 'linear-gradient(180deg, var(--card-bg), var(--surface))', borderRadius: '18px', padding: '1rem 1.25rem', border: '1px solid rgba(37, 99, 235, 0.1)'",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 6,
+      "last_seen": "2026-05-22T18:24:39.017Z"
+    },
+    {
+      "id": "bug-052",
+      "timestamp": "2026-05-22T18:23:26.578Z",
+      "error_message": "Incorrect value in code",
+      "file": "client/src/pages/JobDetailPage.jsx",
+      "root_cause": "Had '#111827'",
+      "fix": "Changed to 'var(--text-h)'",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-22T18:23:50.094Z"
+    },
+    {
+      "id": "bug-053",
+      "timestamp": "2026-05-22T18:31:52.930Z",
+      "error_message": "CSS fix: color",
+      "file": "client/src/pages/RecommendedJobsPage.module.css",
+      "root_cause": "color: #6B7280 → #94A3B8",
+      "fix": "Changed color: #6B7280 → #94A3B8",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T18:31:52.930Z"
+    },
+    {
+      "id": "bug-054",
+      "timestamp": "2026-05-22T18:34:11.794Z",
+      "error_message": "CSS fix: gap, padding",
+      "file": "client/src/components/Navbar.module.css",
+      "root_cause": "gap: 4px → 6px; padding: 0 12px → 0 16px",
+      "fix": "Changed gap: 4px → 6px; padding: 0 12px → 0 16px",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-22T18:37:43.998Z"
+    },
+    {
+      "id": "bug-055",
+      "timestamp": "2026-05-22T18:35:00.440Z",
+      "error_message": "CSS fix: btnSecondary, background-color",
+      "file": "client/src/styles/EditProfilePage.module.css",
+      "root_cause": "btnSecondary: hover { → hover { background-color: #334155; background-color: #F9FAFB → #293548",
+      "fix": "Changed btnSecondary: hover { → hover { background-color: #334155; background-color: #F9FAFB → #293548",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T18:35:00.440Z"
+    },
+    {
+      "id": "bug-056",
+      "timestamp": "2026-05-22T18:37:02.916Z",
+      "error_message": "CSS fix: color",
+      "file": "client/src/pages/RecommendedJobsPage.module.css",
+      "root_cause": "color: #475569 → #34D399",
+      "fix": "Changed color: #475569 → #34D399",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T18:37:02.916Z"
+    },
+    {
+      "id": "bug-057",
+      "timestamp": "2026-05-22T18:39:36.335Z",
+      "error_message": "Incorrect value in code",
+      "file": "client/src/pages/ApplicantsPage.jsx",
+      "root_cause": "Had \"#fff\"",
+      "fix": "Changed to \"var(--card-bg)\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-22T18:40:08.537Z"
+    },
+    {
+      "id": "bug-058",
+      "timestamp": "2026-05-22T18:41:14.076Z",
+      "error_message": "CSS fix: fontSize, color",
+      "file": "client/src/pages/CreateJobPage.jsx",
+      "root_cause": "fontSize: '1.5rem', fontWeight: 700, margin: '0 0 0.375rem', color: '#111827' → '1.5rem', fontWeight: 700, margin: '0 0 0.375rem', color: 'var(--text-primary)'; color: '#6b7280', margin: '0 0 2rem' → 'var(--text-secondary)', margin: '0 0 2rem'",
+      "fix": "Changed fontSize: '1.5rem', fontWeight: 700, margin: '0 0 0.375rem', color: '#111827' → '1.5rem', fontWeight: 700, margin: '0 0 0.375rem', color: 'var(--text-primary)'; color: '#6b7280', margin: '0 0 2rem' → 'var(--text-secondary)', margin: '0 0 2rem'",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 5,
+      "last_seen": "2026-05-22T18:42:13.203Z"
+    },
+    {
+      "id": "bug-059",
+      "timestamp": "2026-05-22T18:41:49.789Z",
+      "error_message": "Incorrect value in code",
+      "file": "client/src/pages/CreateJobPage.jsx",
+      "root_cause": "Had '#eff6ff'",
+      "fix": "Changed to 'rgba(37,99,235,0.1)'",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-22T18:42:00.774Z"
     }
   ]
 }

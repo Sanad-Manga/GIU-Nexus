@@ -2,14 +2,14 @@
   "version": 1,
   "created_at": "2026-05-12T17:30:32.005Z",
   "lifetime": {
-    "total_tokens_estimated": 557584,
-    "total_reads": 494,
-    "total_writes": 949,
-    "total_sessions": 16,
-    "anatomy_hits": 56,
-    "anatomy_misses": 438,
-    "repeated_reads_blocked": 274,
-    "estimated_savings_vs_bare_cli": 599777
+    "total_tokens_estimated": 646380,
+    "total_reads": 530,
+    "total_writes": 1026,
+    "total_sessions": 18,
+    "anatomy_hits": 81,
+    "anatomy_misses": 449,
+    "repeated_reads_blocked": 297,
+    "estimated_savings_vs_bare_cli": 625761
   },
   "sessions": [
     {
@@ -8601,6 +8601,743 @@
         "writes_count": 28,
         "repeated_reads_blocked": 2,
         "anatomy_lookups": 11
+      }
+    },
+    {
+      "id": "session-2026-05-22-1911",
+      "started": "2026-05-22T16:11:58.161Z",
+      "ended": "2026-05-22T18:24:43.568Z",
+      "reads": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/.wolf/cerebrum.md",
+          "tokens_estimated": 0,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/.wolf/memory.md",
+          "tokens_estimated": 0,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/.wolf/anatomy.md",
+          "tokens_estimated": 0,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/HomePage.jsx",
+          "tokens_estimated": 4578,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/index.css",
+          "tokens_estimated": 455,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.jsx",
+          "tokens_estimated": 961,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/HomePage.module.css",
+          "tokens_estimated": 2144,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 1279,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/App.jsx",
+          "tokens_estimated": 1099,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/JobDetailPage.jsx",
+          "tokens_estimated": 8343,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/JobCard.jsx",
+          "tokens_estimated": 1542,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/styles/SavedJobsPage.module.css",
+          "tokens_estimated": 438,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/styles/AdminPages.css",
+          "tokens_estimated": 3208,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/JobListPage.jsx",
+          "tokens_estimated": 5772,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/HomePage.jsx",
+          "tokens_estimated": 24,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/HomePage.jsx",
+          "tokens_estimated": 26,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/context/ThemeContext.jsx",
+          "tokens_estimated": 186,
+          "action": "create"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/index.css",
+          "tokens_estimated": 400,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/App.jsx",
+          "tokens_estimated": 58,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/HomePage.module.css",
+          "tokens_estimated": 47,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/HomePage.jsx",
+          "tokens_estimated": 34,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/HomePage.module.css",
+          "tokens_estimated": 24,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/App.jsx",
+          "tokens_estimated": 32,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/App.jsx",
+          "tokens_estimated": 16,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.jsx",
+          "tokens_estimated": 274,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.jsx",
+          "tokens_estimated": 44,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.jsx",
+          "tokens_estimated": 80,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 468,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/HomePage.module.css",
+          "tokens_estimated": 637,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/styles/ProfilePage.module.css",
+          "tokens_estimated": 226,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/styles/SavedJobsPage.module.css",
+          "tokens_estimated": 98,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/styles/AdminPages.css",
+          "tokens_estimated": 719,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Footer.jsx",
+          "tokens_estimated": 444,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/RecruiterDashboard.jsx",
+          "tokens_estimated": 163,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/RecruiterDashboard.jsx",
+          "tokens_estimated": 123,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/RecruiterDashboard.jsx",
+          "tokens_estimated": 88,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/RecruiterDashboard.jsx",
+          "tokens_estimated": 38,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/RecruiterDashboard.jsx",
+          "tokens_estimated": 88,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/RecruiterDashboard.jsx",
+          "tokens_estimated": 24,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/JobCard.jsx",
+          "tokens_estimated": 519,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/JobListPage.jsx",
+          "tokens_estimated": 106,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/JobListPage.jsx",
+          "tokens_estimated": 244,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/JobDetailPage.jsx",
+          "tokens_estimated": 280,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/JobDetailPage.jsx",
+          "tokens_estimated": 267,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/JobDetailPage.jsx",
+          "tokens_estimated": 140,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/JobDetailPage.jsx",
+          "tokens_estimated": 36,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/JobDetailPage.jsx",
+          "tokens_estimated": 346,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/JobDetailPage.jsx",
+          "tokens_estimated": 57,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/JobDetailPage.jsx",
+          "tokens_estimated": 246,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/JobDetailPage.jsx",
+          "tokens_estimated": 111,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/JobDetailPage.jsx",
+          "tokens_estimated": 82,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/JobDetailPage.jsx",
+          "tokens_estimated": 237,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 29819,
+        "output_tokens_estimated": 7032,
+        "reads_count": 14,
+        "writes_count": 38,
+        "repeated_reads_blocked": 2,
+        "anatomy_lookups": 11
+      }
+    },
+    {
+      "id": "session-2026-05-22-2133",
+      "started": "2026-05-22T18:33:39.028Z",
+      "ended": "2026-05-22T18:35:04.167Z",
+      "reads": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/styles/EditProfilePage.module.css",
+          "tokens_estimated": 0,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 1765,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 76,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/styles/EditProfilePage.module.css",
+          "tokens_estimated": 424,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 1765,
+        "output_tokens_estimated": 500,
+        "reads_count": 2,
+        "writes_count": 2,
+        "repeated_reads_blocked": 3,
+        "anatomy_lookups": 1
+      }
+    },
+    {
+      "id": "session-2026-05-22-2133",
+      "started": "2026-05-22T18:33:39.028Z",
+      "ended": "2026-05-22T18:37:07.266Z",
+      "reads": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/styles/EditProfilePage.module.css",
+          "tokens_estimated": 0,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 1765,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 76,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/styles/EditProfilePage.module.css",
+          "tokens_estimated": 424,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/RecommendedJobsPage.module.css",
+          "tokens_estimated": 27,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 1765,
+        "output_tokens_estimated": 527,
+        "reads_count": 2,
+        "writes_count": 3,
+        "repeated_reads_blocked": 3,
+        "anatomy_lookups": 1
+      }
+    },
+    {
+      "id": "session-2026-05-22-2133",
+      "started": "2026-05-22T18:33:39.028Z",
+      "ended": "2026-05-22T18:37:47.681Z",
+      "reads": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/styles/EditProfilePage.module.css",
+          "tokens_estimated": 0,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 1765,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 76,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/styles/EditProfilePage.module.css",
+          "tokens_estimated": 424,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/RecommendedJobsPage.module.css",
+          "tokens_estimated": 27,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 76,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 1765,
+        "output_tokens_estimated": 603,
+        "reads_count": 2,
+        "writes_count": 4,
+        "repeated_reads_blocked": 3,
+        "anatomy_lookups": 1
+      }
+    },
+    {
+      "id": "session-2026-05-22-2133",
+      "started": "2026-05-22T18:33:39.028Z",
+      "ended": "2026-05-22T18:38:48.769Z",
+      "reads": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/styles/EditProfilePage.module.css",
+          "tokens_estimated": 0,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 1765,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/HomePage.jsx",
+          "tokens_estimated": 4610,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/HomePage.module.css",
+          "tokens_estimated": 2794,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 76,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/styles/EditProfilePage.module.css",
+          "tokens_estimated": 424,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/RecommendedJobsPage.module.css",
+          "tokens_estimated": 27,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 76,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/HomePage.module.css",
+          "tokens_estimated": 17,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 9169,
+        "output_tokens_estimated": 620,
+        "reads_count": 4,
+        "writes_count": 5,
+        "repeated_reads_blocked": 3,
+        "anatomy_lookups": 3
+      }
+    },
+    {
+      "id": "session-2026-05-22-2133",
+      "started": "2026-05-22T18:33:39.028Z",
+      "ended": "2026-05-22T18:40:15.752Z",
+      "reads": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/styles/EditProfilePage.module.css",
+          "tokens_estimated": 0,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 1765,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/HomePage.jsx",
+          "tokens_estimated": 4610,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/HomePage.module.css",
+          "tokens_estimated": 2794,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/ApplicantsPage.jsx",
+          "tokens_estimated": 2409,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 76,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/styles/EditProfilePage.module.css",
+          "tokens_estimated": 424,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/RecommendedJobsPage.module.css",
+          "tokens_estimated": 27,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 76,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/HomePage.module.css",
+          "tokens_estimated": 17,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/ApplicantsPage.jsx",
+          "tokens_estimated": 76,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/ApplicantsPage.jsx",
+          "tokens_estimated": 31,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/ApplicantsPage.jsx",
+          "tokens_estimated": 37,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 11578,
+        "output_tokens_estimated": 764,
+        "reads_count": 5,
+        "writes_count": 8,
+        "repeated_reads_blocked": 4,
+        "anatomy_lookups": 3
+      }
+    },
+    {
+      "id": "session-2026-05-22-2133",
+      "started": "2026-05-22T18:33:39.028Z",
+      "ended": "2026-05-22T18:42:18.014Z",
+      "reads": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/styles/EditProfilePage.module.css",
+          "tokens_estimated": 0,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 1765,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/HomePage.jsx",
+          "tokens_estimated": 4610,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/HomePage.module.css",
+          "tokens_estimated": 2794,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/ApplicantsPage.jsx",
+          "tokens_estimated": 2409,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/CreateJobPage.jsx",
+          "tokens_estimated": 4513,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 76,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/styles/EditProfilePage.module.css",
+          "tokens_estimated": 424,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/RecommendedJobsPage.module.css",
+          "tokens_estimated": 27,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/components/Navbar.module.css",
+          "tokens_estimated": 76,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/HomePage.module.css",
+          "tokens_estimated": 17,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/ApplicantsPage.jsx",
+          "tokens_estimated": 76,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/ApplicantsPage.jsx",
+          "tokens_estimated": 31,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/ApplicantsPage.jsx",
+          "tokens_estimated": 37,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/CreateJobPage.jsx",
+          "tokens_estimated": 552,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/CreateJobPage.jsx",
+          "tokens_estimated": 67,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/CreateJobPage.jsx",
+          "tokens_estimated": 78,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/CreateJobPage.jsx",
+          "tokens_estimated": 63,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/CreateJobPage.jsx",
+          "tokens_estimated": 90,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/CreateJobPage.jsx",
+          "tokens_estimated": 76,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/CreateJobPage.jsx",
+          "tokens_estimated": 104,
+          "action": "edit"
+        },
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/CreateJobPage.jsx",
+          "tokens_estimated": 212,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 16091,
+        "output_tokens_estimated": 2006,
+        "reads_count": 6,
+        "writes_count": 16,
+        "repeated_reads_blocked": 4,
+        "anatomy_lookups": 4
+      }
+    },
+    {
+      "id": "session-2026-05-22-2148",
+      "started": "2026-05-22T18:48:01.038Z",
+      "ended": "2026-05-22T18:49:16.342Z",
+      "reads": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/CreateJobPage.jsx",
+          "tokens_estimated": 4615,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "c:/Programming/Software_Engineering/GIU-Nexus/client/src/pages/CreateJobPage.jsx",
+          "tokens_estimated": 177,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 4615,
+        "output_tokens_estimated": 177,
+        "reads_count": 1,
+        "writes_count": 1,
+        "repeated_reads_blocked": 1,
+        "anatomy_lookups": 1
       }
     }
   ],
