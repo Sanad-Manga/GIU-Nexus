@@ -4,6 +4,7 @@ import api from '../services/api'
 import { useAuth } from '../context/AuthContext'
 import { CATEGORY_COLORS } from '../utils/categoryColors'
 import PendingApprovalBanner from '../components/PendingApprovalBanner'
+import JobForm from '../components/JobForm'
 
 const JOB_TYPES = ['full-time', 'part-time', 'internship', 'contract']
 
@@ -99,8 +100,9 @@ export default function CreateJobPage() {
   if (createdJob) {
     const categoryColor = CATEGORY_COLORS[createdJob.category] ?? 'gray'
     return (
-      <div style={s.page}>
-        <div style={s.successCard}>
+      <div style={s.pageWrapper}>
+        <div style={s.page}>
+          <div style={s.successCard}>
           <div style={s.successIcon}>✓</div>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 0.375rem', color: 'var(--text-primary)' }}>
             Job Posted!
@@ -137,7 +139,20 @@ export default function CreateJobPage() {
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-            <button onClick={() => navigate(`/jobs/${createdJob._id}`)} style={s.submitBtn}>
+            <button
+              onClick={() => navigate(`/jobs/${createdJob._id}`)}
+              style={s.submitBtn}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#1d4ed8'
+                e.currentTarget.style.boxShadow = '0 8px 16px rgba(37, 99, 235, 0.3)'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#2563EB'
+                e.currentTarget.style.boxShadow = 'none'
+                e.currentTarget.style.transform = 'scale(1)'
+              }}
+            >
               View Listing
             </button>
             <button
@@ -147,9 +162,12 @@ export default function CreateJobPage() {
                 setRequirements([''])
               }}
               style={s.cancelBtn}
+              onMouseEnter={e => e.currentTarget.style.filter = 'brightness(0.97)'}
+              onMouseLeave={e => e.currentTarget.style.filter = 'none'}
             >
               Post Another
             </button>
+          </div>
           </div>
         </div>
       </div>
@@ -315,7 +333,11 @@ export default function CreateJobPage() {
 }
 
 const s = {
-  page:         { width: '720px', margin: '0 auto', padding: '2rem 1.5rem 4rem', fontFamily: 'sans-serif' },
+  pageWrapper: { minHeight: '100vh', width: '100%', background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), var(--gradient-end))' },
+  page: { width: '720px', margin: '0 auto', padding: '2rem 1.5rem 4rem' },
+  card: { background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: 16, padding: '1.25rem', boxShadow: '0 6px 18px rgba(2,6,23,0.06)' },
+  heading: { fontSize: '1.75rem', fontWeight: 700, margin: '0 0 0.375rem', color: 'var(--text-primary)' },
+  subtitle: { color: 'var(--text-secondary)', margin: 0 },
   pendingBanner:{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 12, padding: '1.5rem' },
   form:         { background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: 16, padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' },
   field:        { display: 'flex', flexDirection: 'column', gap: '0.375rem' },
