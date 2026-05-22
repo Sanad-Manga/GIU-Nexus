@@ -22,6 +22,9 @@ export default function JobDetailPage() {
   const [authMessage,    setAuthMessage]   = useState('')
   const [toast,          setToast]         = useState(null)
   const [coverLetter,    setCoverLetter]   = useState('')
+  const [clLoading,      setClLoading]     = useState(false)
+  const [clDraft,        setClDraft]       = useState('')
+  const [clError,        setClError]       = useState('')
   const [applying,       setApplying]      = useState(false)
   const [applyError,     setApplyError]    = useState('')
   const [myApplication,  setMyApplication] = useState(null)
@@ -126,6 +129,20 @@ export default function JobDetailPage() {
 
     // User is authenticated and is a job seeker
     setModalOpen(true)
+  }
+
+  const handleGenerateCoverLetter = async () => {
+    setClLoading(true)
+    setClError('')
+    setClDraft('')
+    try {
+      const { data } = await api.post(`/jobs/${id}/cover-letter`)
+      setClDraft(data.coverLetter)
+    } catch (err) {
+      setClError(err.response?.data?.message || 'Failed to generate cover letter. Try again.')
+    } finally {
+      setClLoading(false)
+    }
   }
 
   if (loading) return <Spinner />
@@ -304,6 +321,44 @@ export default function JobDetailPage() {
                   )}
                 </div>
               </div>
+            </section>
+          )}
+
+          {/* AI Cover Letter — job seekers only */}
+          {isJobSeeker && (
+            <section style={s.section}>
+              <h2 style={s.sectionTitle}>AI Cover Letter</h2>
+              <button
+                onClick={handleGenerateCoverLetter}
+                disabled={clLoading}
+                style={{ padding: '0.65rem 1.25rem', background: '#7c3aed', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 600, fontSize: '0.9rem', cursor: clLoading ? 'not-allowed' : 'pointer', opacity: clLoading ? 0.7 : 1, display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              >
+                {clLoading ? <><Spinner size={16} /> Generating…</> : '✨ Generate Cover Letter Suggestion'}
+              </button>
+
+              {clError && (
+                <p style={{ color: '#b91c1c', marginTop: '0.75rem', fontSize: '0.875rem' }}>{clError}</p>
+              )}
+
+              {clDraft && (
+                <div style={{ marginTop: '1rem' }}>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.5rem' }}>
+                    Draft — edit before using
+                  </label>
+                  <textarea
+                    value={clDraft}
+                    onChange={e => setClDraft(e.target.value)}
+                    rows={12}
+                    style={{ width: '100%', padding: '0.875rem', border: '1px solid #d1d5db', borderRadius: 10, fontSize: '0.9rem', lineHeight: 1.7, resize: 'vertical', outline: 'none', boxSizing: 'border-box', fontFamily: 'inherit', background: '#fafafa' }}
+                  />
+                  <button
+                    onClick={() => { navigator.clipboard.writeText(clDraft); setToast({ type: 'success', message: 'Cover letter copied!' }); setTimeout(() => setToast(null), 3000) }}
+                    style={{ marginTop: '0.5rem', padding: '0.5rem 1rem', background: '#f3f4f6', border: '1px solid #e5e7eb', borderRadius: 8, cursor: 'pointer', fontWeight: 500, fontSize: '0.85rem' }}
+                  >
+                    Copy to clipboard
+                  </button>
+                </div>
+              )}
             </section>
           )}
         </div>

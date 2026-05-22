@@ -1,11 +1,10 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-22T13:14:06.803Z
-> Files: 3 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-22T16:31:38.940Z
+> Files: 24 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
-- `README.md` — Project documentation (~1776 tok)
 
 ## .claude/
 
@@ -18,7 +17,6 @@
 
 ## backend/
 
-- `app.js` — API routes: GET (1 endpoints) (~490 tok)
 
 ## backend/__tests__/
 
@@ -28,6 +26,8 @@
 
 ## backend/controllers/
 
+- `jobController.js` — Declares JobPost (~3032 tok)
+- `profileController.js` — User: extractSkillsFromText (~2352 tok)
 
 ## backend/middleware/
 
@@ -37,28 +37,52 @@
 
 ## backend/routes/
 
+- `jobRoutes.js` — API routes: GET, POST, PATCH (7 endpoints) (~4009 tok)
 
 ## backend/services/
 
 
 ## client/
 
-- `vercel.json` (~21 tok)
 
 ## client/src/
 
+- `App.jsx` — App (~1122 tok)
+- `index.css` — Styles: 2 rules, 40 vars (~682 tok)
 
 ## client/src/components/
 
+- `Footer.jsx` — TEAM (~1309 tok)
+- `JobCard.jsx` — TYPE_LABELS (~1562 tok)
+- `Navbar.jsx` — SunIcon (~1272 tok)
+- `Navbar.module.css` — Styles: 30 rules (~1765 tok)
+- `PendingApprovalBanner.jsx` — ClockIcon (~1057 tok)
 
 ## client/src/context/
 
+- `ThemeContext.jsx` — ThemeContext (~186 tok)
 
 ## client/src/pages/
 
+- `AdminJobsPage.jsx` — Job governance; admin-hero + admin-card + admin-table, Delete action, uses AdminPages.css (~2100 tok)
+- `AdminUsersPage.jsx` — PAGE_SIZE — renders table, modal (~3275 tok)
+- `CreateJobPage.jsx` — JOB_TYPES — renders form (~4513 tok)
+- `HomePage.jsx` — hasScore (~4610 tok)
+- `HomePage.module.css` — Styles: 57 rules (~2794 tok)
+- `JobDetailPage.jsx` — JobDetailPage (~8343 tok)
+- `JobListPage.jsx` — JOB_TYPES — renders form (~5776 tok)
+- `RecommendedJobsPage.jsx` — hasScore (~1551 tok)
+- `RecruiterDashboard.jsx` — statusColors (~2006 tok)
 
 ## client/src/services/
 
+
+## client/src/styles/
+
+- `AdminPages.css` — Styles: 87 rules (~3919 tok)
+- `LoginPage.module.css` — Styles: 24 rules (~801 tok)
+- `ProfilePage.module.css` — Styles: 30 rules (~1322 tok)
+- `SavedJobsPage.module.css` — Styles: 14 rules (~501 tok)
 
 ## client/src/utils/
 

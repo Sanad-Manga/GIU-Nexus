@@ -12,6 +12,7 @@ const {
   getRecommendedJobs,
   saveJob,
   getSavedJobs,
+  generateCoverLetter,
 } = require('../controllers/jobController');
 
 const { getJobApplicants, applyToJob } = require("../controllers/applicationController");
@@ -474,5 +475,6 @@ router.delete('/:id', protect, authorize('recruiter', 'admin'), deleteJob);
  *               $ref: '#/components/schemas/Error'
  */
 router.post('/:id/save', protect, authorize('jobSeeker'), saveJob);
+router.post('/:id/cover-letter', protect, authorize('jobSeeker'), generateCoverLetter);
 
 module.exports = router;

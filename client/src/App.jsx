@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import PrivateRoute from './components/PrivateRoute'
 import RoleRoute from './components/RoleRoute'
+import { ThemeProvider } from './context/ThemeContext'
 
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
@@ -30,8 +31,9 @@ import Footer from './components/Footer'
 
 function App() {
   return (
-    <>
+    <ThemeProvider>
       <Navbar />
+      <div style={{ flex: 1 }}>
       <Routes>
         {/* Public */}
         <Route path="/" element={<HomePage />} />
@@ -64,8 +66,9 @@ function App() {
         <Route path="/admin/jobs" element={<RoleRoute roles={['admin']}><AdminJobsPage /></RoleRoute>} />
         <Route path="/admin/users" element={<RoleRoute roles={['admin']}><AdminUsersPage /></RoleRoute>} />
       </Routes>
+      </div>
       <Footer />
-    </>
+    </ThemeProvider>
   )
 }
 

@@ -130,11 +130,12 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: transform 0.15s, box-shadow 0.15s;
 }
 
 .extractBtn:hover:not(:disabled) {
-  background-color: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
 }
 
 .extractBtn:disabled {
@@ -160,31 +161,34 @@
   background-color: #2563EB;
   color: #FFFFFF;
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
-  transition: background-color 0.2s;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .btnPrimary:hover {
-  background-color: #1E40AF;
+  background-color: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
 }
 
 .btnSecondary {
   background-color: #FFFFFF;
-  color: #2563EB;
-  border: 1px solid #2563EB;
+  color: #374151;
+  border: 1px solid #E5E7EB;
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   text-decoration: none;
-  transition: all 0.2s;
+  transition: border-color 0.15s, color 0.15s;
 }
 
 .btnSecondary:hover {
-  background-color: #e0f0ff;
+  border-color: #9CA3AF;
+  color: #111827;
 }
 
 /* Loading / error states */
@@ -222,3 +226,16 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* ── Dark mode ── */
+[data-theme="dark"] .page { background-color: #0F172A; }
+[data-theme="dark"] .card { background-color: #1E293B; border-color: #334155; }
+[data-theme="dark"] .name { color: #F1F5F9; }
+[data-theme="dark"] .email { color: #94A3B8; }
+[data-theme="dark"] .roleBadge { background-color: rgba(37, 99, 235, 0.15); color: #93C5FD; }
+[data-theme="dark"] .section { border-color: #334155; }
+[data-theme="dark"] .sectionTitle { color: #F1F5F9; }
+[data-theme="dark"] .bio { color: #CBD5E1; }
+[data-theme="dark"] .empty { color: #64748B; }
+[data-theme="dark"] .btnSecondary { background-color: #1E293B; color: #CBD5E1; border-color: #334155; }
+[data-theme="dark"] .btnSecondary:hover { border-color: #64748B; color: #F1F5F9; }

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import api from '../services/api'
 import { useAuth } from '../context/AuthContext'
 import { CATEGORY_COLORS } from '../utils/categoryColors'
+import PendingApprovalBanner from '../components/PendingApprovalBanner'
 import JobForm from '../components/JobForm'
 
 const JOB_TYPES = ['full-time', 'part-time', 'internship', 'contract']
@@ -21,24 +22,7 @@ export default function CreateJobPage() {
   const [submitError,  setSubmitError]  = useState('')
   const [createdJob,   setCreatedJob]   = useState(null)
 
-  // Pending recruiter guard — show banner instead of form
-  if (user?.status === 'pending') {
-    return (
-      <div style={s.page}>
-        <div style={s.pendingBanner}>
-          <span style={{ fontSize: '2rem' }}>⏳</span>
-          <div>
-            <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 0.375rem', color: '#92400e' }}>
-              Account Pending Approval
-            </h2>
-            <p style={{ color: '#78350f', margin: 0, lineHeight: 1.6 }}>
-              Your recruiter account is awaiting admin approval. You'll be able to post jobs once approved.
-            </p>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  if (user?.status === 'pending') return <PendingApprovalBanner />
 
   // ── Validation ──
   const validate = () => {

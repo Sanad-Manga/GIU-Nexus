@@ -48,6 +48,742 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-05-22T12:55:44.226Z"
+    },
+    {
+      "id": "bug-004",
+      "timestamp": "2026-05-22T13:25:33.736Z",
+      "error_message": "Missing error handling in unknown",
+      "file": "backend/controllers/jobController.js",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "js"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T13:25:33.736Z"
+    },
+    {
+      "id": "bug-005",
+      "timestamp": "2026-05-22T13:26:18.868Z",
+      "error_message": "Missing error handling in unknown",
+      "file": "client/src/pages/JobDetailPage.jsx",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T13:26:18.868Z"
+    },
+    {
+      "id": "bug-006",
+      "timestamp": "2026-05-22T13:27:02.035Z",
+      "error_message": "CSS fix: color",
+      "file": "client/src/pages/JobDetailPage.jsx",
+      "root_cause": "color: '#2563EB', fontSize: '0.875rem', textDecoration: 'none' → '#b91c1c', marginTop: '0.75rem', fontSize: '0.875rem'",
+      "fix": "Changed color: '#2563EB', fontSize: '0.875rem', textDecoration: 'none' → '#b91c1c', marginTop: '0.75rem', fontSize: '0.875rem'",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T13:27:02.035Z"
+    },
+    {
+      "id": "bug-007",
+      "timestamp": "2026-05-22T13:39:08.905Z",
+      "error_message": "Significant refactor of ",
+      "file": "backend/controllers/profileController.js",
+      "root_cause": "10 lines replaced/restructured",
+      "fix": "Rewrote 36→94 lines (10 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "js"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T13:39:08.905Z"
+    },
+    {
+      "id": "bug-008",
+      "timestamp": "2026-05-22T13:47:29.769Z",
+      "error_message": "Incorrect value in code",
+      "file": "backend/controllers/profileController.js",
+      "root_cause": "Had 'typescript'",
+      "fix": "Changed to 'js'",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "js"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-22T13:47:44.031Z"
+    },
+    {
+      "id": "bug-009",
+      "timestamp": "2026-05-22T14:25:05.505Z",
+      "error_message": "Null/undefined access in ",
+      "file": "backend/controllers/jobController.js",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check) | Also: // Use the legacy HF Inference API directly — the SDK v4 pro; // doesn't have entries for most open models and throws \"pro",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "js"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-22T14:27:58.641Z"
+    },
+    {
+      "id": "bug-010",
+      "timestamp": "2026-05-22T14:25:19.919Z",
+      "error_message": "Missing error handling in unknown",
+      "file": "backend/controllers/profileController.js",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "js"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T14:25:19.919Z"
+    },
+    {
+      "id": "bug-011",
+      "timestamp": "2026-05-22T14:25:26.986Z",
+      "error_message": "Incorrect value in code",
+      "file": "backend/controllers/profileController.js",
+      "root_cause": "Had 'mern stack'",
+      "fix": "Changed to 'mean'",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "js"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T14:25:26.986Z"
+    },
+    {
+      "id": "bug-012",
+      "timestamp": "2026-05-22T14:30:04.119Z",
+      "error_message": "Significant refactor of ",
+      "file": "backend/controllers/jobController.js",
+      "root_cause": "23 lines replaced/restructured",
+      "fix": "Rewrote 25→8 lines (23 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "js"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T14:30:04.119Z"
+    },
+    {
+      "id": "bug-013",
+      "timestamp": "2026-05-22T14:39:39.505Z",
+      "error_message": "Null/undefined access in ",
+      "file": "client/src/pages/HomePage.jsx",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check) | Also: {stats.openPositions !== null && (; <> | Also: <Link to={user?.role === 'recruiter' ? '/dashboard' : '/jobs; {user?.role === 'recruiter' ? 'Go to Dashboard' : 'Browse jo",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 3,
+      "last_seen": "2026-05-22T14:44:35.208Z"
+    },
+    {
+      "id": "bug-014",
+      "timestamp": "2026-05-22T14:40:21.233Z",
+      "error_message": "CSS fix: transition",
+      "file": "client/src/pages/HomePage.module.css",
+      "root_cause": "transition: background 0.15s → transform 0.15s, box-shadow 0.15s",
+      "fix": "Changed transition: background 0.15s → transform 0.15s, box-shadow 0.15s",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T14:40:21.233Z"
+    },
+    {
+      "id": "bug-015",
+      "timestamp": "2026-05-22T14:40:31.852Z",
+      "error_message": "CSS fix: background-color, transition",
+      "file": "client/src/styles/ProfilePage.module.css",
+      "root_cause": "background-color: #059669 → #10B981; transition: background-color 0.2s → transform 0.15s, box-shadow 0.15s",
+      "fix": "Changed background-color: #059669 → #10B981; transition: background-color 0.2s → transform 0.15s, box-shadow 0.15s",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-22T14:40:44.735Z"
+    },
+    {
+      "id": "bug-016",
+      "timestamp": "2026-05-22T14:49:43.104Z",
+      "error_message": "Missing guard clause",
+      "file": "client/src/pages/HomePage.jsx",
+      "root_cause": "No early return/throw for edge case: !isRecruiter",
+      "fix": "Added guard clause: if (!isRecruiter)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T14:49:43.104Z"
+    },
+    {
+      "id": "bug-017",
+      "timestamp": "2026-05-22T14:50:07.096Z",
+      "error_message": "Significant refactor of ",
+      "file": "client/src/pages/HomePage.jsx",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 32→61 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T14:50:07.096Z"
+    },
+    {
+      "id": "bug-018",
+      "timestamp": "2026-05-22T14:53:31.832Z",
+      "error_message": "CSS fix: jobsPosted",
+      "file": "client/src/pages/HomePage.jsx",
+      "root_cause": "jobsPosted: jobs.length, totalApplicants → jobs.length, totalApplicants, openJobs",
+      "fix": "Changed jobsPosted: jobs.length, totalApplicants → jobs.length, totalApplicants, openJobs",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T14:53:31.832Z"
+    },
+    {
+      "id": "bug-019",
+      "timestamp": "2026-05-22T14:56:13.069Z",
+      "error_message": "CSS fix: grid-template-columns",
+      "file": "client/src/components/Navbar.module.css",
+      "root_cause": "grid-template-columns: auto minmax(0, 1fr) auto → minmax(0, 1fr) auto minmax(0, 1fr)",
+      "fix": "Changed grid-template-columns: auto minmax(0, 1fr) auto → minmax(0, 1fr) auto minmax(0, 1fr)",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T14:56:13.069Z"
+    },
+    {
+      "id": "bug-020",
+      "timestamp": "2026-05-22T15:00:25.800Z",
+      "error_message": "Missing error handling in unknown",
+      "file": "client/src/pages/HomePage.jsx",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T15:00:25.800Z"
+    },
+    {
+      "id": "bug-021",
+      "timestamp": "2026-05-22T15:00:43.168Z",
+      "error_message": "Significant refactor of ",
+      "file": "client/src/pages/HomePage.jsx",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 4→7 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T15:00:43.168Z"
+    },
+    {
+      "id": "bug-022",
+      "timestamp": "2026-05-22T15:01:00.593Z",
+      "error_message": "Null/undefined access in ",
+      "file": "client/src/pages/HomePage.jsx",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check) | Also: {isAdmin && (; <h2 className={styles.sectionTitle}>Pending recruiter approv",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-22T15:01:24.060Z"
+    },
+    {
+      "id": "bug-023",
+      "timestamp": "2026-05-22T15:02:59.287Z",
+      "error_message": "Missing import: ../styles/AdminPages.css",
+      "file": "client/src/pages/HomePage.jsx",
+      "root_cause": "Module(s) not imported: ../styles/AdminPages.css",
+      "fix": "Added import(s) for ../styles/AdminPages.css",
+      "tags": [
+        "auto-detected",
+        "missing-import",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T15:02:59.287Z"
+    },
+    {
+      "id": "bug-024",
+      "timestamp": "2026-05-22T15:06:32.637Z",
+      "error_message": "Null/undefined access in ",
+      "file": "client/src/pages/HomePage.jsx",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T15:06:32.637Z"
+    },
+    {
+      "id": "bug-025",
+      "timestamp": "2026-05-22T15:12:06.874Z",
+      "error_message": "Missing guard clause",
+      "file": "client/src/pages/CreateJobPage.jsx",
+      "root_cause": "No early return/throw for edge case: user?.status === 'pending'",
+      "fix": "Added guard clause: if (user?.status === 'pending')",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T15:12:06.874Z"
+    },
+    {
+      "id": "bug-026",
+      "timestamp": "2026-05-22T15:19:07.766Z",
+      "error_message": "CSS fix: gap",
+      "file": "client/src/styles/AdminPages.css",
+      "root_cause": "gap: 10px → 8px",
+      "fix": "Changed gap: 10px → 8px",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 4,
+      "last_seen": "2026-05-22T15:26:01.241Z"
+    },
+    {
+      "id": "bug-027",
+      "timestamp": "2026-05-22T15:21:25.215Z",
+      "error_message": "CSS fix: label",
+      "file": "client/src/pages/AdminUsersPage.jsx",
+      "root_cause": "label: 'Rejected', value: globalStats.rejected, filter: 'rejected' → 'Rejected', value: globalStats.rejected, filter: 'rejected', variant: 'rejected'",
+      "fix": "Changed label: 'Rejected', value: globalStats.rejected, filter: 'rejected' → 'Rejected', value: globalStats.rejected, filter: 'rejected', variant: 'rejected'",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-22T15:22:03.402Z"
+    },
+    {
+      "id": "bug-028",
+      "timestamp": "2026-05-22T15:23:15.725Z",
+      "error_message": "Significant refactor of ",
+      "file": "client/src/styles/AdminPages.css",
+      "root_cause": "9 lines replaced/restructured",
+      "fix": "Rewrote 31→50 lines (9 removed) | Also: /* ── User status badges (square tags, not pills) ; .admin-status-approved,",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-22T15:25:54.747Z"
+    },
+    {
+      "id": "bug-029",
+      "timestamp": "2026-05-22T15:35:17.689Z",
+      "error_message": "Wrong return value",
+      "file": "client/src/components/Navbar.jsx",
+      "root_cause": "Was returning: [{ to: '/jobs', label: 'Jobs' }]",
+      "fix": "Now returns: []",
+      "tags": [
+        "auto-detected",
+        "return-value",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T15:35:17.689Z"
+    },
+    {
+      "id": "bug-030",
+      "timestamp": "2026-05-22T15:35:28.566Z",
+      "error_message": "Significant refactor of ",
+      "file": "client/src/components/Footer.jsx",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 15→11 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T15:35:28.566Z"
+    },
+    {
+      "id": "bug-031",
+      "timestamp": "2026-05-22T15:38:58.717Z",
+      "error_message": "CSS fix: max-width, padding",
+      "file": "client/src/styles/SavedJobsPage.module.css",
+      "root_cause": "max-width: none → 1280px; padding: 2rem 0.5rem 4rem → 2.5rem 2rem 4rem",
+      "fix": "Changed max-width: none → 1280px; padding: 2rem 0.5rem 4rem → 2.5rem 2rem 4rem",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T15:38:58.717Z"
+    },
+    {
+      "id": "bug-032",
+      "timestamp": "2026-05-22T15:40:49.307Z",
+      "error_message": "CSS fix: maxWidth",
+      "file": "client/src/components/Footer.jsx",
+      "root_cause": "maxWidth: '220px', → '280px',",
+      "fix": "Changed maxWidth: '220px', → '280px',",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T15:40:49.307Z"
+    },
+    {
+      "id": "bug-033",
+      "timestamp": "2026-05-22T15:43:16.031Z",
+      "error_message": "Wrong reference: main should be div",
+      "file": "client/src/App.jsx",
+      "root_cause": "Used \"main\" instead of \"div\"",
+      "fix": "Changed main → div",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T15:43:16.031Z"
+    },
+    {
+      "id": "bug-034",
+      "timestamp": "2026-05-22T15:46:23.922Z",
+      "error_message": "Significant refactor of ",
+      "file": "client/src/App.jsx",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 4→3 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T15:46:23.922Z"
+    },
+    {
+      "id": "bug-035",
+      "timestamp": "2026-05-22T15:49:24.644Z",
+      "error_message": "Wrong reference: Footer should be div",
+      "file": "client/src/App.jsx",
+      "root_cause": "Used \"Footer\" instead of \"div\"",
+      "fix": "Changed Footer → div",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T15:49:24.644Z"
+    },
+    {
+      "id": "bug-036",
+      "timestamp": "2026-05-22T15:52:30.625Z",
+      "error_message": "Wrong reference: btnOutline should be btnPrimary",
+      "file": "client/src/pages/HomePage.jsx",
+      "root_cause": "Used \"btnOutline\" instead of \"btnPrimary\"",
+      "fix": "Changed btnOutline → btnPrimary",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T15:52:30.625Z"
+    },
+    {
+      "id": "bug-037",
+      "timestamp": "2026-05-22T15:52:39.718Z",
+      "error_message": "CSS fix: color, background, border",
+      "file": "client/src/components/Navbar.module.css",
+      "root_cause": "color: #ffffff → #1e40af; background: #1e40af → #eff6ff; border: 1px solid #2563eb → 1.5px solid #2563eb",
+      "fix": "Changed color: #ffffff → #1e40af; background: #1e40af → #eff6ff; border: 1px solid #2563eb → 1.5px solid #2563eb",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T15:52:39.718Z"
+    },
+    {
+      "id": "bug-038",
+      "timestamp": "2026-05-22T15:54:21.074Z",
+      "error_message": "CSS fix: box-shadow",
+      "file": "client/src/pages/HomePage.module.css",
+      "root_cause": "box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35) → 0 8px 24px rgba(37, 99, 235, 0.45)",
+      "fix": "Changed box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35) → 0 8px 24px rgba(37, 99, 235, 0.45)",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T15:54:21.074Z"
+    },
+    {
+      "id": "bug-039",
+      "timestamp": "2026-05-22T15:59:09.404Z",
+      "error_message": "CSS fix: background-color, border-radius, transition",
+      "file": "client/src/styles/LoginPage.module.css",
+      "root_cause": "background-color: var(--primary-dark) → var(--primary); border-radius: 6px → 10px; transition: background-color 0.2s ease → box-shadow 0.2s ease, transform 0.2s ease",
+      "fix": "Changed background-color: var(--primary-dark) → var(--primary); border-radius: 6px → 10px; transition: background-color 0.2s ease → box-shadow 0.2s ease, transform 0.2s ease",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-22T16:00:28.557Z"
+    },
+    {
+      "id": "bug-040",
+      "timestamp": "2026-05-22T15:59:23.563Z",
+      "error_message": "CSS fix: searchBtn",
+      "file": "client/src/pages/JobListPage.jsx",
+      "root_cause": "searchBtn: { padding: '0.6rem 1.5rem', background: '#2563EB', color: '#fff', border: 'none', borderRadius: 8, fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer' → { padding: '0.6rem 1.5rem', background: '#2563EB', color: '#fff', border: 'none', borderRadius: 10, fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer', transition: 'box-shadow 0.2s ease, transform 0.2s ease'",
+      "fix": "Changed searchBtn: { padding: '0.6rem 1.5rem', background: '#2563EB', color: '#fff', border: 'none', borderRadius: 8, fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer' → { padding: '0.6rem 1.5rem', background: '#2563EB', color: '#fff', border: 'none', borderRadius: 10, fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer', transition: 'box-shadow 0.2s ease, transform 0.2s ease'",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T15:59:23.563Z"
+    },
+    {
+      "id": "bug-041",
+      "timestamp": "2026-05-22T16:00:13.737Z",
+      "error_message": "CSS fix: background-color, box-shadow",
+      "file": "client/src/styles/ProfilePage.module.css",
+      "root_cause": "background-color: #2563EB → #1d4ed8; box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45) → 0 6px 20px rgba(37, 99, 235, 0.35)",
+      "fix": "Changed background-color: #2563EB → #1d4ed8; box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45) → 0 6px 20px rgba(37, 99, 235, 0.35)",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T16:00:13.737Z"
+    },
+    {
+      "id": "bug-042",
+      "timestamp": "2026-05-22T16:00:44.624Z",
+      "error_message": "Incorrect value in code",
+      "file": "client/src/pages/JobListPage.jsx",
+      "root_cause": "Had 'var(--text)'",
+      "fix": "Changed to '#374151'",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T16:00:44.624Z"
+    },
+    {
+      "id": "bug-043",
+      "timestamp": "2026-05-22T16:05:05.025Z",
+      "error_message": "CSS fix: heading, items",
+      "file": "client/src/components/Footer.jsx",
+      "root_cause": "heading: 'Platform', → 'Admin',; items: [{ label: 'Browse Jobs', to: '/jobs' → [",
+      "fix": "Changed heading: 'Platform', → 'Admin',; items: [{ label: 'Browse Jobs', to: '/jobs' → [",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-22T16:06:08.495Z"
+    },
+    {
+      "id": "bug-044",
+      "timestamp": "2026-05-22T16:14:26.738Z",
+      "error_message": "Wrong condition in logic",
+      "file": "client/src/pages/HomePage.jsx",
+      "root_cause": "Condition was: if (!isPrivileged)",
+      "fix": "Changed to: if (isAuthenticated && !isPrivileged)",
+      "tags": [
+        "auto-detected",
+        "logic-fix",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T16:14:26.738Z"
+    },
+    {
+      "id": "bug-045",
+      "timestamp": "2026-05-22T16:24:32.010Z",
+      "error_message": "CSS fix: background",
+      "file": "client/src/pages/HomePage.module.css",
+      "root_cause": "background: #F9FAFB → #ffffff",
+      "fix": "Changed background: #F9FAFB → #ffffff",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-22T16:28:50.620Z"
+    },
+    {
+      "id": "bug-046",
+      "timestamp": "2026-05-22T16:29:52.370Z",
+      "error_message": "CSS fix: background, borderTop, color",
+      "file": "client/src/components/Footer.jsx",
+      "root_cause": "background: '#fff', → 'var(--card-bg)',; borderTop: '1px solid #F3F4F6', → '1px solid var(--surface)',; color: '#9CA3AF', → 'var(--text-tertiary)',",
+      "fix": "Changed background: '#fff', → 'var(--card-bg)',; borderTop: '1px solid #F3F4F6', → '1px solid var(--surface)',; color: '#9CA3AF', → 'var(--text-tertiary)',",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T16:29:52.370Z"
+    },
+    {
+      "id": "bug-047",
+      "timestamp": "2026-05-22T16:30:02.195Z",
+      "error_message": "CSS fix: color",
+      "file": "client/src/pages/RecruiterDashboard.jsx",
+      "root_cause": "color: \"#6B7280\", → \"var(--text-secondary)\",",
+      "fix": "Changed color: \"#6B7280\", → \"var(--text-secondary)\",",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 6,
+      "last_seen": "2026-05-22T16:30:45.801Z"
+    },
+    {
+      "id": "bug-048",
+      "timestamp": "2026-05-22T16:31:09.385Z",
+      "error_message": "CSS fix: background, color",
+      "file": "client/src/components/JobCard.jsx",
+      "root_cause": "background: '#e5e7eb', → 'var(--border)',; color: '#6b7280', → 'var(--text-secondary)',",
+      "fix": "Changed background: '#e5e7eb', → 'var(--border)',; color: '#6b7280', → 'var(--text-secondary)',",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-22T16:31:09.385Z"
+    },
+    {
+      "id": "bug-049",
+      "timestamp": "2026-05-22T16:31:27.705Z",
+      "error_message": "Incorrect value in code",
+      "file": "client/src/pages/JobListPage.jsx",
+      "root_cause": "Had 'radial-gradient(circle at top right, rgba(16, 185",
+      "fix": "Changed to 'radial-gradient(circle at top right, rgba(16, 185",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "jsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-22T16:31:38.955Z"
     }
   ]
 }
