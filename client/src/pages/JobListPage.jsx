@@ -209,6 +209,7 @@ export default function JobListPage() {
         />
         <div ref={typeRef} style={{ position: 'relative', flex: '1 1 140px' }}>
           <button
+            type="button"
             style={s.select}
             onClick={() => { setTypeOpen(!typeOpen); setStatusOpen(false) }}
             onMouseEnter={e => e.target.style.borderColor = 'var(--accent)'}
@@ -229,6 +230,7 @@ export default function JobListPage() {
         
         <div ref={statusRef} style={{ position: 'relative', flex: '1 1 140px' }}>
           <button
+            type="button"
             style={s.select}
             onClick={() => { setStatusOpen(!statusOpen); setTypeOpen(false) }}
             onMouseEnter={e => e.target.style.borderColor = 'var(--accent)'}

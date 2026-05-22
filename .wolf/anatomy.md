@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-22T20:25:16.157Z
-> Files: 29 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-22T20:38:16.942Z
+> Files: 30 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -71,6 +71,7 @@
 - `EditProfilePage.jsx` — EditProfilePage — renders form (~1771 tok)
 - `HomePage.module.css` — Styles: 57 rules (~2814 tok)
 - `JobDetailPage.jsx` — JobDetailPage (~8609 tok)
+- `JobListPage.jsx` — JOB_TYPES — renders form (~5792 tok)
 - `MyApplicationsPage.jsx` — STATUS_CLASS (~925 tok)
 - `ProfilePage.jsx` — ROLE_LABEL (~1226 tok)
 - `PublicProfilePage.jsx` — ROLE_LABEL (~922 tok)
