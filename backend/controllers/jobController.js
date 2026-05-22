@@ -11,6 +11,7 @@ const getJobs = async (req, res, next) => {
     const filter = {};
     if (keyword) filter.$or = [
       { title:       { $regex: keyword, $options: 'i' } },
+      { company:     { $regex: keyword, $options: 'i' } },
       { description: { $regex: keyword, $options: 'i' } },
     ];
     if (location) filter.location = { $regex: location, $options: 'i' };
