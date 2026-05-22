@@ -7,13 +7,22 @@
   color: #111827;
 }
 
-/* ── HEADER ── */
+/* ── HEADER WITH STATS CARDS ── */
 .pageHeader {
   background: #ffffff;
   border-bottom: 1px solid #E5E7EB;
-  padding: 2rem;
+  padding: 1.5rem 2rem;
 }
 
+.headerTop {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
 
 .pageTitle {
   font-size: 24px;
@@ -28,6 +37,43 @@
   color: #6B7280;
 }
 
+.statsCards {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.statCard {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 0.75rem 1.25rem;
+  min-width: 80px;
+  text-align: center;
+  transition: all 0.15s;
+}
+
+.statCard:hover {
+  border-color: #2563EB;
+  background: #EFF6FF;
+}
+
+.statNumber {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.statLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6B7280;
+}
+
 /* ── CONTENT ── */
 .content {
   max-width: 1280px;
@@ -38,10 +84,24 @@
 /* ── FILTER BAR ── */
 .filterBar {
   display: flex;
-  gap: 12px;
+  gap: 1rem;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-end;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.filterLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6B7280;
 }
 
 .filterSelect {
@@ -55,6 +115,7 @@
   outline: none;
   cursor: pointer;
   transition: border-color 0.15s;
+  min-width: 140px;
 }
 
 .filterSelect:focus {
@@ -72,6 +133,7 @@
   padding: 8px 14px;
   cursor: pointer;
   transition: all 0.15s;
+  margin-top: 1.25rem;
 }
 
 .clearBtn:hover {
@@ -96,10 +158,10 @@
 .th {
   padding: 12px 16px;
   text-align: left;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
   color: #6B7280;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   background: #F9FAFB;
   border-bottom: 1px solid #E5E7EB;
@@ -157,16 +219,29 @@
   font-size: 13px;
 }
 
-.roleText {
-  font-size: 13px;
-  font-weight: 500;
-  color: #374151;
+/* ── ROLE BADGE ── */
+.roleBadge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 100px;
   text-transform: capitalize;
+  display: inline-block;
 }
 
-.dateText {
-  font-size: 13px;
-  color: #9CA3AF;
+.roleAdmin {
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563EB;
+}
+
+.roleRecruiter {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+}
+
+.roleSeeker {
+  background: rgba(107, 114, 128, 0.1);
+  color: #4B5563;
 }
 
 /* ── STATUS SELECT ── */
@@ -181,47 +256,32 @@
   outline: none;
   cursor: pointer;
   color: #374151;
-  transition: border-color 0.15s;
+  transition: all 0.15s;
+}
+
+.statusSelect:hover {
+  border-color: #9CA3AF;
 }
 
 .statusSelect:focus {
   border-color: #2563EB;
 }
 
-/* ── STATUS BADGE ── */
-.statusBadge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 8px;
-  border-radius: 100px;
-  text-transform: capitalize;
+.dateText {
+  font-size: 13px;
+  color: #9CA3AF;
 }
 
-.status_approved {
-  background: rgba(16, 185, 129, 0.1);
-  color: #059669;
-}
-
-.status_pending {
-  background: rgba(245, 158, 11, 0.1);
-  color: #D97706;
-}
-
-.status_rejected {
-  background: rgba(239, 68, 68, 0.1);
-  color: #DC2626;
-}
-
-/* ── DELETE BUTTON ── */
+/* ── DELETE BUTTON (FULLY ROUNDED EDGES) ── */
 .deleteBtn {
   font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
   color: #EF4444;
   background: transparent;
   border: 1px solid #FEE2E2;
-  border-radius: 6px;
-  padding: 5px 12px;
+  border-radius: 999px;      /* Pill shape / fully rounded */
+  padding: 6px 16px;
   cursor: pointer;
   transition: all 0.15s;
 }
@@ -329,4 +389,48 @@
   font-size: 14px;
   text-align: center;
   padding: 2rem;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .content {
+    padding: 1rem;
+  }
+  
+  .headerTop {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .statsCards {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .statCard {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .filterBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filterGroup {
+    width: 100%;
+  }
+  
+  .clearBtn {
+    margin-top: 0;
+    width: 100%;
+  }
+  
+  .th, .td {
+    padding: 10px 12px;
+  }
+  
+  .pageNumbers {
+    display: none;
+  }
 }

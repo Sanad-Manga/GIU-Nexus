@@ -11,6 +11,12 @@ const STATUS_OPTIONS = [
   { value: 'rejected', label: 'Rejected' },
 ];
 
+const ROLE_OPTIONS = [
+  { value: 'jobSeeker', label: 'Job Seeker' },
+  { value: 'recruiter', label: 'Recruiter' },
+  { value: 'admin', label: 'Admin' },
+];
+
 const getTotalPages = (data) => {
   if (data.totalPages) return data.totalPages;
   return Math.max(1, Math.ceil((data.total || 0) / PAGE_SIZE));
@@ -23,6 +29,7 @@ const AdminUsersPage = () => {
   const [filters, setFilters] = useState({ role: '', status: '' });
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalUsers, setTotalUsers] = useState(0);
   const [modal, setModal] = useState({ open: false, userId: null, userName: '' });
 
   const buildParams = useCallback(() => ({
@@ -35,6 +42,8 @@ const AdminUsersPage = () => {
   const refreshUsers = async () => {
     const res = await api.get('/users', { params: buildParams() });
     setUsers(res.data.users || []);
+    const total = res.data.total || 0;
+    setTotalUsers(total);
     setTotalPages(getTotalPages(res.data));
   };
 
@@ -46,6 +55,7 @@ const AdminUsersPage = () => {
         const res = await api.get('/users', { params: buildParams() });
         if (isMounted) {
           setUsers(res.data.users || []);
+          setTotalUsers(res.data.total || 0);
           setTotalPages(getTotalPages(res.data));
           setError('');
         }
@@ -83,35 +93,80 @@ const AdminUsersPage = () => {
     }
   };
 
+  const getRoleBadgeStyle = (role) => {
+    switch (role) {
+      case 'admin':
+        return styles.roleAdmin;
+      case 'recruiter':
+        return styles.roleRecruiter;
+      default:
+        return styles.roleSeeker;
+    }
+  };
+
   return (
     <div className={styles.page}>
       <div className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>Manage Users</h1>
-        <p className={styles.pageSub}>View, filter, and manage all platform users</p>
+        <div className={styles.headerTop}>
+          <div>
+            <h1 className={styles.pageTitle}>USERS REGISTRY</h1>
+            <p className={styles.pageSub}>View, filter, and manage all platform users</p>
+          </div>
+          <div className={styles.statsCards}>
+            <div className={styles.statCard}>
+              <span className={styles.statNumber}>{totalUsers}</span>
+              <span className={styles.statLabel}>Total Users</span>
+            </div>
+            <div className={styles.statCard}>
+              <span className={styles.statNumber}>
+                {users.filter(u => u.status === 'approved').length}
+              </span>
+              <span className={styles.statLabel}>Approved</span>
+            </div>
+            <div className={styles.statCard}>
+              <span className={styles.statNumber}>
+                {users.filter(u => u.status === 'pending').length}
+              </span>
+              <span className={styles.statLabel}>Pending</span>
+            </div>
+            <div className={styles.statCard}>
+              <span className={styles.statNumber}>
+                {users.filter(u => u.status === 'rejected').length}
+              </span>
+              <span className={styles.statLabel}>Rejected</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className={styles.content}>
         <div className={styles.filterBar}>
-          <select
-            className={styles.filterSelect}
-            value={filters.role}
-            onChange={e => handleFilterChange('role', e.target.value)}
-          >
-            <option value="">All roles</option>
-            <option value="jobSeeker">Job Seeker</option>
-            <option value="recruiter">Recruiter</option>
-            <option value="admin">Admin</option>
-          </select>
-          <select
-            className={styles.filterSelect}
-            value={filters.status}
-            onChange={e => handleFilterChange('status', e.target.value)}
-          >
-            <option value="">All statuses</option>
-            {STATUS_OPTIONS.map(s => (
-              <option key={s.value} value={s.value}>{s.label}</option>
-            ))}
-          </select>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Role</label>
+            <select
+              className={styles.filterSelect}
+              value={filters.role}
+              onChange={e => handleFilterChange('role', e.target.value)}
+            >
+              <option value="">All roles</option>
+              {ROLE_OPTIONS.map(role => (
+                <option key={role.value} value={role.value}>{role.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Status</label>
+            <select
+              className={styles.filterSelect}
+              value={filters.status}
+              onChange={e => handleFilterChange('status', e.target.value)}
+            >
+              <option value="">All statuses</option>
+              {STATUS_OPTIONS.map(s => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
+          </div>
           {(filters.role || filters.status) && (
             <button
               className={styles.clearBtn}
@@ -127,12 +182,12 @@ const AdminUsersPage = () => {
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th className={styles.th}>Name</th>
-                  <th className={styles.th}>Email</th>
-                  <th className={styles.th}>Role</th>
-                  <th className={styles.th}>Status</th>
-                  <th className={styles.th}>Registered</th>
-                  <th className={styles.th}>Actions</th>
+                  <th className={styles.th}>NAME</th>
+                  <th className={styles.th}>EMAIL</th>
+                  <th className={styles.th}>ROLE</th>
+                  <th className={styles.th}>STATUS</th>
+                  <th className={styles.th}>REGISTERED</th>
+                  <th className={styles.th}>ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
@@ -159,12 +214,12 @@ const AdminUsersPage = () => {
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th className={styles.th}>Name</th>
-                  <th className={styles.th}>Email</th>
-                  <th className={styles.th}>Role</th>
-                  <th className={styles.th}>Status</th>
-                  <th className={styles.th}>Registered</th>
-                  <th className={styles.th}>Actions</th>
+                  <th className={styles.th}>NAME</th>
+                  <th className={styles.th}>EMAIL</th>
+                  <th className={styles.th}>ROLE</th>
+                  <th className={styles.th}>STATUS</th>
+                  <th className={styles.th}>REGISTERED</th>
+                  <th className={styles.th}>ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
@@ -178,7 +233,7 @@ const AdminUsersPage = () => {
                     <td className={styles.td}>
                       <div className={styles.nameCell}>
                         <div className={styles.avatar}>
-                          {user.name.charAt(0).toUpperCase()}
+                          {user.name?.charAt(0).toUpperCase() || 'U'}
                         </div>
                         <span className={styles.userName}>{user.name}</span>
                       </div>
@@ -187,7 +242,9 @@ const AdminUsersPage = () => {
                       <span className={styles.emailText}>{user.email}</span>
                     </td>
                     <td className={styles.td}>
-                      <span className={styles.roleText}>{user.role}</span>
+                      <span className={`${styles.roleBadge} ${getRoleBadgeStyle(user.role)}`}>
+                        {user.role === 'jobSeeker' ? 'Job Seeker' : user.role}
+                      </span>
                     </td>
                     <td className={styles.td}>
                       <select
@@ -202,8 +259,10 @@ const AdminUsersPage = () => {
                     </td>
                     <td className={styles.td}>
                       <span className={styles.dateText}>
-                        {new Date(user.createdAt).toLocaleDateString('en-GB', {
-                          day: 'numeric', month: 'short', year: 'numeric'
+                        {new Date(user.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
                         })}
                       </span>
                     </td>
