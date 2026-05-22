@@ -84,9 +84,9 @@ When a job seeker requests recommendations, their skills are encoded into a vect
 │   ├── routes/         # Express routers
 │   ├── services/       # Email, classification, upload logic
 │   ├── __tests__/      # Jest integration tests
+│   ├── seed.js         # DB seed script
 │   └── server.js       # Entry point
-├── server/
-│   └── seed.js         # DB seed script
+├── client/             # React frontend (Vite)
 ├── Dockerfile
 ├── docker-compose.yml
 ├── .env.example
@@ -205,8 +205,10 @@ Creates sample users, jobs, and applications for development.
 
 ## Deployment
 
-The app is deployed on **Railway** using Nixpacks (configured via `railway.toml`).
+| Layer | Platform | URL |
+|-------|----------|-----|
+| Frontend | Vercel | **https://giu-nexus-beta.vercel.app** |
+| Backend | Railway | **https://giu-nexus-api.up.railway.app** |
+| Database | MongoDB Atlas | — |
 
-Live API: set your Railway URL as `BASE_URL` in Postman.
-
-**Deployed URL:** https://giu-nexus-api.up.railway.app
+Full interactive API docs: https://giu-nexus-api.up.railway.app/api-docs
