@@ -61,9 +61,10 @@ const Navbar = () => {
             <NavLink
               key={link.to}
               to={link.to}
-              className={({ isActive }) =>
-                `${styles.navLink} ${isActive ? styles.activeLink : ''}`
-              }
+              className={() => {
+                const isActive = window.location.pathname === link.to;
+                return `${styles.navLink} ${isActive ? styles.activeLink : ''}`;
+              }}
             >
               {link.label}
             </NavLink>
