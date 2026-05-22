@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import api from '../services/api'
 import { useAuth } from '../context/AuthContext'
 import { CATEGORY_COLORS } from '../utils/categoryColors'
+import JobForm from '../components/JobForm'
 
 const JOB_TYPES = ['full-time', 'part-time', 'internship', 'contract']
 
@@ -115,8 +116,9 @@ export default function CreateJobPage() {
   if (createdJob) {
     const categoryColor = CATEGORY_COLORS[createdJob.category] ?? 'gray'
     return (
-      <div style={s.page}>
-        <div style={s.successCard}>
+      <div style={s.pageWrapper}>
+        <div style={s.page}>
+          <div style={s.successCard}>
           <div style={s.successIcon}>✓</div>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 0.375rem', color: '#111827' }}>
             Job Posted!
@@ -153,7 +155,20 @@ export default function CreateJobPage() {
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-            <button onClick={() => navigate(`/jobs/${createdJob._id}`)} style={s.submitBtn}>
+            <button
+              onClick={() => navigate(`/jobs/${createdJob._id}`)}
+              style={s.submitBtn}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#1d4ed8'
+                e.currentTarget.style.boxShadow = '0 8px 16px rgba(37, 99, 235, 0.3)'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#2563EB'
+                e.currentTarget.style.boxShadow = 'none'
+                e.currentTarget.style.transform = 'scale(1)'
+              }}
+            >
               View Listing
             </button>
             <button
@@ -163,9 +178,12 @@ export default function CreateJobPage() {
                 setRequirements([''])
               }}
               style={s.cancelBtn}
+              onMouseEnter={e => e.currentTarget.style.filter = 'brightness(0.97)'}
+              onMouseLeave={e => e.currentTarget.style.filter = 'none'}
             >
               Post Another
             </button>
+          </div>
           </div>
         </div>
       </div>
@@ -174,174 +192,61 @@ export default function CreateJobPage() {
 
   // ── Form ──
   return (
-    <div style={s.page}>
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, margin: '0 0 0.375rem', color: '#111827' }}>
-          Post a New Job
-        </h1>
-        <p style={{ color: '#6b7280', margin: 0 }}>
-          Fill in the details. The AI will automatically assign a category to your listing.
-        </p>
+    <div style={s.pageWrapper}>
+      <div style={s.page}>
+        <div style={{ marginBottom: '2rem' }}>
+          <h1 style={s.heading}>Post a New Job</h1>
+          <p style={s.subtitle}>Fill in the details. The AI will automatically assign a category to your listing.</p>
+        </div>
+
+        <div style={s.card}>
+          <JobForm
+            form={form}
+            errors={errors}
+            requirements={requirements}
+            onChange={handleChange}
+            onUpdateRequirement={updateReq}
+            onAddRequirement={addReq}
+            onRemoveRequirement={removeReq}
+            onSubmit={handleSubmit}
+            submitting={submitting}
+            submitError={submitError}
+            submitLabel={'Post Job'}
+            cancelLabel={'Cancel'}
+            onCancel={() => navigate(-1)}
+            showStatus={false}
+            showAiNotice={true}
+          />
+        </div>
       </div>
-
-      <form onSubmit={handleSubmit} style={s.form} noValidate>
-
-        {/* Title */}
-        <div style={s.field}>
-          <label style={s.label}>Job Title <span style={{ color: '#ef4444' }}>*</span></label>
-          <input
-            style={{ ...s.input, ...(errors.title ? s.inputErr : {}) }}
-            type="text" placeholder="e.g. Senior Frontend Engineer"
-            value={form.title} onChange={handleChange('title')}
-          />
-          {errors.title && <p style={s.ferr}>{errors.title}</p>}
-        </div>
-
-        {/* Company */}
-        <div style={s.field}>
-          <label style={s.label}>Company <span style={{ color: '#ef4444' }}>*</span></label>
-          <input
-            style={{ ...s.input, ...(errors.company ? s.inputErr : {}) }}
-            type="text" placeholder="e.g. Acme Corp"
-            value={form.company} onChange={handleChange('company')}
-          />
-          {errors.company && <p style={s.ferr}>{errors.company}</p>}
-        </div>
-
-        {/* Location + Type */}
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <div style={{ ...s.field, flex: 1 }}>
-            <label style={s.label}>Location <span style={{ color: '#ef4444' }}>*</span></label>
-            <input
-              style={{ ...s.input, ...(errors.location ? s.inputErr : {}) }}
-              type="text" placeholder="e.g. Cairo, Egypt"
-              value={form.location} onChange={handleChange('location')}
-            />
-            {errors.location && <p style={s.ferr}>{errors.location}</p>}
-          </div>
-          <div style={{ ...s.field, flex: 1 }}>
-            <label style={s.label}>Job Type <span style={{ color: '#ef4444' }}>*</span></label>
-            <select style={s.input} value={form.type} onChange={handleChange('type')}>
-              {JOB_TYPES.map(t => (
-                <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Description */}
-        <div style={s.field}>
-          <label style={s.label}>Description <span style={{ color: '#ef4444' }}>*</span></label>
-          <textarea
-            style={{ ...s.input, resize: 'vertical', lineHeight: 1.6, fontFamily: 'inherit', ...(errors.description ? s.inputErr : {}) }}
-            rows={5} placeholder="Describe the role and responsibilities…"
-            value={form.description} onChange={handleChange('description')}
-          />
-          {errors.description && <p style={s.ferr}>{errors.description}</p>}
-        </div>
-
-        {/* Requirements — dynamic add/remove */}
-        <div style={s.field}>
-          <label style={s.label}>Requirements <span style={{ color: '#ef4444' }}>*</span></label>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {requirements.map((req, i) => (
-              <div key={i} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                <input
-                  style={{ ...s.input, flex: 1 }}
-                  type="text" placeholder={`Requirement ${i + 1}`}
-                  value={req} onChange={e => updateReq(i, e.target.value)}
-                />
-                {requirements.length > 1 && (
-                  <button
-                    type="button" onClick={() => removeReq(i)}
-                    style={{ width: 32, height: 32, background: '#fee2e2', color: '#b91c1c', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: '1.1rem', flexShrink: 0 }}
-                  >×</button>
-                )}
-              </div>
-            ))}
-          </div>
-          {errors.requirements && <p style={s.ferr}>{errors.requirements}</p>}
-          <button
-            type="button" onClick={addReq}
-            style={{ alignSelf: 'flex-start', marginTop: '0.375rem', padding: '0.45rem 1rem', background: '#eff6ff', color: '#2563EB', border: '1px solid #bfdbfe', borderRadius: 8, fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
-          >+ Add Requirement</button>
-        </div>
-
-        {/* Salary + Total Slots */}
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <div style={{ ...s.field, flex: 1 }}>
-            <label style={s.label}>
-              Salary (USD/yr) <span style={{ fontSize: '0.75rem', fontWeight: 400, color: '#9ca3af' }}>optional</span>
-            </label>
-            <input
-              style={{ ...s.input, ...(errors.salary ? s.inputErr : {}) }}
-              type="number" min={0} placeholder="e.g. 60000"
-              value={form.salary} onChange={handleChange('salary')}
-            />
-            {errors.salary && <p style={s.ferr}>{errors.salary}</p>}
-          </div>
-          <div style={{ ...s.field, flex: 1 }}>
-            <label style={s.label}>
-              Total Slots <span style={{ fontSize: '0.75rem', fontWeight: 400, color: '#9ca3af' }}>optional</span>
-            </label>
-            <input
-              style={{ ...s.input, ...(errors.totalSlots ? s.inputErr : {}) }}
-              type="number" min={1} placeholder="e.g. 3"
-              value={form.totalSlots} onChange={handleChange('totalSlots')}
-            />
-            {errors.totalSlots && <p style={s.ferr}>{errors.totalSlots}</p>}
-          </div>
-        </div>
-
-        {/* AI notice — no category field */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: 10, padding: '1rem' }}>
-          <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>✨</span>
-          <p style={{ margin: 0, color: '#5b21b6', fontSize: '0.875rem', lineHeight: 1.5 }}>
-            <strong>Category is auto-assigned by AI</strong> — you'll see the result after posting.
-          </p>
-        </div>
-
-        {submitError && (
-          <div style={{ 
-            background: '#fef2f2', 
-            border: '1px solid #fecaca', 
-            borderRadius: 10, 
-            padding: '1rem',
-            display: 'flex',
-            gap: '0.75rem',
-            alignItems: 'flex-start'
-          }}>
-            <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>⚠️</span>
-            <div style={{ flex: 1 }}>
-              <p style={{ color: '#b91c1c', fontSize: '0.95rem', fontWeight: 600, margin: '0 0 0.25rem' }}>Cannot Post Job</p>
-              <p style={{ color: '#7f1d1d', fontSize: '0.875rem', margin: 0, lineHeight: 1.5 }}>{submitError}</p>
-            </div>
-          </div>
-        )}
-
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
-          <button type="button" onClick={() => navigate(-1)} style={s.cancelBtn}>Cancel</button>
-          <button type="submit" style={s.submitBtn} disabled={submitting}>
-            {submitting ? 'Posting…' : 'Post Job'}
-          </button>
-        </div>
-      </form>
     </div>
   )
 }
 
 const s = {
-  page:         { width: '720px', margin: '0 auto', padding: '2rem 1.5rem 4rem', fontFamily: 'sans-serif' },
+  pageWrapper: { minHeight: '100vh', width: '100%', background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), rgba(255, 255, 255, 0.94))' },
+  page: { width: '720px', margin: '0 auto', padding: '2rem 1.5rem 4rem' },
+  card: { background: '#fff', border: '1px solid #e5e7eb', borderRadius: 16, padding: '1.25rem', boxShadow: '0 6px 18px rgba(2,6,23,0.06)' },
+  heading: { fontSize: '1.75rem', fontWeight: 700, margin: '0 0 0.375rem', color: '#111827' },
+  subtitle: { color: '#6b7280', margin: 0 },
   pendingBanner:{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 12, padding: '1.5rem' },
-  form:         { background: '#fff', border: '1px solid #e5e7eb', borderRadius: 16, padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' },
-  field:        { display: 'flex', flexDirection: 'column', gap: '0.375rem' },
-  label:        { fontSize: '0.875rem', fontWeight: 600, color: '#374151' },
-  input:        { padding: '0.65rem 0.875rem', border: '1px solid #d1d5db', borderRadius: 8, fontSize: '0.9rem', outline: 'none', width: '100%', boxSizing: 'border-box', background: '#fff' },
-  inputErr:     { borderColor: '#ef4444', background: '#fff5f5' },
-  ferr:         { color: '#ef4444', fontSize: '0.8rem', margin: 0 },
-  cancelBtn:    { padding: '0.65rem 1.25rem', background: '#f3f4f6', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 500 },
-  submitBtn:    { padding: '0.65rem 1.75rem', background: '#2563EB', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: '0.95rem', cursor: 'pointer' },
-  successCard:  { background: '#fff', border: '1px solid #e5e7eb', borderRadius: 16, padding: '2.5rem', textAlign: 'center' },
-  successIcon:  { width: 56, height: 56, background: '#dcfce7', color: '#166534', borderRadius: '50%', fontSize: '1.5rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' },
-  resultJob:    { background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 12, padding: '1.5rem', marginBottom: '2rem', textAlign: 'left' },
+  form: { background: '#fff', border: '1px solid #e5e7eb', borderRadius: 16, padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' },
+  field: { display: 'flex', flexDirection: 'column', gap: '0.375rem' },
+  label: { fontSize: '0.875rem', fontWeight: 600, color: '#374151' },
+  input: { padding: '0.75rem 1rem', border: '1px solid #d1d5db', borderRadius: 10, fontSize: '0.95rem', outline: 'none', width: '100%', boxSizing: 'border-box', background: '#fff' },
+  inputErr: { borderColor: '#ef4444', background: '#fef2f2' },
+  ferr: { color: '#ef4444', fontSize: '0.8rem', margin: 0 },
+  cancelBtn: { padding: '0.5rem 1.25rem', background: '#f3f4f6', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600, minWidth:44, minHeight:44, display:'inline-flex', alignItems:'center', justifyContent:'center' },
+  submitBtn: { padding: '0.5rem 1.5rem', background: '#2563EB', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: '0.95rem', cursor: 'pointer', minWidth:44, minHeight:44, display:'inline-flex', alignItems:'center', justifyContent:'center' },
+  addReqBtn: { alignSelf: 'flex-start', padding: '0.4rem 1rem', background: '#eff6ff', color: '#2563EB', border: '1px solid #bfdbfe', borderRadius: 8, cursor: 'pointer', fontWeight: 600, minHeight:44, minWidth:44, display:'inline-flex', alignItems:'center', justifyContent:'center' },
+  removeReqBtn: { width: 44, height: 44, minWidth:44, minHeight:44, background: '#fee2e2', color: '#b91c1c', border: 'none', borderRadius: 10, cursor: 'pointer', fontSize: '1.1rem' },
+  infoCard: { background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: '1rem', color: '#475569' },
+  errorBanner: { display: 'flex', gap: '0.75rem', padding: '1rem', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 12, marginBottom: '1rem' },
+  successBanner: { display: 'flex', gap: '0.75rem', padding: '1rem', background: '#ecfdf5', border: '1px solid #bbf7d0', borderRadius: 12, marginBottom: '1rem' },
+  bannerIcon: { fontSize: '1.25rem' },
+  bannerTitle: { margin: 0, fontWeight: 700, color: '#111827' },
+  bannerText: { margin: 0, color: '#374151' },
+  successCard: { background: '#fff', border: '1px solid #e5e7eb', borderRadius: 16, padding: '2.5rem', textAlign: 'center' },
+  successIcon: { width: 56, height: 56, background: '#dcfce7', color: '#166534', borderRadius: '50%', fontSize: '1.5rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' },
+  resultJob: { background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 12, padding: '1.5rem', marginBottom: '2rem', textAlign: 'left' },
 }
