@@ -27,7 +27,7 @@ export default function ResetPasswordPage() {
 
     try {
       const { data } = await api.patch(`/auth/reset-password/${token}`, {
-        newPassword,
+      password: newPassword,
       });
       // data should contain { token: newJwt, user: userObject }
       login(data.token, data.user);
