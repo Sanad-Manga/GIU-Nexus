@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     setUser(null);
 
-    // Redirect to login unless on HomePage, JobListPage, or JobDetailPage
     if (navigate) {
       const pathname = window.location.pathname;
       const isExceptionPage =
@@ -37,9 +36,22 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // ✅ Add this function to update the user object
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, token, login, logout, isAuthenticated: !!token }}
+      value={{
+        user,
+        token,
+        login,
+        logout,
+        isAuthenticated: !!token,
+        updateUser, // ✅ expose it
+      }}
     >
       {children}
     </AuthContext.Provider>
