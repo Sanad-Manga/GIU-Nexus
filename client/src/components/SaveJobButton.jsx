@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import api from '../services/api'
 
 const BookmarkIcon = ({ filled }) => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M6 2h12v18l-6-3-6 3V2z" fill={filled ? '#2563EB' : 'none'} stroke={filled ? '#2563EB' : '#6b7280'} strokeWidth="1.2" strokeLinejoin="round"/>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6 2h12v18l-6-3-6 3V2z" fill={filled ? '#2563EB' : 'none'} stroke={filled ? '#2563EB' : 'currentColor'} strokeWidth="1.5" strokeLinejoin="round"/>
   </svg>
 )
 
@@ -44,13 +44,16 @@ const SaveJobButton = ({ jobId, status, initialSaved = false, jobStatus }) => {
       disabled={jsStatus !== 'open'}
       aria-pressed={saved}
       style={{
-        background: 'transparent', 
-        border: 'none', 
-        padding: 8, 
-        cursor: jsStatus !== 'open' ? 'not-allowed' : 'pointer', 
-        display: 'inline-flex', 
+        background: saved ? 'rgba(37,99,235,0.1)' : 'rgba(107,114,128,0.12)',
+        border: `1px solid ${saved ? 'rgba(37,99,235,0.25)' : 'rgba(107,114,128,0.2)'}`,
+        borderRadius: 7,
+        padding: '5px 7px',
+        cursor: jsStatus !== 'open' ? 'not-allowed' : 'pointer',
+        display: 'inline-flex',
         alignItems: 'center',
-        opacity: jsStatus !== 'open' ? 0.5 : 1
+        color: saved ? '#2563EB' : 'var(--text-secondary, #6b7280)',
+        opacity: jsStatus !== 'open' ? 0.5 : 1,
+        transition: 'background 0.15s, border-color 0.15s',
       }}
       title={saved ? 'Saved' : 'Save job'}
     >

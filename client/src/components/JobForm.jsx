@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
+import { useEffect, useRef, useState } from 'react'
+
 const JOB_TYPES = ["full-time", "part-time", "internship", "contract"];
 
 const MAX_DESC = 2000
@@ -124,6 +126,18 @@ const JobForm = ({
           <div style={s.rowBetween}><div>{errors.description && <p style={s.ferr}>{errors.description}</p>}</div><div style={s.counter}>{descCount} / {MAX_DESC} characters</div></div>
         </div>
 
+        <div style={s.col}>
+          <label style={s.label}>Salary (USD/yr) <span style={{ fontSize: '0.75rem', fontWeight: 400, color: '#9ca3af' }}>optional</span></label>
+          <input style={{ ...s.input, ...(errors.salary ? s.inputErr : {}) }} type="number" min={0} placeholder="e.g. 60000" value={form.salary} onChange={onChange('salary')} />
+          {errors.salary && <p style={s.ferr}>{errors.salary}</p>}
+        </div>
+
+        <div style={{ gridColumn: '1 / -1' }}>
+          <label style={s.label}>Description <span style={{ color: '#ef4444' }}>*</span> <span style={s.aiBadge} title="AI will auto-classify category">✨ AI will auto-classify category</span></label>
+          <textarea style={{ ...s.input, minHeight: 140, resize: 'vertical', lineHeight: 1.6, fontFamily: 'inherit', ...(errors.description ? s.inputErr : {}) }} rows={6} placeholder="Describe the role and responsibilities…" value={form.description} onChange={onChange('description')} />
+          <div style={s.rowBetween}><div>{errors.description && <p style={s.ferr}>{errors.description}</p>}</div><div style={s.counter}>{descCount} / {MAX_DESC} characters</div></div>
+        </div>
+
         <div style={{ gridColumn: '1 / -1' }}>
           <label style={s.label}>Requirements <span style={{ color: '#ef4444' }}>*</span></label>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -185,8 +199,8 @@ const JobForm = ({
 
 const s = {
   form: {
-    background: "#fff",
-    border: "1px solid #e5e7eb",
+    background: "var(--card-bg)",
+    border: "1px solid var(--border)",
     borderRadius: 16,
     padding: "2rem",
     display: "flex",
@@ -216,22 +230,23 @@ const s = {
   label: {
     fontSize: "0.875rem",
     fontWeight: 600,
-    color: "#374151",
+    color: "var(--text-primary)",
   },
   input: {
     padding: "0.75rem 1rem",
-    border: "1px solid #d1d5db",
+    border: "1px solid var(--border)",
     borderRadius: 10,
     fontSize: "0.95rem",
     outline: "none",
     width: "100%",
     boxSizing: "border-box",
-    background: "#fff",
+    background: "var(--card-bg)",
+    color: "var(--text-primary)",
   },
   /* select removed to use `s.input` instead to avoid native-select rendering issues */
   inputErr: {
     borderColor: "#ef4444",
-    background: "#fef2f2",
+    background: "rgba(239,68,68,0.08)",
   },
   ferr: {
     color: "#ef4444",
@@ -271,7 +286,7 @@ const s = {
     padding: "0.4rem 1rem",
     background: "#eff6ff",
     color: "#2563EB",
-    border: "1px solid #bfdbfe",
+    border: "1px solid rgba(37,99,235,0.3)",
     borderRadius: 8,
     cursor: "pointer",
     fontWeight: 600,
@@ -297,8 +312,8 @@ const s = {
     display: "flex",
     alignItems: "flex-start",
     gap: "0.75rem",
-    background: "#f5f3ff",
-    border: "1px solid #ddd6fe",
+    background: "rgba(91,33,182,0.08)",
+    border: "1px solid rgba(167,139,250,0.3)",
     borderRadius: 10,
     padding: "1rem",
   },
@@ -308,7 +323,7 @@ const s = {
   },
   noticeText: {
     margin: 0,
-    color: "#5b21b6",
+    color: "#7c3aed",
     fontSize: "0.875rem",
     lineHeight: 1.5,
   },
@@ -317,15 +332,15 @@ const s = {
   counter: { fontSize: '0.78rem', color: '#6b7280' },
   actionBar: { position: 'sticky', bottom: 0, display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', padding: '0.75rem 0', background: 'linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,0.95))', marginTop: '1rem' },
   categoryCard: {
-    background: "#f8fafc",
-    border: "1px solid #e2e8f0",
+    background: "var(--surface)",
+    border: "1px solid var(--border)",
     borderRadius: 12,
     padding: "1rem",
-    color: "#475569",
+    color: "var(--text-secondary)",
   },
   errorBanner: {
-    background: "#fef2f2",
-    border: "1px solid #fecaca",
+    background: "rgba(239,68,68,0.08)",
+    border: "1px solid rgba(239,68,68,0.3)",
     borderRadius: 10,
     padding: "1rem",
     display: "flex",
@@ -337,16 +352,17 @@ const s = {
     flexShrink: 0,
   },
   errorTitle: {
-    color: "#b91c1c",
+    color: "var(--error)",
     fontSize: "0.95rem",
     fontWeight: 600,
     margin: "0 0 0.25rem",
   },
   errorText: {
-    color: "#7f1d1d",
+    color: "var(--error)",
     fontSize: "0.875rem",
     margin: 0,
     lineHeight: 1.5,
+    opacity: 0.8,
   },
 };
 

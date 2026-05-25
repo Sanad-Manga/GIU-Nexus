@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import PrivateRoute from './components/PrivateRoute'
 import RoleRoute from './components/RoleRoute'
+import { ThemeProvider } from './context/ThemeContext'
 
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
@@ -24,14 +25,16 @@ import AdminSetupPage from './pages/AdminSetupPage'
 import PendingRecruitersPage from './pages/PendingRecruitersPage'
 import AdminJobsPage from './pages/AdminJobsPage'
 import AdminUsersPage from './pages/AdminUsersPage'
+import PublicProfilePage from './pages/PublicProfilePage'
 
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 
 function App() {
   return (
-    <>
+    <ThemeProvider>
       <Navbar />
+      <div style={{ flex: 1 }}>
       <Routes>
         {/* Public */}
         <Route path="/" element={<HomePage />} />
@@ -42,8 +45,11 @@ function App() {
         <Route path="/jobs" element={<JobListPage />} />
         <Route path="/jobs/:id" element={<JobDetailPage />} />
 
+        {/* Any authenticated user */}
+        <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+        <Route path="/users/:id" element={<PrivateRoute><PublicProfilePage /></PrivateRoute>} />
+
         {/* Job Seeker */}
-        <Route path="/profile" element={<RoleRoute roles={['jobSeeker']}><ProfilePage /></RoleRoute>} />
         <Route path="/jobs/recommended" element={<RoleRoute roles={['jobSeeker']}><RecommendedJobsPage /></RoleRoute>} />
         <Route path="/jobs/saved" element={<RoleRoute roles={['jobSeeker']}><SavedJobsPage /></RoleRoute>} />
         <Route path="/applications/my" element={<RoleRoute roles={['jobSeeker']}><MyApplicationsPage /></RoleRoute>} />
@@ -64,8 +70,9 @@ function App() {
         <Route path="/admin/jobs" element={<RoleRoute roles={['admin']}><AdminJobsPage /></RoleRoute>} />
         <Route path="/admin/users" element={<RoleRoute roles={['admin']}><AdminUsersPage /></RoleRoute>} />
       </Routes>
+      </div>
       <Footer />
-    </>
+    </ThemeProvider>
   )
 }
 

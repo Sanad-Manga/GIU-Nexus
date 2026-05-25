@@ -9,12 +9,12 @@ const COLORS = {
   primary: "#2563EB",
   secondary: "#1E40AF",
   accent: "#10B981",
-  bg: "#F9FAFB",
-  card: "#FFFFFF",
-  textPrimary: "#111827",
-  textSecondary: "#6B7280",
-  error: "#EF4444",
-  border: "#E5E7EB",
+  bg: "var(--bg)",
+  card: "var(--card-bg)",
+  textPrimary: "var(--text-primary)",
+  textSecondary: "var(--text-secondary)",
+  error: "var(--error)",
+  border: "var(--border)",
 };
 
 const STATUS_OPTIONS = ["pending", "shortlisted", "rejected"];
@@ -89,7 +89,7 @@ const ApplicantsPage = () => {
       >
         <div
           style={{
-            background: "#FEE2E2",
+            background: "rgba(239,68,68,0.1)",
             border: `1px solid ${COLORS.error}`,
             color: COLORS.error,
             padding: "16px 20px",
@@ -244,8 +244,8 @@ const ApplicantsPage = () => {
                         padding: "8px 12px",
                         borderRadius: "8px",
                         border: `1px solid ${COLORS.border}`,
-                        background: "#fff",
-                        color: COLORS.textPrimary,
+                        background: "var(--card-bg)",
+                        color: "var(--text-primary)",
                         fontSize: "13px",
                         fontFamily: "'Inter', sans-serif",
                         cursor:

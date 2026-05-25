@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { CATEGORY_COLORS } from '../utils/categoryColors'
 import SaveJobButton from './SaveJobButton'
 import { useAuth } from '../context/AuthContext'
@@ -26,6 +27,7 @@ const MapPinIcon = () => (
 const JobCard = ({ job }) => {
   const { title, company, type, location, category } = job
   const { isAuthenticated, user } = useAuth()
+  const navigate = useNavigate()
   const categoryColor = CATEGORY_COLORS[category] ?? '#6b7280'
   const companyInitials = company?.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase() ?? '?'
   const typeLabel = TYPE_LABELS[type] || type
@@ -36,7 +38,7 @@ const JobCard = ({ job }) => {
       flexDirection: 'column',
       gap: 0,
       padding: '0.875rem 1rem',
-      background: '#ffffff',
+      background: 'var(--card-bg)',
       border: '1.5px solid #dbeafe',
       borderRadius: 12,
       transition: 'all 0.3s ease',
@@ -59,7 +61,7 @@ const JobCard = ({ job }) => {
       marginRight: 0,
       marginBottom: 2,
       marginLeft: 0,
-      color: '#111827',
+      color: 'var(--text-primary)',
       lineHeight: 1.3,
     },
     companyRow: {
@@ -72,8 +74,8 @@ const JobCard = ({ job }) => {
       width: '28px',
       height: '28px',
       borderRadius: 6,
-      background: '#e5e7eb',
-      color: '#374151',
+      background: 'var(--surface)',
+      color: 'var(--text-primary)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -83,7 +85,7 @@ const JobCard = ({ job }) => {
     },
     company: {
       fontSize: '0.8rem',
-      color: '#111827',
+      color: 'var(--text-primary)',
       marginTop: 0,
       marginRight: 0,
       marginBottom: 0,
@@ -92,7 +94,7 @@ const JobCard = ({ job }) => {
     },
     divider: {
       height: '1px',
-      background: '#e5e7eb',
+      background: 'var(--border)',
       border: 'none',
       marginTop: 0,
       marginRight: '-1rem',
@@ -101,7 +103,7 @@ const JobCard = ({ job }) => {
     },
     meta: {
       fontSize: '0.78rem',
-      color: '#6b7280',
+      color: 'var(--text-secondary)',
       marginTop: 0,
       marginRight: 0,
       marginBottom: 8,
@@ -143,6 +145,7 @@ const JobCard = ({ job }) => {
   return (
     <div
       style={s.card}
+      onClick={() => navigate(`/jobs/${job._id}`)}
       onMouseEnter={(e) => {
         e.currentTarget.style.borderColor = '#60a5fa'
         e.currentTarget.style.transform = 'translateY(-2px)'

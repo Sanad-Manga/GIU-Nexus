@@ -216,8 +216,14 @@
 
 .admin-action-group {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
+}
+
+.admin-action-group .admin-button {
+  min-width: 72px;
+  text-align: center;
+  padding: 8px 12px;
 }
 
 .admin-button {
@@ -356,11 +362,288 @@
   background: #e5e7eb;
 }
 
+/* ── User status badges ── */
+.admin-status-approved {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.admin-status-pending {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.admin-status-rejected {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+/* ── Role badges ── */
+.admin-role-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 5px 11px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.admin-role-admin {
+  color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.admin-role-recruiter {
+  color: #0369a1;
+  background: #e0f2fe;
+}
+
+.admin-role-seeker {
+  color: #374151;
+  background: #f3f4f6;
+}
+
+/* ── Hero stats row ── */
+.admin-hero-stats {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.admin-hero-stat {
+  flex: 1;
+  min-width: 100px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1.5px solid rgba(37, 99, 235, 0.1);
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  user-select: none;
+}
+
+.admin-hero-stat:hover {
+  border-color: rgba(37, 99, 235, 0.3);
+  background: #fff;
+  transform: translateY(-1px);
+}
+
+.admin-hero-stat .admin-stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-secondary);
+}
+
+.admin-hero-stat .admin-stat-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #111827;
+  margin-top: 0;
+}
+
+.admin-hero-stat-active {
+  border-color: var(--primary) !important;
+  background: rgba(37, 99, 235, 0.05) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
+}
+
+/* ── Filter bar ── */
+.admin-filter-bar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.admin-filter-select {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: #fff;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.admin-filter-select:focus {
+  border-color: var(--primary);
+}
+
+/* ── Name cell with avatar ── */
+.admin-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #2563eb;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── Extra button variants ── */
+.admin-button-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.admin-button-warn {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+/* ── Skeleton line ── */
+.admin-skeleton-line {
+  height: 14px;
+  border-radius: 6px;
+  background: #e5e7eb;
+  animation: admin-skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes admin-skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── Pagination ── */
+.admin-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.admin-page-numbers {
+  display: flex;
+  gap: 4px;
+}
+
+.admin-page-num {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.admin-page-num:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.admin-page-num-active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
 @keyframes admin-spin {
   to {
     transform: rotate(360deg);
   }
 }
+
+/* ── Dark mode ── */
+[data-theme="dark"] .admin-hero {
+  background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.1), transparent 28%),
+    linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(30, 41, 59, 0.94));
+  border-color: #334155;
+}
+[data-theme="dark"] .admin-stat-tile {
+  background: linear-gradient(180deg, #1E293B, #1a2540);
+  border-color: rgba(37, 99, 235, 0.15);
+}
+[data-theme="dark"] .admin-hero-stat {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: #334155;
+}
+[data-theme="dark"] .admin-hero-stat:hover {
+  background: #1E293B;
+  border-color: #475569;
+}
+[data-theme="dark"] .admin-hero-stat .admin-stat-value { color: #F1F5F9; }
+[data-theme="dark"] .admin-leaderboard-row {
+  background: rgba(37, 99, 235, 0.05);
+  border-color: rgba(37, 99, 235, 0.1);
+}
+[data-theme="dark"] .admin-chart-label {
+  background: #1E293B;
+}
+[data-theme="dark"] .admin-filter-select {
+  background: #1E293B;
+  color: #F1F5F9;
+  border-color: #334155;
+}
+[data-theme="dark"] .admin-skeleton-line { background: #334155; }
+[data-theme="dark"] .admin-page-num {
+  background: #1E293B;
+  border-color: #334155;
+  color: #CBD5E1;
+}
+[data-theme="dark"] .admin-button-secondary {
+  background: rgba(37, 99, 235, 0.15);
+  color: #93C5FD;
+}
+[data-theme="dark"] .admin-button-danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: #F87171;
+}
+[data-theme="dark"] .admin-button-success {
+  background: rgba(16, 185, 129, 0.1);
+  color: #34D399;
+}
+[data-theme="dark"] .admin-button-warn {
+  background: rgba(249, 115, 22, 0.1);
+  color: #FB923C;
+}
+[data-theme="dark"] .admin-error {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.2);
+  color: #F87171;
+}
+[data-theme="dark"] .modal {
+  background: #1E293B;
+}
+[data-theme="dark"] .modal button:last-of-type {
+  background: #334155;
+  color: #CBD5E1;
+}
+[data-theme="dark"] .admin-role-seeker {
+  background: #293548;
+  color: #94A3B8;
+}
+[data-theme="dark"] .admin-status-approved { background: rgba(16, 185, 129, 0.12); color: #34D399; }
+[data-theme="dark"] .admin-status-pending { background: rgba(245, 158, 11, 0.12); color: #FCD34D; }
+[data-theme="dark"] .admin-status-rejected { background: rgba(239, 68, 68, 0.12); color: #F87171; }
+[data-theme="dark"] .admin-status-open { background: rgba(16, 185, 129, 0.12); color: #34D399; }
+[data-theme="dark"] .admin-status-closed { background: rgba(100, 116, 139, 0.12); color: #94A3B8; }
 
 @media (max-width: 900px) {
   .admin-grid {

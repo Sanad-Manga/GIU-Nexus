@@ -209,6 +209,7 @@ export default function JobListPage() {
         />
         <div ref={typeRef} style={{ position: 'relative', flex: '1 1 140px' }}>
           <button
+            type="button"
             style={s.select}
             onClick={() => { setTypeOpen(!typeOpen); setStatusOpen(false) }}
             onMouseEnter={e => e.target.style.borderColor = 'var(--accent)'}
@@ -229,6 +230,7 @@ export default function JobListPage() {
         
         <div ref={statusRef} style={{ position: 'relative', flex: '1 1 140px' }}>
           <button
+            type="button"
             style={s.select}
             onClick={() => { setStatusOpen(!statusOpen); setTypeOpen(false) }}
             onMouseEnter={e => e.target.style.borderColor = 'var(--accent)'}
@@ -275,8 +277,8 @@ export default function JobListPage() {
           <p>{error}</p>
           {errorType === 'auth' ? (
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', marginTop: '1rem' }}>
-              <Link to="/login" style={s.searchBtn}>Log In</Link>
-              <Link to="/register" style={s.resetBtn}>Create Account</Link>
+              <Link to="/login" style={s.authLoginBtn}>Log In</Link>
+              <Link to="/register" style={s.authCreateBtn}>Create Account</Link>
             </div>
           ) : errorType === 'forbidden' ? (
             <div style={{ marginTop: '1rem' }}>
@@ -342,7 +344,7 @@ export default function JobListPage() {
 
 const s = {
   page:      { maxWidth: 'none', margin: '0 auto', padding: '2rem 0.5rem 4rem', fontFamily: 'sans-serif' },
-  header:    { marginBottom: '2rem', padding: '28px', border: '1px solid rgba(37, 99, 235, 0.12)', borderRadius: '24px', background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), rgba(255, 255, 255, 0.94))', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)', animation: 'fadeInDown 0.6s ease-out' },
+  header:    { marginBottom: '2rem', padding: '28px', border: '1px solid rgba(37, 99, 235, 0.12)', borderRadius: '24px', background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), var(--gradient-end))', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)', animation: 'fadeInDown 0.6s ease-out' },
   kicker:    { color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: '12px', fontWeight: 700, margin: 0, marginBottom: '0.5rem' },
   title:     { fontSize: 'clamp(1.6rem, 2vw, 2.25rem)', fontWeight: 700, color: 'var(--text-h)', margin: '8px 0 0.375rem', lineHeight: 1.1 },
   subtitle:  { color: 'var(--text-secondary)', marginTop: '0.75rem', fontSize: '1.05rem', fontWeight: 500, margin: 0, display: 'flex', alignItems: 'baseline', gap: '0.5rem' },
@@ -351,8 +353,10 @@ const s = {
   filterBar: { display: 'flex', flexWrap: 'wrap', gap: '0.625rem', marginBottom: '1rem', background: 'var(--bg)', border: '1px solid #60a5fa', borderRadius: 12, padding: '0.75rem', animation: 'fadeInDown 0.6s ease-out 0.1s backwards', overflow: 'visible', position: 'relative', boxShadow: '0 6px 20px rgba(96, 165, 250, 0.2)' },
   input:     { flex: '1 1 180px', padding: '0.6rem 0.875rem', border: '1px solid var(--border)', borderRadius: 8, fontSize: '0.9rem', outline: 'none', background: 'var(--code-bg)', color: 'var(--text-h)' },
   select:    { width: '100%', padding: '0.6rem 0.875rem', border: '1px solid var(--border)', borderRadius: 12, fontSize: '0.9rem', background: 'var(--code-bg)', color: 'var(--text-h)', cursor: 'pointer', transition: 'all 0.2s ease', appearance: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center', textAlign: 'center' },
-  searchBtn: { padding: '0.6rem 1.5rem', background: '#2563EB', color: '#fff', border: 'none', borderRadius: 8, fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer' },
-  resetBtn:  { padding: '0.6rem 1rem', background: 'transparent', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 8, fontSize: '0.9rem', cursor: 'pointer' },
+  searchBtn:    { padding: '0.6rem 1.5rem', background: '#2563EB', color: '#fff', border: 'none', borderRadius: 10, fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer', transition: 'box-shadow 0.2s ease, transform 0.2s ease' },
+  resetBtn:     { padding: '0.6rem 1rem', background: 'transparent', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 10, fontSize: '0.9rem', fontWeight: 500, cursor: 'pointer' },
+  authLoginBtn: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.65rem 1.75rem', background: '#2563EB', color: '#fff', border: 'none', borderRadius: 10, fontSize: '0.95rem', fontWeight: 600, cursor: 'pointer', textDecoration: 'none', minHeight: '44px', transition: 'background 0.2s ease' },
+  authCreateBtn:{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.65rem 1.75rem', background: 'transparent', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 10, fontSize: '0.95rem', fontWeight: 500, cursor: 'pointer', textDecoration: 'none', minHeight: '44px' },
   chips:     { display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.25rem', animation: 'fadeIn 0.4s ease-out 0.2s backwards' },
   chip:      { display: 'inline-flex', alignItems: 'center', gap: '0.375rem', background: 'var(--accent-bg)', color: 'var(--accent)', border: '1px solid var(--accent-border)', borderRadius: 20, padding: '0.25rem 0.75rem', fontSize: '0.8rem', fontWeight: 500 },
   chipX:     { background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '1rem', lineHeight: 1, padding: 0 },

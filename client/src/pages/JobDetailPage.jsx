@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import api from '../services/api'
 import { useAuth } from '../context/AuthContext'
 import { CATEGORY_COLORS } from '../utils/categoryColors'
@@ -22,6 +22,9 @@ export default function JobDetailPage() {
   const [authMessage,    setAuthMessage]   = useState('')
   const [toast,          setToast]         = useState(null)
   const [coverLetter,    setCoverLetter]   = useState('')
+  const [clLoading,      setClLoading]     = useState(false)
+  const [clDraft,        setClDraft]       = useState('')
+  const [clError,        setClError]       = useState('')
   const [applying,       setApplying]      = useState(false)
   const [applyError,     setApplyError]    = useState('')
   const [myApplication,  setMyApplication] = useState(null)
@@ -128,6 +131,20 @@ export default function JobDetailPage() {
     setModalOpen(true)
   }
 
+  const handleGenerateCoverLetter = async () => {
+    setClLoading(true)
+    setClError('')
+    setClDraft('')
+    try {
+      const { data } = await api.post(`/jobs/${id}/cover-letter`)
+      setClDraft(data.coverLetter)
+    } catch (err) {
+      setClError(err.response?.data?.message || 'Failed to generate cover letter. Try again.')
+    } finally {
+      setClLoading(false)
+    }
+  }
+
   if (loading) return <Spinner />
 
   if (error) return (
@@ -167,12 +184,12 @@ export default function JobDetailPage() {
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
             <h1 style={s.jobTitle}>{job.title}</h1>
             {job.type && (
-              <span style={{ background: '#f3f4f6', color: '#4b5563', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', padding: '4px 10px', borderRadius: 12 }}>
+              <span style={{ background: 'var(--surface)', color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', padding: '4px 10px', borderRadius: 12 }}>
                 {job.type}
               </span>
             )}
           </div>
-          <span style={{ ...s.badge, color: '#4b5563', border: '1px solid #d1d5db', background: '#f3f4f6', marginBottom: '1rem' }}>
+          <span style={{ ...s.badge, color: 'var(--text-secondary)', border: '1px solid var(--border)', background: 'var(--surface)', marginBottom: '1rem' }}>
             {job.category || 'Other'}
           </span>
           <p style={s.company}>{job.company}</p>
@@ -296,14 +313,63 @@ export default function JobDetailPage() {
               <div style={s.recruiterCard}>
                 <div style={s.avatar}>{(recruiter.name || 'R')[0].toUpperCase()}</div>
                 <div>
-                  <p style={{ fontWeight: 600, color: '#111827', margin: 0 }}>{recruiter.name}</p>
+                  {recruiter._id ? (
+                    <Link
+                      to={`/users/${recruiter._id}`}
+                      style={{ fontWeight: 600, color: '#2563EB', margin: 0, textDecoration: 'none', display: 'block' }}
+                      onMouseEnter={e => e.target.style.textDecoration = 'underline'}
+                      onMouseLeave={e => e.target.style.textDecoration = 'none'}
+                    >
+                      {recruiter.name}
+                    </Link>
+                  ) : (
+                    <p style={{ fontWeight: 600, color: 'var(--text-h)', margin: 0 }}>{recruiter.name}</p>
+                  )}
                   {recruiter.email && (
-                    <a href={`mailto:${recruiter.email}`} style={{ color: '#2563EB', fontSize: '0.875rem', textDecoration: 'none' }}>
+                    <a href={`mailto:${recruiter.email}`} style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', textDecoration: 'none' }}>
                       {recruiter.email}
                     </a>
                   )}
                 </div>
               </div>
+            </section>
+          )}
+
+          {/* AI Cover Letter — job seekers only */}
+          {isJobSeeker && (
+            <section style={s.section}>
+              <h2 style={s.sectionTitle}>AI Cover Letter</h2>
+              <button
+                onClick={handleGenerateCoverLetter}
+                disabled={clLoading}
+                style={{ padding: '0.65rem 1.25rem', background: '#7c3aed', color: '#fff', border: 'none', borderRadius: 10, fontWeight: 600, fontSize: '0.9rem', cursor: clLoading ? 'not-allowed' : 'pointer', opacity: clLoading ? 0.7 : 1, display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              >
+                {clLoading ? <><Spinner size={16} /> Generating…</> : '✨ Generate Cover Letter Suggestion'}
+              </button>
+
+              {clError && (
+                <p style={{ color: '#b91c1c', marginTop: '0.75rem', fontSize: '0.875rem' }}>{clError}</p>
+              )}
+
+              {clDraft && (
+                <div style={{ marginTop: '1rem' }}>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.5rem' }}>
+                    Draft — edit before using
+                  </label>
+                  <textarea
+                    value={clDraft}
+                    onChange={e => setClDraft(e.target.value)}
+                    rows={12}
+                    style={{ width: '100%', padding: '0.875rem', border: '1px solid var(--border)', borderRadius: 10, fontSize: '0.9rem', lineHeight: 1.7, resize: 'vertical', outline: 'none', boxSizing: 'border-box', fontFamily: 'inherit', background: 'var(--card-bg)', color: 'var(--text)' }}
+                  />
+                  <button
+                    onClick={() => { navigator.clipboard.writeText(clDraft); setToast({ type: 'success', message: 'Cover letter copied!' }); setTimeout(() => setToast(null), 3000) }}
+                    style={{ marginTop: '0.5rem', padding: '0.5rem 1rem', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, cursor: 'pointer', fontWeight: 500, fontSize: '0.85rem', color: 'var(--text)' }}
+                  >
+                    Copy to clipboard
+                  </button>
+                </div>
+              )}
             </section>
           )}
         </div>
@@ -313,15 +379,15 @@ export default function JobDetailPage() {
       {modalOpen && (
         <div style={s.modalOverlay} onClick={() => { setModalOpen(false); setApplyError('') }}>
           <div style={s.modalContent} onClick={e => e.stopPropagation()}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.25rem', color: '#111827' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.25rem', color: 'var(--text-h)' }}>
               Apply — {job.title}
             </h2>
-            <p style={{ color: '#6b7280', fontSize: '0.875rem', margin: '0 0 1.25rem' }}>at {job.company}</p>
-            <label style={{ display: 'block', fontWeight: 600, fontSize: '0.875rem', color: '#374151', marginBottom: '0.5rem' }}>
-              Cover Letter <span style={{ color: '#9ca3af', fontWeight: 400 }}>(optional)</span>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', margin: '0 0 1.25rem' }}>at {job.company}</p>
+            <label style={{ display: 'block', fontWeight: 600, fontSize: '0.875rem', color: 'var(--text)', marginBottom: '0.5rem' }}>
+              Cover Letter <span style={{ color: 'var(--text-tertiary)', fontWeight: 400 }}>(optional)</span>
             </label>
             <textarea
-              style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: 8, fontSize: '0.9rem', lineHeight: 1.6, resize: 'vertical', outline: 'none', boxSizing: 'border-box', fontFamily: 'inherit' }}
+              style={{ width: '100%', padding: '0.75rem', border: '1px solid var(--border)', borderRadius: 8, fontSize: '0.9rem', lineHeight: 1.6, resize: 'vertical', outline: 'none', boxSizing: 'border-box', fontFamily: 'inherit', background: 'var(--surface)', color: 'var(--text)' }}
               rows={6}
               placeholder="Tell the recruiter why you're a great fit…"
               value={coverLetter}
@@ -346,7 +412,7 @@ export default function JobDetailPage() {
               <button
                 onClick={() => { setModalOpen(false); setApplyError('') }}
                 disabled={applying}
-                style={{ padding: '0.6rem 1.25rem', background: '#f3f4f6', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 500, transition: 'all 0.2s ease' }}
+                style={{ padding: '0.6rem 1.25rem', background: 'var(--surface)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 8, cursor: 'pointer', fontWeight: 500, transition: 'all 0.2s ease' }}
               >Cancel</button>
               <button
                 onClick={handleApply}
@@ -363,10 +429,10 @@ export default function JobDetailPage() {
         <div style={s.modalOverlay} onClick={() => setAuthModalOpen(false)}>
           <div style={s.modalContent} onClick={e => e.stopPropagation()}>
             <div style={{ textAlign: 'center' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 0.5rem', color: '#111827' }}>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 0.5rem', color: 'var(--text-h)' }}>
                 {authMessage}
               </h2>
-              <p style={{ color: '#6b7280', fontSize: '0.95rem', margin: '0 0 1.75rem', lineHeight: 1.6 }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', margin: '0 0 1.75rem', lineHeight: 1.6 }}>
                 {authMessage.includes('Log In') ? 
                   'You need to log in to apply for this job. Create an account or log in with your existing credentials.' :
                   'This action is only available to job seekers. Log in as a job seeker or create a new account.'}
@@ -386,13 +452,13 @@ export default function JobDetailPage() {
                     setAuthModalOpen(false)
                     navigate('/register')
                   }}
-                  style={{ padding: '0.7rem 1.5rem', background: '#f3f4f6', color: '#111827', border: '1px solid #e5e7eb', borderRadius: 8, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s ease' }}
+                  style={{ padding: '0.7rem 1.5rem', background: 'var(--surface)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: 8, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s ease' }}
                 >
                   Create Account
                 </button>
                 <button
                   onClick={() => setAuthModalOpen(false)}
-                  style={{ padding: '0.7rem 1.5rem', background: 'transparent', color: '#6b7280', border: 'none', borderRadius: 8, fontWeight: 500, cursor: 'pointer', transition: 'all 0.2s ease' }}
+                  style={{ padding: '0.7rem 1.5rem', background: 'transparent', color: 'var(--text-secondary)', border: 'none', borderRadius: 8, fontWeight: 500, cursor: 'pointer', transition: 'all 0.2s ease' }}
                 >
                   Cancel
                 </button>
@@ -523,10 +589,10 @@ export default function JobDetailPage() {
 }
 
 const s = {
-  pageWrapper: { minHeight: '100vh', width: '100%', background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), rgba(255, 255, 255, 0.94))' },
+  pageWrapper: { minHeight: '100vh', width: '100%', background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), var(--gradient-end))' },
   page:        { width: '720px', margin: '0 auto', padding: '2rem 1.5rem 4rem', fontFamily: 'sans-serif' },
   backLink:    { background: 'rgba(37, 99, 235, 0.06)', border: '1px solid rgba(37, 99, 235, 0.15)', color: '#2563EB', fontSize: '0.9rem', cursor: 'pointer', marginBottom: '1.25rem', padding: '0.5rem 1rem', borderRadius: '8px', transition: 'all 0.2s ease', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.4rem' },
-  card:        { background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), rgba(255, 255, 255, 0.94))', border: '1px solid rgba(37, 99, 235, 0.12)', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)' },
+  card:        { background: 'radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), transparent 28%), linear-gradient(135deg, rgba(37, 99, 235, 0.09), var(--gradient-end))', border: '1px solid rgba(37, 99, 235, 0.12)', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)' },
   cardHeader:  { display: 'flex', flexDirection: 'column', gap: '1rem', padding: '28px' },
   kicker:      { color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.12em', fontSize: '12px', fontWeight: 700, margin: 0 },
   badge:       { display: 'inline-flex', width: 'fit-content', margin: '0 0 0.75rem', padding: '6px 16px', borderRadius: 20, fontSize: '0.85rem', fontWeight: 600, boxShadow: '0 2px 6px rgba(0, 0, 0, 0.06)' },
@@ -541,15 +607,15 @@ const s = {
   highlightRow: { display: 'flex', gap: '2rem', alignItems: 'center', marginBottom: '1.5rem' },
   highlightContainer: { display: 'flex', alignItems: 'center', gap: '0.5rem' },
   highlight:   { display: 'flex', flexDirection: 'column', gap: '0.2rem' },
-  hlLabel:     { fontSize: '0.75rem', color: '#6b7280', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' },
+  hlLabel:     { fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' },
   hlValue:     { fontSize: '1rem', fontWeight: 700, color: 'var(--text-h)' },
   section:     { marginBottom: '2rem' },
-  sectionTitle:{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text)', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' },
+  sectionTitle:{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.04em' },
   description: { color: 'var(--text)', lineHeight: 1.7, whiteSpace: 'pre-wrap', margin: 0 },
   list:        { listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' },
   listItem:    { color: 'var(--text)', lineHeight: 1.6 },
-  recruiterCard:{ display: 'flex', alignItems: 'center', gap: '0.875rem', background: 'linear-gradient(180deg, #ffffff, #f8fbff)', borderRadius: '18px', padding: '1rem 1.25rem', border: '1px solid rgba(37, 99, 235, 0.08)' },
+  recruiterCard:{ display: 'flex', alignItems: 'center', gap: '0.875rem', background: 'linear-gradient(180deg, var(--card-bg), var(--surface))', borderRadius: '18px', padding: '1rem 1.25rem', border: '1px solid rgba(37, 99, 235, 0.1)' },
   avatar:      { width: 44, height: 44, borderRadius: '50%', background: '#2563EB', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.1rem', flexShrink: 0 },
   modalOverlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9998, animation: 'fadeIn 0.2s ease-out' },
-  modalContent: { background: 'var(--bg)', borderRadius: 16, padding: '2rem', maxWidth: 500, width: '90%', boxShadow: '0 20px 25px rgba(0,0,0,0.15)', animation: 'modalSlideIn 0.3s ease-out' },
+  modalContent: { background: 'var(--card-bg)', borderRadius: 16, padding: '2rem', maxWidth: 500, width: '90%', boxShadow: '0 20px 25px rgba(0,0,0,0.25)', animation: 'modalSlideIn 0.3s ease-out' },
 }

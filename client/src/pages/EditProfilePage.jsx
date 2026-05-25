@@ -17,16 +17,23 @@ export default function EditProfilePage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // If user loads after component mount, update form
+  // Fetch fresh profile on mount to get bio and latest data
   useEffect(() => {
-    if (user) {
+    api.get('/profile').then(({ data }) => {
+      const fresh = data.user || data;
       setFormData({
-        name: user.name || '',
-        bio: user.bio || '',
+        name: fresh.name || user?.name || '',
+        bio: fresh.bio || '',
       });
-      if (user.profilePicture) setPreviewUrl(user.profilePicture);
-    }
-  }, [user]);
+      if (fresh.profilePicture) setPreviewUrl(fresh.profilePicture);
+    }).catch(() => {
+      // fallback to cached user
+      if (user) {
+        setFormData({ name: user.name || '', bio: user.bio || '' });
+        if (user.profilePicture) setPreviewUrl(user.profilePicture);
+      }
+    });
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

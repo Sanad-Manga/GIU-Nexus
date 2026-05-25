@@ -6,6 +6,7 @@ const {
   forgotPassword,
   verifyOtp,
   resetPassword,
+  validateResetToken,
 } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
 const { authLimiter, authLimiterStore } = require('../middleware/rateLimiter');
@@ -246,6 +247,7 @@ router.post('/verify-otp', authLimiter, verifyOtp);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
+router.get('/validate-reset-token/:token', validateResetToken);
 router.patch('/reset-password/:token', resetPassword);
 
 /**
