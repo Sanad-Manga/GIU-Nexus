@@ -11,6 +11,9 @@ node_modules/
 postman/
 *.wolf
 
+*.code-workspaces
+CLAUDE.md
+
 #Open wolf
 .wolf/
 .claude/rules/openwolf.md
