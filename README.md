@@ -142,7 +142,6 @@ Starts the API and a local MongoDB container together. API available at `http://
 | `MONGO_URI_DOCKER` | MongoDB URI for Docker Compose |
 | `JWT_SECRET` | Secret key for signing JWTs |
 | `JWT_EXPIRE` | JWT expiry (e.g. `7d`) |
-| `ADMIN_REGISTRATION_SECRET` | Secret required to register admin accounts |
 | `HF_TOKEN` | HuggingFace API token |
 | `EMAIL_HOST` | SMTP host (e.g. `smtp.gmail.com`) |
 | `EMAIL_PORT` | SMTP port (e.g. `587`) |
