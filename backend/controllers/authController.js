@@ -133,7 +133,8 @@ exports.login = async (req, res, next) => {
       });
     }
 
-    const user = await User.findOne({ email }).select("+password");
+    const normalizedEmail = validator.normalizeEmail(email);
+    const user = await User.findOne({ email: normalizedEmail }).select("+password");
 
     if (!user) {
       return res.status(401).json({
@@ -200,7 +201,8 @@ exports.forgotPassword = async (req, res, next) => {
       });
     }
 
-    const user = await User.findOne({ email });
+    const normalizedEmail = validator.normalizeEmail(email);
+    const user = await User.findOne({ email: normalizedEmail });
 
     // Always return 200 to avoid email enumeration
     if (!user) {
@@ -250,8 +252,9 @@ exports.verifyOtp = async (req, res, next) => {
 
     const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
 
+    const normalizedEmail = validator.normalizeEmail(email);
     const user = await User.findOne({
-      email,
+      email: normalizedEmail,
       otp: otpHash,
       otpExpire: { $gt: Date.now() },
     }).select("+otp +otpExpire");
