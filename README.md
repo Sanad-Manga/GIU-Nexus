@@ -193,10 +193,13 @@ Uses an in-memory MongoDB instance — no external DB required. Covers auth, job
 ## Seeding the Database
 
 ```bash
-npm run seed
+SEED_ADMIN_EMAIL=admin@example.com SEED_ADMIN_PASSWORD=your-strong-password npm run seed
 ```
 
-Creates sample users, jobs, and applications for development.
+Creates a single admin account (`role: admin`, `status: approved`) from `SEED_ADMIN_EMAIL`
+and `SEED_ADMIN_PASSWORD`. Both are required — the script refuses to run if either is unset.
+If an account with that email already exists, it is left untouched (no password reset).
+Running with `NODE_ENV=production` is refused unless you also pass `--force`.
 
 ---
 
