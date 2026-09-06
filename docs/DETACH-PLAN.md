@@ -10,11 +10,13 @@ attributed.
 
 | Step | State |
 |------|-------|
-| Ahmed's P0/P1: CI + branch protection (#86), seed creds (C1), test refresh (#87) | done — merged |
-| Ziad's P0/P1: Z1 token blacklist, Z5 input sanitization / NoSQL injection | **todo — gates the tag** |
-| Abdelrahman's P0/P1: A7 mass-assignment on job create/update | **todo — gates the tag** |
-| Co-owned AI P1s: #79 embedding cache, #80 honest match %, #83 HF provider + dim validation | **todo — gates the tag** |
-| Tag `v1.0` on the current repo | **not yet** — cut only once every row above is merged |
+| Ahmed — CI + branch protection (#86), seed creds (C1), test refresh (#87), dead code (#89), lint gate (#92), README (#88) | done — merged |
+| Ziad — Z3 OTP expiry, Z6 email normalization, Z7 dead admin secret (#96) | done — merged |
+| Abdelrahman — A1–A6, A8: embedding cache, honest match %, HF provider + dim validation, response shape, skill-doc reconcile, category enum, job-post cleanup (#100) | done — merged |
+| **Ziad — Z1: JWT blacklist off in-memory `Set` (`P0`)** | **todo — gates the tag** |
+| **Ziad — Z5: wire up input sanitization (`P1`)** | **todo — gates the tag** |
+| **Abdelrahman — A7: mass-assignment allowlist on job create/update (`P1`)** | **todo — gates the tag** |
+| Tag `v1.0` on the current repo | **not yet** — cut once the three rows above are merged |
 | `.mailmap` (identity consolidation) | done — in this PR |
 | `CONTRIBUTORS` file | done — in this PR |
 | Get informal OK from the other 6 original authors | **todo — gates going public** |
@@ -24,9 +26,16 @@ attributed.
 | History & Attribution section in the new README | todo (text drafted below) |
 
 > **`v1.0` has not been tagged.** An earlier attempt cut it on the #87 merge and
-> was removed — it must sit on the *actual* last commit before detach, i.e. after
-> all P0/P1 work from all three of us has merged. Re-cut with:
-> `git tag -a v1.0 <commit> -m "..." && git push origin v1.0`
+> was removed — it must sit on the *actual* last commit before detach. As of
+> 2026-09-07 the only work still outstanding is **Z1 (P0), Z5 (P1), A7 (P1)**.
+> Once those merge, cut it on the new `main` HEAD:
+>
+> ```bash
+> git checkout main && git pull
+> git tag -a v1.0 -m "GIU Nexus v1.0 — university edition. Frozen before the \
+> rebranded continuation. Original contributors: <9 names>." 
+> git push origin v1.0
+> ```
 
 ---
 
@@ -43,9 +52,9 @@ attributed.
 
 Until both are done, keep the new repo **private**.
 
-3. **All P0/P1 work merged** — `v1.0` marks the frozen university version, so it
-   can't be cut until Z1, Z5, A7, and the co-owned AI P1s (#79, #80, #83) are in,
-   not just Ahmed's cross-cutting fixes.
+3. **All P0/P1 work merged** — `v1.0` marks the frozen university version. All
+   filed audit issues (#76–#100) are in; the tag waits only on the three unfiled
+   items still open as of 2026-09-07: **Z1** (P0), **Z5** (P1), **A7** (P1).
 
 ---
 
@@ -147,5 +156,5 @@ Pick the new product name first, then sweep these. `grep -rniE 'giu[- ]?nexus|gi
   swagger `servers` URLs to match.
 - Archive or add a pointer note to `Sanad-Manga/GIU-Nexus` once the new repo is
   public, so the old one isn't mistaken for active.
-- Consider `client/dist/` — it's checked in; add it to `.gitignore` in the new
-  repo (ties into #89).
+- Carry over `.dockerignore` and the `.gitignore` rules (both already exclude
+  `client/dist`, `node_modules`, `.env`).
