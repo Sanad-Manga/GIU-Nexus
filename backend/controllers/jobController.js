@@ -124,8 +124,9 @@ const updateJob = async (req, res, next) => {
     if (job.createdBy.toString() !== req.user._id.toString())
       return res.status(403).json({ success: false, message: 'Not authorised to edit this job' });
 
-    
-    if (req.body.description) req.body.category = await classifyJobCategory(req.body.title || job.title, req.body.description);
+    if (req.body.description || req.body.title) {
+      req.body.category = await classifyJobCategory(req.body.title || job.title, req.body.description || job.description);
+    }
     if (req.body.title || req.body.requirements) {
       req.body.embedding = await getJobEmbedding(req.body.title || job.title, req.body.requirements || job.requirements);
     }
