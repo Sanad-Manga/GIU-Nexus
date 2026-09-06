@@ -23,7 +23,7 @@ A RESTful backend API connecting German International University students with i
 - **Recruiter approval** — Recruiters start as `pending` and must be approved by an admin before posting jobs.
 - **Jobs** — Create, filter, update, delete. AI auto-assigns category (HuggingFace zero-shot classification). Save/unsave jobs.
 - **Applications** — Apply to jobs, track status (pending → shortlisted / rejected). Recruiters manage applicants per job.
-- **Profile** — View and update profile. AI extracts skills from bio (HuggingFace NER). Profile picture upload via Cloudinary.
+- **Profile** — View and update profile. AI extracts skills from bio (keyword-based matching). Profile picture upload via Cloudinary.
 - **Recommendations** — AI-powered job recommendations based on user skills (sentence-transformers + cosine similarity).
 - **Admin** — Platform stats, user management, recruiter approval/rejection.
 - **Rate limiting** — Auth routes limited to 10 requests per 15 minutes per IP.
@@ -43,9 +43,11 @@ Three HuggingFace-powered features are integrated into the platform:
 When a recruiter posts or updates a job, the title and description are sent to HuggingFace. The model classifies the job into one of: `Backend`, `Frontend`, `AI/ML`, `DevOps`, `Data Engineering`, `Mobile`, `Security`, or `Other` — automatically, no manual tagging needed.
 
 ### 2. Skill Extraction from Bio
-**Model:** `dslim/bert-base-NER` (Named Entity Recognition)
+**Approach:** Keyword matching against a curated tech-skills list
 
-Job seekers write a bio and hit the extract-skills endpoint. The NER model scans the text and pulls out technical skills and tools (e.g. React, Python, Docker). These are saved to the user's profile and used for recommendations.
+Job seekers write a bio and hit the extract-skills endpoint. The bio text is scanned against a hardcoded list of known technical skills and tools (e.g. React, Python, Docker) using regex matching. These are saved to the user's profile and used for recommendations.
+
+*Note: an earlier version used the HuggingFace `dslim/bert-base-NER` model, but it was inaccurate on tech-specific terms (e.g. tagging "GIU" as an organization, missing "Node.js" entirely) and was replaced with keyword matching for reliability.*
 
 ### 3. AI Job Recommendations
 **Model:** `sentence-transformers/all-MiniLM-L6-v2` (sentence embeddings)
