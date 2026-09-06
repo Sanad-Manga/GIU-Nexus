@@ -10,15 +10,23 @@ attributed.
 
 | Step | State |
 |------|-------|
-| Land P0/P1 fixes on `Sanad-Manga/GIU-Nexus` | done — #86, C1, #87 merged |
-| Tag `v1.0` on the current repo | done — annotated tag on the #87 merge commit |
+| Ahmed's P0/P1: CI + branch protection (#86), seed creds (C1), test refresh (#87) | done — merged |
+| Ziad's P0/P1: Z1 token blacklist, Z5 input sanitization / NoSQL injection | **todo — gates the tag** |
+| Abdelrahman's P0/P1: A7 mass-assignment on job create/update | **todo — gates the tag** |
+| Co-owned AI P1s: #79 embedding cache, #80 honest match %, #83 HF provider + dim validation | **todo — gates the tag** |
+| Tag `v1.0` on the current repo | **not yet** — cut only once every row above is merged |
 | `.mailmap` (identity consolidation) | done — in this PR |
 | `CONTRIBUTORS` file | done — in this PR |
-| Get informal OK from the other 6 original authors | **todo — gates everything below** |
+| Get informal OK from the other 6 original authors | **todo — gates going public** |
 | Check the program's academic-integrity / IP policy | **todo — gates going public** |
 | Create the new repo + push history | todo |
 | Rebrand pass in the new repo | todo |
 | History & Attribution section in the new README | todo (text drafted below) |
+
+> **`v1.0` has not been tagged.** An earlier attempt cut it on the #87 merge and
+> was removed — it must sit on the *actual* last commit before detach, i.e. after
+> all P0/P1 work from all three of us has merged. Re-cut with:
+> `git tag -a v1.0 <commit> -m "..." && git push origin v1.0`
 
 ---
 
@@ -34,6 +42,10 @@ attributed.
    assigns IP to the university or the group, note who signed off.
 
 Until both are done, keep the new repo **private**.
+
+3. **All P0/P1 work merged** — `v1.0` marks the frozen university version, so it
+   can't be cut until Z1, Z5, A7, and the co-owned AI P1s (#79, #80, #83) are in,
+   not just Ahmed's cross-cutting fixes.
 
 ---
 
