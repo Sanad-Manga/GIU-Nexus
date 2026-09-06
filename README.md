@@ -40,7 +40,7 @@ Three HuggingFace-powered features are integrated into the platform:
 ### 1. Job Category Classification
 **Model:** `facebook/bart-large-mnli` (zero-shot classification)
 
-When a recruiter posts or updates a job, the title and description are sent to HuggingFace. The model classifies the job into one of: `Backend`, `Frontend`, `AI/ML`, `DevOps`, `Data Engineering`, `Mobile`, `Security`, or `Other` — automatically, no manual tagging needed.
+When a recruiter posts or updates a job, the title and description are sent to HuggingFace. The model classifies the job into one of: `Backend`, `Frontend`, `AI/ML`, `DevOps`, `Data Engineering`, or `Other` — automatically, no manual tagging needed.
 
 ### 2. Skill Extraction from Bio
 **Approach:** Keyword matching against a curated tech-skills list
