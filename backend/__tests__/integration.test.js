@@ -37,11 +37,14 @@ process.env.JWT_EXPIRE = '7d';
 process.env.NODE_ENV = 'test';
 
 const { MongoMemoryServer } = require('mongodb-memory-server');
+const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const request = require('supertest');
 const app = require('../app');
 const User = require('../models/User');
 const JobPost = require('../models/JobPost');
+const BlacklistedToken = require('../models/BlacklistedToken');
+const blacklist = require('../middleware/tokenBlacklist');
 const { USERS, JOB } = require('./fixtures');
 const { authLimiterStore } = require('../middleware/rateLimiter');
 const hfService = require('../services/hfService');
@@ -193,6 +196,49 @@ describe('Auth — Login', () => {
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
     expect(res.body.token).toBeDefined();
+  });
+});
+
+// ─── Logout / JWT blacklist ──────────────────────────────────────────────────
+
+describe('Auth — Logout (Mongo-backed JWT blacklist)', () => {
+  it('rejects a logged-out token on a protected route with 401', async () => {
+    const { token } = await registerAndLogin('jobSeeker');
+
+    const logoutRes = await request(app)
+      .post('/api/v1/auth/logout')
+      .set('Authorization', `Bearer ${token}`);
+    expect(logoutRes.status).toBe(200);
+
+    const reuseRes = await request(app)
+      .post('/api/v1/auth/logout')
+      .set('Authorization', `Bearer ${token}`);
+    expect(reuseRes.status).toBe(401);
+    expect(reuseRes.body.message).toMatch(/invalidated/i);
+  });
+
+  it('persists a BlacklistedToken row whose expiresAt matches the token exp claim', async () => {
+    const { token } = await registerAndLogin('jobSeeker');
+    const decoded = jwt.decode(token);
+
+    await request(app)
+      .post('/api/v1/auth/logout')
+      .set('Authorization', `Bearer ${token}`);
+
+    const row = await BlacklistedToken.findOne({ jti: decoded.jti });
+    expect(row).not.toBeNull();
+    expect(row.expiresAt.getTime()).toBe(decoded.exp * 1000);
+  });
+
+  it('does not throw when the same jti is blacklisted twice concurrently', async () => {
+    const jti = 'concurrent-jti-test';
+    const exp = Math.floor(Date.now() / 1000) + 3600;
+
+    await expect(
+      Promise.all([blacklist.add(jti, exp), blacklist.add(jti, exp)])
+    ).resolves.not.toThrow();
+
+    expect(await blacklist.has(jti)).toBe(true);
   });
 });
 

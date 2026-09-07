@@ -178,7 +178,7 @@ exports.logout = async (req, res, next) => {
     const token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.decode(token);
     if (decoded?.jti) {
-      blacklist.add(decoded.jti);
+      await blacklist.add(decoded.jti, decoded.exp);
     }
     res.status(200).json({
       success: true,
