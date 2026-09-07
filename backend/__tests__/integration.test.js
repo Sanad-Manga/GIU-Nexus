@@ -43,6 +43,7 @@ const request = require('supertest');
 const app = require('../app');
 const User = require('../models/User');
 const JobPost = require('../models/JobPost');
+const Application = require('../models/Application');
 const BlacklistedToken = require('../models/BlacklistedToken');
 const RateLimitHit = require('../models/RateLimitHit');
 const blacklist = require('../middleware/tokenBlacklist');
@@ -673,6 +674,110 @@ describe('Admin — Stats (GET /admin/stats)', () => {
   it('returns 401 without a token', async () => {
     const res = await request(app).get('/api/v1/admin/stats');
     expect(res.status).toBe(401);
+  });
+});
+
+// ─── Admin — user self-protection + cascade on delete ───────────────────────
+
+describe('Admin — User management guards (DELETE /users/:id, PATCH /users/:id/status)', () => {
+  it('cannot delete another admin (403)', async () => {
+    const { token } = await createAdminAndLogin('a');
+    const { userId: otherAdminId } = await createAdminAndLogin('b');
+
+    const res = await request(app)
+      .delete(`/api/v1/users/${otherAdminId}`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.status).toBe(403);
+    expect(await User.findById(otherAdminId)).not.toBeNull();
+  });
+
+  it('cannot delete their own account (403)', async () => {
+    const { token, userId } = await createAdminAndLogin('a');
+
+    const res = await request(app)
+      .delete(`/api/v1/users/${userId}`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.status).toBe(403);
+    expect(await User.findById(userId)).not.toBeNull();
+  });
+
+  it('cannot change another admin\'s status (403)', async () => {
+    const { token } = await createAdminAndLogin('a');
+    const { userId: otherAdminId } = await createAdminAndLogin('b');
+
+    const res = await request(app)
+      .patch(`/api/v1/users/${otherAdminId}/status`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ status: 'rejected' });
+
+    expect(res.status).toBe(403);
+  });
+
+  it('cannot change their own status (403)', async () => {
+    const { token, userId } = await createAdminAndLogin('a');
+
+    const res = await request(app)
+      .patch(`/api/v1/users/${userId}/status`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ status: 'pending' });
+
+    expect(res.status).toBe(403);
+  });
+
+  it('deleting a recruiter cascade-removes their job posts', async () => {
+    const { token: adminToken } = await createAdminAndLogin('a');
+    const { token: recToken, userId: recId } = await registerAndLogin('recruiter', 'casc');
+    await createTestJob(recToken, { title: 'Job One' });
+    await createTestJob(recToken, { title: 'Job Two' });
+
+    const res = await request(app)
+      .delete(`/api/v1/users/${recId}`)
+      .set('Authorization', `Bearer ${adminToken}`);
+
+    expect(res.status).toBe(200);
+    expect(await JobPost.countDocuments({ createdBy: recId })).toBe(0);
+  });
+
+  it('deleting a recruiter also removes applications to their jobs', async () => {
+    const { token: adminToken } = await createAdminAndLogin('a');
+    const { token: recToken, userId: recId } = await registerAndLogin('recruiter', 'casc');
+    const { token: seekerToken } = await registerAndLogin('jobSeeker', 'casc');
+
+    const jobRes = await createTestJob(recToken);
+    await request(app)
+      .post(`/api/v1/applications/${jobRes.body.job._id}/apply`)
+      .set('Authorization', `Bearer ${seekerToken}`)
+      .send({ coverLetter: 'x' });
+    expect(await Application.countDocuments({ job: jobRes.body.job._id })).toBe(1);
+
+    const res = await request(app)
+      .delete(`/api/v1/users/${recId}`)
+      .set('Authorization', `Bearer ${adminToken}`);
+
+    expect(res.status).toBe(200);
+    expect(await Application.countDocuments({ job: jobRes.body.job._id })).toBe(0);
+  });
+
+  it('deleting a job seeker cascade-removes their applications', async () => {
+    const { token: adminToken } = await createAdminAndLogin('a');
+    const { token: recToken } = await registerAndLogin('recruiter', 'casc');
+    const { token: seekerToken, userId: seekerId } = await registerAndLogin('jobSeeker', 'casc');
+
+    const jobRes = await createTestJob(recToken);
+    await request(app)
+      .post(`/api/v1/applications/${jobRes.body.job._id}/apply`)
+      .set('Authorization', `Bearer ${seekerToken}`)
+      .send({ coverLetter: 'x' });
+    expect(await Application.countDocuments({ user: seekerId })).toBe(1);
+
+    const res = await request(app)
+      .delete(`/api/v1/users/${seekerId}`)
+      .set('Authorization', `Bearer ${adminToken}`);
+
+    expect(res.status).toBe(200);
+    expect(await Application.countDocuments({ user: seekerId })).toBe(0);
   });
 });
 
