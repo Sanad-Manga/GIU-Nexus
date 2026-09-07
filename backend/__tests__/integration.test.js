@@ -966,3 +966,21 @@ describe('Auth — Rate Limiting', () => {
     expect(rows[0].expiresAt.getTime()).toBeGreaterThan(Date.now());
   });
 });
+
+// ─── AI-heavy routes — per-user rate limiting ────────────────────────────────
+
+describe('Jobs — AI route rate limiting', () => {
+  it('returns 429 after 20 AI requests from the same user in the window', async () => {
+    const { token } = await registerAndLogin('recruiter');
+
+    for (let i = 0; i < 20; i++) {
+      const ok = await createTestJob(token);
+      expect(ok.status).toBe(201);
+    }
+
+    const res = await createTestJob(token);
+    expect(res.status).toBe(429);
+    expect(res.body.success).toBe(false);
+    expect(res.body.message).toMatch(/too many ai requests/i);
+  });
+});
