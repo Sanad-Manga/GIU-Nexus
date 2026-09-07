@@ -44,6 +44,7 @@ const app = require('../app');
 const User = require('../models/User');
 const JobPost = require('../models/JobPost');
 const BlacklistedToken = require('../models/BlacklistedToken');
+const RateLimitHit = require('../models/RateLimitHit');
 const blacklist = require('../middleware/tokenBlacklist');
 const { USERS, JOB } = require('./fixtures');
 const { authLimiterStore } = require('../middleware/rateLimiter');
@@ -952,5 +953,16 @@ describe('Auth — Rate Limiting', () => {
     expect(res.status).toBe(429);
     expect(res.body.success).toBe(false);
     expect(res.body.message).toMatch(/too many attempts/i);
+  });
+
+  it('persists the hit counter in Mongo (survives a process restart)', async () => {
+    for (let i = 0; i < 3; i++) {
+      await loginUser(`nobody${i}@test.com`, 'whatever');
+    }
+
+    const rows = await RateLimitHit.find({});
+    expect(rows).toHaveLength(1);
+    expect(rows[0].totalHits).toBe(3);
+    expect(rows[0].expiresAt.getTime()).toBeGreaterThan(Date.now());
   });
 });

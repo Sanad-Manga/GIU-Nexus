@@ -1,6 +1,7 @@
-const { rateLimit, MemoryStore } = require('express-rate-limit');
+const { rateLimit } = require('express-rate-limit');
+const MongoRateLimitStore = require('./mongoRateLimitStore');
 
-const authLimiterStore = new MemoryStore();
+const authLimiterStore = new MongoRateLimitStore({ prefix: 'auth:' });
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
