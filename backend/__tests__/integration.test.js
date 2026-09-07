@@ -180,6 +180,17 @@ describe('Auth — Login', () => {
     expect(res.status).toBe(401);
   });
 
+  it('rejects a NoSQL operator object in the email field', async () => {
+    const res = await request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: { $ne: null }, password: 'anything' });
+
+    expect([400, 401]).toContain(res.status);
+    expect(res.body.success).not.toBe(true);
+    expect(res.body.token).toBeUndefined();
+    expect(res.body.user).toBeUndefined();
+  });
+
   it('logs in with the original mixed-case, dotted email used at register', async () => {
     const original = 'Foo.Bar@Gmail.com';
     const password = USERS.jobSeeker.password;

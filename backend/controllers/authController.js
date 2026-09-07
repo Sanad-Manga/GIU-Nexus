@@ -133,6 +133,10 @@ exports.login = async (req, res, next) => {
       });
     }
 
+    if (typeof email !== "string") {
+      return res.status(400).json({ success: false, message: "Invalid email" });
+    }
+
     const normalizedEmail = validator.normalizeEmail(email);
     const user = await User.findOne({ email: normalizedEmail }).select("+password");
 
@@ -201,6 +205,10 @@ exports.forgotPassword = async (req, res, next) => {
       });
     }
 
+    if (typeof email !== "string") {
+      return res.status(400).json({ success: false, message: "Invalid email" });
+    }
+
     const normalizedEmail = validator.normalizeEmail(email);
     const user = await User.findOne({ email: normalizedEmail });
 
@@ -248,6 +256,10 @@ exports.verifyOtp = async (req, res, next) => {
         success: false,
         message: "Please provide email and OTP",
       });
+    }
+
+    if (typeof email !== "string") {
+      return res.status(400).json({ success: false, message: "Invalid email" });
     }
 
     const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
