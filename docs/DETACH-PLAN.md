@@ -10,32 +10,23 @@ attributed.
 
 | Step | State |
 |------|-------|
-| Ahmed — CI + branch protection (#86), seed creds (C1), test refresh (#87), dead code (#89), lint gate (#92), README (#88) | done — merged |
+| Ahmed — CI + branch protection (#86), seed creds (C1), test refresh (#87), dead code (#89), lint gate (#92), README (#88), recommend-test fix (#103) | done — merged |
 | Ziad — Z3 OTP expiry, Z6 email normalization, Z7 dead admin secret (#96) | done — merged |
-| Abdelrahman — A1–A6, A8: embedding cache, honest match %, HF provider + dim validation, response shape, skill-doc reconcile, category enum, job-post cleanup (#100) | done — merged |
-| **Ziad — Z1: JWT blacklist off in-memory `Set` (`P0`)** | **todo — gates the tag** |
-| **Ziad — Z5: wire up input sanitization (`P1`)** | **todo — gates the tag** |
-| **Abdelrahman — A7: mass-assignment allowlist on job create/update (`P1`)** | **todo — gates the tag** |
-| Tag `v1.0` on the current repo | **not yet** — cut once the three rows above are merged |
+| Ziad — Z1 Mongo-backed JWT blacklist, Z2 Mongo rate limiter, Z4 per-route AI limits, Z5 input sanitization, Z8 admin-delete safety (#102) | done — merged |
+| Abdelrahman — A1–A8: embedding cache, honest match %, HF provider + dim validation, response shape, skill-doc reconcile, category enum, mass-assignment allowlist, job-post cleanup (#100, #101) | done — merged |
+| **Tag `v1.0`** on `803c5bf` (the #102 merge) | **done — pushed 2026-09-07** |
 | `.mailmap` (identity consolidation) | done — in this PR |
 | `CONTRIBUTORS` file | done — in this PR |
 | Get informal OK from the other 6 original authors | **todo — gates going public** |
 | Check the program's academic-integrity / IP policy | **todo — gates going public** |
-| Create the new repo + push history | todo |
+| Create the new repo + push history | todo — run the migration steps below |
 | Rebrand pass in the new repo | todo |
 | History & Attribution section in the new README | todo (text drafted below) |
 
-> **`v1.0` has not been tagged.** An earlier attempt cut it on the #87 merge and
-> was removed — it must sit on the *actual* last commit before detach. As of
-> 2026-09-07 the only work still outstanding is **Z1 (P0), Z5 (P1), A7 (P1)**.
-> Once those merge, cut it on the new `main` HEAD:
->
-> ```bash
-> git checkout main && git pull
-> git tag -a v1.0 -m "GIU Nexus v1.0 — university edition. Frozen before the \
-> rebranded continuation. Original contributors: <9 names>." 
-> git push origin v1.0
-> ```
+> **`v1.0` is tagged** (annotated, on `803c5bf`). All P0/P1 audit work is in.
+> An earlier attempt had cut it on the #87 merge and was removed — this one sits
+> on the real last commit before detach. What's left for #90 is the migration
+> itself, which is gated on the two "going public" rows above.
 
 ---
 
@@ -52,9 +43,9 @@ attributed.
 
 Until both are done, keep the new repo **private**.
 
-3. **All P0/P1 work merged** — `v1.0` marks the frozen university version. All
-   filed audit issues (#76–#100) are in; the tag waits only on the three unfiled
-   items still open as of 2026-09-07: **Z1** (P0), **Z5** (P1), **A7** (P1).
+3. **All P0/P1 work merged** — done. `v1.0` (on `803c5bf`) is the frozen
+   university version; every filed audit issue plus the three unfiled items
+   (Z1, Z5, A7) are in.
 
 ---
 
@@ -153,7 +144,9 @@ Pick the new product name first, then sweep these. `grep -rniE 'giu[- ]?nexus|gi
 - Re-add CI secrets (Railway, Vercel) and re-enable branch protection on `main`
   (mirror the old repo: require the `Test` check + 1 review).
 - Update deployment targets (new Railway project / Vercel project) and the
-  swagger `servers` URLs to match.
+  swagger `servers` URLs to match. Note: the **Deploy to Railway** job is
+  currently failing on the old repo (exit 1 — stale token/service config); set
+  it up fresh rather than copying the broken secrets.
 - Archive or add a pointer note to `Sanad-Manga/GIU-Nexus` once the new repo is
   public, so the old one isn't mistaken for active.
 - Carry over `.dockerignore` and the `.gitignore` rules (both already exclude
